@@ -78,14 +78,11 @@ public class DarienOpModeAuto extends DarienOpMode {
     }
         public void setArmPosition(int position, double power) {
         //positive is out
-        rightArm.setTargetPosition(position);
-        leftArm.setTargetPosition(position);
+        arm.setTargetPosition(position);
 
-        rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        rightArm.setPower(power);
-        leftArm.setPower(power);
+        arm.setPower(power);
     }
 
     public void driveArm(String position) {
@@ -93,16 +90,13 @@ public class DarienOpModeAuto extends DarienOpMode {
         switch (position) {
             case "in":
                 // TODO: power the arm down until it reaches the stopping position. Then turn off the power.
-                leftArm.setPower(-power);
-                rightArm.setPower(-power);
+                arm.setPower(-power);
                 break;
             case "out":
-                leftArm.setPower(power);
-                rightArm.setPower(power);
+                arm.setPower(power);
                 break;
             case "none":
-                leftArm.setPower(0);
-                rightArm.setPower(0);
+                arm.setPower(0);
             default:
                 // do nothing;
         }
@@ -115,17 +109,14 @@ public class DarienOpModeAuto extends DarienOpMode {
 
                 sleep(50);
 
-                leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
                 driveArm("in");
                 sleep(200);
                 driveArm("none");
 
-                leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 break;
             case "dropPixel":
                 //always put purple pixel to the left
@@ -182,14 +173,12 @@ public class DarienOpModeAuto extends DarienOpMode {
         omniMotor2 = initializeMotor("omniMotor1");
         omniMotor3 = initializeMotor("omniMotor2");
 
-        leftArm = initializeMotor("leftArm");
-        rightArm = initializeMotor("rightArm");
+        arm = initializeMotor("arm");
 
-        leftArm.setDirection(DcMotor.Direction.REVERSE);
+        arm.setDirection(DcMotor.Direction.REVERSE);
 
         if (isAuto) {
-            leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
             colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
         }
@@ -208,7 +197,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         clawRight = hardwareMap.get(Servo.class, "clawRight");
 
         feeder = hardwareMap.get(CRServo.class, "feeder");
-        droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
+        //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
 
     }
 
@@ -570,14 +559,12 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public void initControlsRR(boolean isAuto) {
         //isAuto: true=auto false=teleop
-        leftArm = initializeMotor("leftArm");
-        rightArm = initializeMotor("rightArm");
+        arm = initializeMotor("arm");
 
-        leftArm.setDirection(DcMotor.Direction.REVERSE);
+        arm.setDirection(DcMotor.Direction.REVERSE);
 
         if (isAuto) {
-            leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
             colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
         }

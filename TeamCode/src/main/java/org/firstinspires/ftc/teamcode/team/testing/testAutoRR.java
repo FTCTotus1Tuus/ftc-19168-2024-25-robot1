@@ -115,7 +115,7 @@ public class testAutoRR extends DarienOpModeAuto {
             autoRunMacro("ReadyToPickup");
             setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
             setArmPosition(250, 0.3);
-            while(leftArm.isBusy()) {}
+            while(arm.isBusy()) {}
             setWristPosition("dropGround");
             sleep(333);
             print("prop position", propPosition);

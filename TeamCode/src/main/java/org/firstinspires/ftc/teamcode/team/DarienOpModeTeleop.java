@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -19,6 +21,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
         @Override
     public void runOpMode() throws InterruptedException {}
 
+    /*
     public void runDroneSystem(){
         if(gamepad2.left_stick_button && gamepad2.b){
             droneLauncher.setPower(0.8);
@@ -27,6 +30,8 @@ public class DarienOpModeTeleop extends DarienOpMode {
             droneLauncher.setPower(0);
         }
     }
+
+     */
     public void runIntakeSystem() {
         if (gamepad1.right_bumper) {
             // Load pixels
@@ -128,8 +133,15 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public void runArmSystem() {
         // DONE: Arm control on the left joystick up/down.
-        leftArm.setPower(-gamepad2.left_stick_y);
-        rightArm.setPower(-gamepad2.left_stick_y);
+        // gamepad2.left_stick_y is negative when pushing the joystick up (arm going out). And positive when down (arm coming in).
+        if( gamepad2.left_stick_y > 0 && touchSensor.isPressed() ) {
+            // If the arm is fully retracted (in), stop driving the motor to avoid tensioning the linear slide cable.
+            arm.setPower(0);
+            return;
+        } else {
+            arm.setPower(-gamepad2.left_stick_y);
+        }
+        //print("touchSensor.isPressed: ", touchSensor.isPressed() );
     }
 
     public void driveArm(String position) {
@@ -137,16 +149,13 @@ public class DarienOpModeTeleop extends DarienOpMode {
         switch (position) {
             case "in":
                 // TODO: power the arm down until it reaches the stopping position. Then turn off the power.
-                leftArm.setPower(-power);
-                rightArm.setPower(-power);
+                arm.setPower(-power);
                 break;
             case "out":
-                leftArm.setPower(power);
-                rightArm.setPower(power);
+                arm.setPower(power);
                 break;
             case "none":
-                leftArm.setPower(0);
-                rightArm.setPower(0);
+                arm.setPower(0);
             default:
                 // do nothing;
         }
@@ -234,14 +243,12 @@ public class DarienOpModeTeleop extends DarienOpMode {
         omniMotor2 = initializeMotor("omniMotor1");
         omniMotor3 = initializeMotor("omniMotor2");
 
-        leftArm = initializeMotor("leftArm");
-        rightArm = initializeMotor("rightArm");
+        arm = initializeMotor("arm");
 
-        leftArm.setDirection(DcMotor.Direction.REVERSE);
+        arm.setDirection(DcMotor.Direction.REVERSE);
 
         if (isAuto) {
-            leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
             colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
         }
@@ -260,7 +267,9 @@ public class DarienOpModeTeleop extends DarienOpMode {
         clawRight = hardwareMap.get(Servo.class, "clawRight");
 
         feeder = hardwareMap.get(CRServo.class, "feeder");
-        droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
+
+        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
     }
             int move_to_position;
         double y;

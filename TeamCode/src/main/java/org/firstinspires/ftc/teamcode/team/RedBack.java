@@ -71,7 +71,7 @@ public class RedBack extends DarienOpModeAuto{
             setClawPosition("closed"); // grabs yellow pixel
         sleep(250);
         setArmPosition(200, 0.1); // extends the arm a tiny bit
-        while (leftArm.isBusy()) {}
+        while (arm.isBusy()) {}
         autoRunMacro("ReadyToDrop"); // extends the wrist
         setArmPosition(0, 0.3);
 

@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -20,7 +22,8 @@ import java.util.List;
 @Config
 public class DarienOpMode extends LinearOpMode {
 
-    public CRServo leftIntake, rightIntake, feeder, droneLauncher;
+    public CRServo leftIntake, rightIntake, feeder;
+    //public droneLauncher;
     public Servo clawWrist, clawLeft, clawRight;
     public ColorSensor colourSensorLeft, colourSensorRight;
     public static int minRedVal = 900, minBlueVal = 1000;
@@ -49,8 +52,10 @@ public class DarienOpMode extends LinearOpMode {
     public DcMotor omniMotor1; // front right
     public DcMotor omniMotor2; // back left
     public DcMotor omniMotor3; // back right
-    public DcMotor leftArm, rightArm;
+    public DcMotor arm;
     public IMU imu;
+
+    public TouchSensor touchSensor;
 
 
     @Override
@@ -69,18 +74,16 @@ public class DarienOpMode extends LinearOpMode {
         imu.resetYaw();
 
         omniMotor0 = initializeMotor("omniMotor0");
-        omniMotor1 = initializeMotor("omniMotor3");
-        omniMotor2 = initializeMotor("omniMotor1");
-        omniMotor3 = initializeMotor("omniMotor2");
+        omniMotor1 = initializeMotor("omniMotor1");
+        omniMotor2 = initializeMotor("omniMotor2");
+        omniMotor3 = initializeMotor("omniMotor3");
 
-        leftArm = initializeMotor("leftArm");
-        rightArm = initializeMotor("rightArm");
+        arm = initializeMotor("arm");
 
-        leftArm.setDirection(DcMotor.Direction.REVERSE);
+        arm.setDirection(DcMotor.Direction.REVERSE);
 
         if (isAuto) {
-            leftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
             colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
         }
@@ -99,7 +102,7 @@ public class DarienOpMode extends LinearOpMode {
         clawRight = hardwareMap.get(Servo.class, "clawRight");
 
         feeder = hardwareMap.get(CRServo.class, "feeder");
-        droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
+        //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
     }
         public double getVoltage () {
             return (hardwareMap.voltageSensor.iterator().next().getVoltage());
