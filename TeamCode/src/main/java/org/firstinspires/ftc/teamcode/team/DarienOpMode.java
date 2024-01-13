@@ -48,10 +48,10 @@ public class DarienOpMode extends LinearOpMode {
     public double regularDivBy = 1;
     public double turboDivBy = 1;
     public boolean turboBoost;
-    public DcMotor omniMotor0; // front left
-    public DcMotor omniMotor1; // front right
-    public DcMotor omniMotor2; // back left
-    public DcMotor omniMotor3; // back right
+    public DcMotor omniMotor0; // leftFront
+    public DcMotor omniMotor1; // leftRear
+    public DcMotor omniMotor2; // rightRear
+    public DcMotor omniMotor3; // rightFront
     public DcMotor arm;
     public IMU imu;
 
