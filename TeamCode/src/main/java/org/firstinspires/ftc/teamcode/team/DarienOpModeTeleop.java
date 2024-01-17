@@ -134,14 +134,19 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public void runArmSystem() {
         // DONE: Arm control on the left joystick up/down.
         // gamepad2.left_stick_y is negative when pushing the joystick up (arm going out). And positive when down (arm coming in).
-        if( gamepad2.left_stick_y > 0 && touchSensor.isPressed() ) {
+        if( gamepad2.left_stick_y > 0 && armInStopTouchSensor.isPressed() ) {
             // If the arm is fully retracted (in), stop driving the motor to avoid tensioning the linear slide cable.
+            arm.setPower(0);
+            return;
+        }
+        else if( gamepad2.left_stick_y < 0 && armOutStopTouchSensor.isPressed() ) {
+            // If the arm is fully extended (out), stop driving the motor to avoid tensioning the linear slide cable.
             arm.setPower(0);
             return;
         } else {
             arm.setPower(-gamepad2.left_stick_y);
         }
-        //print("touchSensor.isPressed: ", touchSensor.isPressed() );
+        //print("armInStopTouchSensor.isPressed: ", armInStopTouchSensor.isPressed() );
     }
 
     public void driveArm(String position) {
@@ -268,7 +273,8 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
         feeder = hardwareMap.get(CRServo.class, "feeder");
 
-        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        armInStopTouchSensor = hardwareMap.get(TouchSensor.class, "armInStopTouchSensor");
+        armOutStopTouchSensor = hardwareMap.get(TouchSensor.class, "armOutStopTouchSensor");
         //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
     }
             int move_to_position;
