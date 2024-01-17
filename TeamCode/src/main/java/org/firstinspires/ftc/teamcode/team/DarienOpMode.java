@@ -38,7 +38,7 @@ public class DarienOpMode extends LinearOpMode {
     double clawWristPositionDrop = 0.3;
     public static double clawWristPositionGround = 0.6;
     public double clawLeftPositionOpen = 0.4;
-    public double clawLeftPositionClosed = 0.08;
+    public double clawLeftPositionClosed = 0.07;
     public double clawRightPositionOpen = 0.6;
     public double clawRightPositionClosed = 0.93;
     public static int armOutPosition = 750;
@@ -55,8 +55,8 @@ public class DarienOpMode extends LinearOpMode {
     public DcMotor arm;
     public IMU imu;
 
-    public TouchSensor touchSensor;
-
+    public TouchSensor armInStopTouchSensor;
+    public TouchSensor armOutStopTouchSensor;
 
     @Override
     public void runOpMode() throws InterruptedException {}
