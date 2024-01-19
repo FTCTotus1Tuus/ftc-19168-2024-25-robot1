@@ -63,6 +63,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public void runWristSystem() {
         // Wrist to be on fixed positions for grabbing and for dropping on the backboard.
+        /* Removed to make way for individual left and right claw control.
         if (gamepad2.right_trigger > 0) {
             // Pick up pixels from the robot tray.
             setWristPosition("pickup");
@@ -71,8 +72,15 @@ public class DarienOpModeTeleop extends DarienOpMode {
             // Drop pixels on backboard
             setWristPosition("drop");
         }
+         */
         if (gamepad2.x) {
             setWristPosition("dropGround");
+        }
+        if( gamepad2.right_stick_y < 0 ){
+            setWristPosition("drop");
+        }
+        if( gamepad2.right_stick_y > 0 ){
+            setWristPosition("pickup");
         }
         //clawWrist.setPower(gamepad2.left_stick_y/3); // clawWrist control as a continuous servo (CRServo).
     }
@@ -95,13 +103,15 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public void runClawSystem() {
         if (gamepad2.right_bumper) {
-            setClawPosition("open");
-            // Open the claw
-        } else if (gamepad2.left_bumper) {
-            setClawPosition("closed");
-            // Close the claw
+            setClawPosition("rightOpen");
+        } else if (gamepad2.right_trigger > 0) {
+            setClawPosition("rightClosed");
         }
-
+        if (gamepad2.left_bumper) {
+            setClawPosition("leftOpen");
+        } else if (gamepad2.left_trigger > 0) {
+            setClawPosition("leftClosed");
+        }
     }
 
     public void setClawPosition(String position) {
@@ -178,7 +188,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public void runMacro(String macro) {
         switch (macro) {
             case "ReadyToPickup":
-                if (gamepad2.y) {
+                if (gamepad2.a) {
                     if (clawWrist.getPosition() < clawWristPositionPickup) {
                         // If the wrist is already in PICKUP position, do nothing.
                         setWristPosition("pickup");
@@ -188,18 +198,18 @@ public class DarienOpModeTeleop extends DarienOpMode {
                         setClawPosition("open");
                     }
                 }
-                while (gamepad2.y) {
+                while (gamepad2.a) {
                     driveArm("in");
                 }
                 break;
             case "ReadyToDrop":
-                if (gamepad2.a) {
+                if (gamepad2.y) {
                     if (clawWrist.getPosition() > clawWristPositionDrop) {
                         // Only raise the wrist if it's not already in position.
                         setWristPosition("drop");
                     }
                 }
-                while (gamepad2.a) {
+                while (gamepad2.y) {
                     driveArm("out");
                 }
                 break;
