@@ -167,9 +167,9 @@ public class DarienOpModeTeleop extends DarienOpMode {
     }
 
     public void runDriveSystem() {
-        direction[0] = (Math.pow(-gamepad1.left_stick_x, 7) -gamepad1.left_stick_x)/2;
-        direction[1] = (Math.pow(-gamepad1.left_stick_y, 7) -gamepad1.left_stick_y)/2;
-        rotation = (Math.pow(-gamepad1.right_stick_x, 7) -gamepad1.right_stick_x) / 2;
+        direction[0] = -gamepad1.left_stick_x;
+        direction[1] = -gamepad1.left_stick_y;
+        rotation = -gamepad1.right_stick_x;
         turboBoost = gamepad1.left_stick_button;
 
         MoveRobot(direction, -rotation, turboBoost);
