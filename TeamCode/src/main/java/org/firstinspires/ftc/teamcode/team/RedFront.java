@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.team;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous
 public class RedFront extends DarienOpModeAuto{
@@ -10,18 +11,24 @@ public class RedFront extends DarienOpModeAuto{
         initControls(true);
 
         int propPosition;
+        //TODO fix arm out for all movements
+        //TODO for left and right positions fix centering with offsets
+        //TODO move 2 inches more for first centering bc no wiggle
+        //TODO find out whats wrong with april tag detection and alignment
+        //TODO increase movemnt forward by 1-2 inches depending on above
 
         waitForStart();
 
         propPosition = getPropPosition();
-        telemetry.addData("Prop", teamPropMaskPipeline.getLastResults());
+        telemetry.addData("Prop", propPosition);
         telemetry.update();
         autoRunMacro("ReadyToPickup");
         setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
         MoveY(24, 0.3); //centers on spike tile
-            sleep(350);
-            setArmPosition(250, 0.3); // extends the arm
-            sleep(500);
+            setArmPosition(1000, 0.5); // extends the arm
+
+//            sleep(500);
+        while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
             setWristPosition("dropGround"); // extends the wrist
         waitForMotors();
         switch (propPosition) {
@@ -60,7 +67,8 @@ public class RedFront extends DarienOpModeAuto{
         AutoRotate(-90, 0.3, 0);
         // AT THIS POINT, THE ROBOT SHOULD BE IN THE CENTER OF THE TILE.
         autoRunMacro("ReadyToPickup");
-        setArmPosition(-10,0.1);
+//        setArmPosition(-10,0.1);
+        print("second half","");
         MoveY(72,0.5); // moves past stage door towards backdrop
         waitForMotors();
             setClawPosition("closed"); // grabs yellow pixel

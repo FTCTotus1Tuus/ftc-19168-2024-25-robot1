@@ -84,6 +84,7 @@ public class DarienOpMode extends LinearOpMode {
 
         if (isAuto) {
             arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
             colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
         }
@@ -103,6 +104,9 @@ public class DarienOpMode extends LinearOpMode {
 
         feeder = hardwareMap.get(CRServo.class, "feeder");
         //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
+
+
+
     }
         public double getVoltage () {
             return (hardwareMap.voltageSensor.iterator().next().getVoltage());

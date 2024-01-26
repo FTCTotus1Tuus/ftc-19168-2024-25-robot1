@@ -30,7 +30,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     public AprilTagProcessor aprilTag;
     double timeRot1=0.5, timeRot2=0.75;
 
-    double timeout = 3;
+    double timeout = 3; // In seconds
     SampleMecanumDrive drive;
     @Override
     public void runOpMode() throws InterruptedException {}
@@ -109,14 +109,15 @@ public class DarienOpModeAuto extends DarienOpMode {
 
                 sleep(50);
 
-                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                arm.setTargetPosition(0);
+//              changed bc drive doesnt use limit switches
+//                  and it broke the arm on the first ready to pickup
+//                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//                driveArm("in");
+//                sleep(200);
+//                driveArm("none");
 
-                driveArm("in");
-                sleep(200);
-                driveArm("none");
-
-                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 break;
             case "dropPixel":
                 //always put purple pixel to the left
@@ -406,6 +407,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         boolean isRotating = true;
 
         if (direction == 0) {
+            // rotate the shortest way.
             if ((TargetPosDegrees-getRawHeading()) > 0) {direction=-1;}
             else {direction = 1;}
             rotationTolerance = 2;
@@ -422,7 +424,7 @@ public class DarienOpModeAuto extends DarienOpMode {
             setRotatePower(power, direction);
             if (error<rotationTolerance) {
                 isRotating = false;
-            } else if (getRuntime() - startTime > timeout) {
+            } else if (getRuntime() - startTime > timeoutS) {
                 isRotating = false;
             }
         }
@@ -431,7 +433,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         setRotatePower(0,0);
         resetEncoder();
     }
-    public int getPropPosition() {
+    public int getPropPositionOld() {
         MoveY(2, 0.3);
         waitForMotors();
         AutoRotate(10, 0.3, -1);
@@ -451,6 +453,12 @@ public class DarienOpModeAuto extends DarienOpMode {
         else if (secondResults > firstResults && secondResults > thirdResults) {return 2;}
         else {return 3;}
 
+    }
+    public int getPropPosition() {
+        double[] results = teamPropMaskPipeline.getLastResults();
+        if (results[0] > results[1] && results[0] > results[2]) {return 1;}
+        else if (results[1] > results[0] && results[1] > results[2]) {return 2;}
+        else {return 3;}
     }
     public int getPropPositionRR(SampleMecanumDrive drive) {
         final double[] firstResults = new double[1];
