@@ -14,14 +14,13 @@ public class BlueFront extends DarienOpModeAuto{
         waitForStart();
 
         propPosition = getPropPosition();
-        telemetry.addData("Prop", teamPropMaskPipeline.getLastResults());
+        telemetry.addData("Prop", propPosition);
         telemetry.update();
         autoRunMacro("ReadyToPickup");
         setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
-        MoveY(24, 0.3); //centers on spike tile
-            sleep(350);
-            setArmPosition(250, 0.3); // extends the arm
-            sleep(500);
+        MoveY(29, 0.3); //centers on spike tile
+            setArmPosition(1000, 0.5); // extends the arm
+        while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
             setWristPosition("dropGround"); // extends the wrist
         waitForMotors();
         switch (propPosition) {
@@ -54,10 +53,10 @@ public class BlueFront extends DarienOpModeAuto{
                 break;
             case 1:
                 AutoRotate(90, 0.3,-1); // turns to spike mark
-                MoveY(0.5, 0.1);
+                MoveY(2, 0.1);
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the pixel
-                MoveY(-3.5, 0.1);
+                MoveY(-4.5, 0.1);
                 autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
                 MoveX(24, 0.3); // moves in line with top case
@@ -72,7 +71,7 @@ public class BlueFront extends DarienOpModeAuto{
         waitForMotors();
             setClawPosition("closed"); // grabs yellow pixel
 //        AutoRotate(90, 0.3, -1);
-        setArmPosition(200, 0.1); // extends the arm a tiny bit
+        setArmPosition(1000, 0.3); // extends the arm a tiny bit
         while (arm.isBusy()) {}
         autoRunMacro("ReadyToDrop"); // extends the wrist
         print("pls no crash","");

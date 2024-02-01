@@ -158,11 +158,11 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public void initControls(boolean isAuto) {
         //isAuto: true=auto false=teleop
-        imu = hardwareMap.get(IMU.class, "imu");
+        imu = hardwareMap.get(IMU.class, "imu 1");
         imu.initialize(
                 new IMU.Parameters(
                         new RevHubOrientationOnRobot(
-                                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                                 RevHubOrientationOnRobot.UsbFacingDirection.UP
                         )
                 )
@@ -214,7 +214,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         if (isBlue) {
             MoveX(-24, 0.5);
             waitForMotors();
-            setArmPosition(0, 0.3);
+            setArmPosition(100, 0.3);
             ArrayList<AprilTagDetection> currentDetections = null;
             double startTime = getRuntime();
             do { currentDetections = aprilTag.getDetections();}
@@ -253,7 +253,7 @@ public class DarienOpModeAuto extends DarienOpMode {
             // RED: STRAFE RIGHT TO THE CORRECT POSITION BASED ON THE STRIPE MARK - adding using camera to read as well
             MoveX(24, 0.3);
             waitForMotors();
-            setArmPosition(0, 0.3);
+            setArmPosition(100, 0.3);
             ArrayList<AprilTagDetection> currentDetections = null;
             double startTime = getRuntime();
             do { currentDetections = aprilTag.getDetections();}
@@ -337,20 +337,20 @@ public class DarienOpModeAuto extends DarienOpMode {
         double finalMove = 0;
         switch (propPosition) {
             case 1:
-                finalMove = -robotPositionX;
+                finalMove = -robotPositionX - 3;
                 break;
             case 2:
-                finalMove = 6 - robotPositionX;
+                finalMove = 6 - robotPositionX - 3;
                 break;
             case 3:
-                finalMove = 12 - robotPositionX;
+                finalMove = 12 - robotPositionX - 3;
                 break;
         } // where to go
         if (isBlue) {finalMove -= 0.75;}
         MoveX(finalMove, 0.3);
         waitForMotors();
 
-        MoveY(tag.ftcPose.y-3.5, 0.1);
+        MoveY(tag.ftcPose.y-1, 0.1);
         waitForMotors();
         autoPlacePixel();
 
@@ -400,10 +400,8 @@ public class DarienOpModeAuto extends DarienOpMode {
         double timeoutS = 3;
 
         setToRotateRunMode();
-        double initError = Math.abs(TargetPosDegrees-getRawHeading());
         double truePower;
         double error;
-        double scaleConstant = initError;
         boolean isRotating = true;
 
         if (direction == 0) {
@@ -414,20 +412,21 @@ public class DarienOpModeAuto extends DarienOpMode {
             power/=2;
         }
         double startTime = getRuntime();
-        while (isRotating) {
-            error = Math.abs(TargetPosDegrees-getRawHeading());
-//            truePower = Math.min(Math.pow((error/scaleConstant),2),1);
-            telemetry.addData("heading ", getRawHeading());
-            telemetry.addData("error ", error);
-            print("", power);
+        setRotatePower(power, direction);
+        if ( !(Math.abs(TargetPosDegrees-getRawHeading()) < rotationTolerance)){
+            while (isRotating) {
+                error = Math.abs(TargetPosDegrees-getRawHeading());
+//              truePower = Math.min(Math.pow((error/scaleConstant),2),1);
+                telemetry.addData("heading ", getRawHeading());
+                telemetry.addData("error ", error);
+                print("power", power);
 
-            setRotatePower(power, direction);
-            if (error<rotationTolerance) {
-                isRotating = false;
-            } else if (getRuntime() - startTime > timeoutS) {
-                isRotating = false;
-            }
-        }
+                if (error<=rotationTolerance) {
+                    isRotating = false;
+                } else if (getRuntime() - startTime > timeoutS) {
+                    isRotating = false;
+                }
+        }}
         telemetry.addData("rotate end", "");
         telemetry.update();
         setRotatePower(0,0);
