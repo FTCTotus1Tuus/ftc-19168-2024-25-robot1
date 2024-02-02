@@ -71,7 +71,7 @@ public class BlueFront extends DarienOpModeAuto{
         waitForMotors();
             setClawPosition("closed"); // grabs yellow pixel
 //        AutoRotate(90, 0.3, -1);
-        setArmPosition(1000, 0.3); // extends the arm a tiny bit
+        setArmPosition(1250, 0.3); // extends the arm a tiny bit
         while (arm.isBusy()) {}
         autoRunMacro("ReadyToDrop"); // extends the wrist
         print("pls no crash","");

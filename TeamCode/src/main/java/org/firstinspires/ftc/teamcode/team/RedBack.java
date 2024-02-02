@@ -18,17 +18,18 @@ public class RedBack extends DarienOpModeAuto{
         telemetry.update();
         autoRunMacro("ReadyToPickup");
         setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
-        MoveY(24, 0.3); //centers on spike tile
-            sleep(350);
-            setArmPosition(250, 0.3); // extends the arm
-            sleep(500);
-            setWristPosition("dropGround"); // extends the wrist
+        MoveY(27, 0.3); //centers on spike tile
+            setArmPosition(1250, 0.3); // extends the arm
+            while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
+        setWristPosition("dropGround"); // extends the wrist
         waitForMotors();
         switch (propPosition) {
             case 1:
                 AutoRotate(90, 0.3,-1); // turns to spike mark
+                MoveY(2,0.1);
+                waitForMotors();
                 autoRunMacro("dropPixel"); // places the purple pixel on the ground
-                MoveY(-24, 0.3);  // moves 1 tile back to be facing the backdrop
+                MoveY(-26, 0.3);  // moves 1 tile back to be facing the backdrop
                 autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
                 AutoRotate(-90, 0.3, 1);
@@ -48,7 +49,7 @@ public class RedBack extends DarienOpModeAuto{
                 break;
             case 3:
                 AutoRotate(-90, 0.3,1); // turns to spike mark
-                MoveY(3.25, 0.1);
+                MoveY(2.75, 0.1);
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the pixel
                 MoveY(-1, 0.1);
@@ -70,11 +71,10 @@ public class RedBack extends DarienOpModeAuto{
         sleep(500);
             setClawPosition("closed"); // grabs yellow pixel
         sleep(250);
-        setArmPosition(200, 0.1); // extends the arm a tiny bit
+        setArmPosition(1500, 0.3); // extends the arm a tiny bit
         while (arm.isBusy()) {}
         autoRunMacro("ReadyToDrop"); // extends the wrist
-        setArmPosition(0, 0.3);
-
+        setArmPosition(1150, 0.3);
         alignBackPositions(true, propPosition);
 
         print("pls no crash","");

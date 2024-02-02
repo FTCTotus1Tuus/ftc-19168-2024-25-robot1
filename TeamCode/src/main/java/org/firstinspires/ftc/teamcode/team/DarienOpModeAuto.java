@@ -214,7 +214,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         if (isBlue) {
             MoveX(-24, 0.5);
             waitForMotors();
-            setArmPosition(100, 0.3);
+            setArmPosition(1150, 0.3);
             ArrayList<AprilTagDetection> currentDetections = null;
             double startTime = getRuntime();
             do { currentDetections = aprilTag.getDetections();}
@@ -253,7 +253,7 @@ public class DarienOpModeAuto extends DarienOpMode {
             // RED: STRAFE RIGHT TO THE CORRECT POSITION BASED ON THE STRIPE MARK - adding using camera to read as well
             MoveX(24, 0.3);
             waitForMotors();
-            setArmPosition(100, 0.3);
+            setArmPosition(1150, 0.3);
             ArrayList<AprilTagDetection> currentDetections = null;
             double startTime = getRuntime();
             do { currentDetections = aprilTag.getDetections();}

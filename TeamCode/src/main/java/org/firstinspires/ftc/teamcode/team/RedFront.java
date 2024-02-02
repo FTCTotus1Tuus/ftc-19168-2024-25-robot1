@@ -77,7 +77,7 @@ public class RedFront extends DarienOpModeAuto{
         MoveY(72,0.5); // moves past stage door towards backdrop
         waitForMotors();
             setClawPosition("closed"); // grabs yellow pixel
-        setArmPosition(1000, 0.3); // extends the arm a tiny bit
+        setArmPosition(1250, 0.3); // extends the arm a tiny bit
         while (arm.isBusy()) {}
         autoRunMacro("ReadyToDrop"); // extends the wrist
         print("pls no crash","");
