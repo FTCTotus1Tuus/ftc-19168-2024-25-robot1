@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.team;
+package org.firstinspires.ftc.teamcode.team.Autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;

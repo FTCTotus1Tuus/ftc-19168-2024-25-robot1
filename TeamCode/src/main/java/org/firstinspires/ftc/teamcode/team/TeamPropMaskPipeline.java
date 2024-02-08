@@ -74,19 +74,9 @@ class TeamPropMaskPipeline implements VisionProcessor
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
 
-//            workingMat1.release();
-//            workingMat2.release();
-//            workingMat3.release();
-//
-//            mask1.release();
-//            mask2.release();
-//            mask3.release();
-
-
         // Calculate the width and height of the frame
         frameWidth = frame.width();
         frameHeight = frame.height();
-
 
         // Define the region of interest (ROI) for each third of the screen
         firstThird = new Rect(0, 0, frameWidth / 3, frameHeight);
@@ -94,11 +84,7 @@ class TeamPropMaskPipeline implements VisionProcessor
         thirdThird = new Rect(2 * (frameWidth / 3), 0, frameWidth / 3, frameHeight);
 
         workingMat1 = frame.clone();
-
-
-        // Apply a color mask to the workingMat (for example, to highlight a specific color)
-
-
+        // Apply a color mask to the workingMat
         Imgproc.cvtColor(workingMat1, workingMat2, Imgproc.COLOR_RGB2HSV);
         Core.inRange(workingMat2, new Scalar(minHue, minSaturation, minValue), new Scalar(maxHue, maxSaturation, maxValue), workingMat3);
 
@@ -106,16 +92,13 @@ class TeamPropMaskPipeline implements VisionProcessor
         mask2 = workingMat3.submat(secondThird);
         mask3 = workingMat3.submat(thirdThird);
 
-
         avgFirstThird = Core.countNonZero(mask1);
         avgSecondThird = Core.countNonZero(mask2);
         avgThirdThird = Core.countNonZero(mask3);
 
-
         lastResults[0] = avgFirstThird;
         lastResults[1] = avgSecondThird;
         lastResults[2] = avgThirdThird;
-
 
         workingMat1.release();
         workingMat2.release();

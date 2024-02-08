@@ -350,7 +350,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         MoveX(finalMove, 0.3);
         waitForMotors();
 
-        MoveY(tag.ftcPose.y-1, 0.1);
+        MoveY(tag.ftcPose.y-1.25, 0.1);
         waitForMotors();
         autoPlacePixel();
 
@@ -366,11 +366,19 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public void autoPlacePixel() {
         waitForMotors();
-        autoRunMacro("dropPixel");
+        setClawPosition("rightOpen");
         MoveY(-4.5, 0.25);
         waitForMotors();
         autoRunMacro("ReadyToPickup");
         return;
+    }
+    public void pickUpWhite() {
+        leftIntake.setPower(1);
+        rightIntake.setPower(-1);
+        feeder.setPower(-1);
+        waitForMotors();
+        sleep(1250);
+
     }
 
     public void MoveY(double y, double power) {
