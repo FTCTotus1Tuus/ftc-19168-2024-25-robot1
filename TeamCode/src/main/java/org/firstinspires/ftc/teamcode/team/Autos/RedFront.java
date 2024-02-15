@@ -74,12 +74,12 @@ public class RedFront extends DarienOpModeAuto {
         MoveY(72,0.5); // moves past stage door towards backdrop
         waitForMotors();
             setClawPosition("closed"); // grabs yellow pixel
+        sleep(250);
         setArmPosition(1250, 0.3); // extends the arm a tiny bit
         while (arm.isBusy()) {}
         autoRunMacro("ReadyToDrop"); // extends the wrist
         print("pls no crash","");
         backDropPlace(false, propPosition);
-        MoveY(-5, 0.3);
         setWristPosition("dropGround");
         switch (propPosition) {
             case 1:

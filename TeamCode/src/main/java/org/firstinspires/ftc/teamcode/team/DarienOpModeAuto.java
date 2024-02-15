@@ -369,7 +369,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         setClawPosition("rightOpen");
         MoveY(-4.5, 0.25);
         waitForMotors();
-        autoRunMacro("ReadyToPickup");
+        setWristPosition("dropGround");
         return;
     }
     public void pickUpWhite() {
