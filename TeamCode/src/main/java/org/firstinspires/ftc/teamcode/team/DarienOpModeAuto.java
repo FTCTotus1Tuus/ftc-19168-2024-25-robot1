@@ -180,6 +180,7 @@ public class DarienOpModeAuto extends DarienOpMode {
 
         if (isAuto) {
             arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
             colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
         }
@@ -367,6 +368,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void autoPlacePixel() {
         waitForMotors();
         setClawPosition("rightOpen");
+        sleep(150);
         MoveY(-4.5, 0.25);
         waitForMotors();
         setWristPosition("dropGround");

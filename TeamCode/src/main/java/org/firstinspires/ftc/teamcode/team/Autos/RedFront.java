@@ -36,7 +36,7 @@ public class RedFront extends DarienOpModeAuto {
                 autoRunMacro("dropPixel"); // places the purple pixel on the ground
                 MoveY(-2.5, 0.2);
                 waitForMotors();
-                MoveX(25, 0.3);  // moves 1 tile right to be facing the backdrop
+                MoveX(21.5, 0.3);  // moves 1 tile right to be facing the backdrop
                 autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
                 AutoRotate(-90, 0.3, 1);
@@ -47,10 +47,10 @@ public class RedFront extends DarienOpModeAuto {
                     autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
                 AutoRotate(0, 0.1 ,1);
-                MoveY(25, 0.3);
+                MoveY(22, 0.3);
                 waitForMotors();
                 AutoRotate(-90, 0.3, 1); // turns towards backdrop
-                MoveY(16, 0.3); // moves in line with top case
+                MoveY(14.5, 0.3); // moves in line with top case
                 waitForMotors();
                 AutoRotate(-90, 0.3, 0);
 
@@ -63,7 +63,7 @@ public class RedFront extends DarienOpModeAuto {
                 MoveY(-4, 0.1);
                 autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
-                MoveX(-24, 0.3); // strafe left to the center of the tile, facing the backdrop
+                MoveX(-20.5, 0.3); // strafe left to the center of the tile, facing the backdrop
                 waitForMotors();
                 break;
         }

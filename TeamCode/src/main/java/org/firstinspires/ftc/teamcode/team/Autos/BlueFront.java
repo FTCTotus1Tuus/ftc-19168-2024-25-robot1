@@ -26,7 +26,6 @@ public class BlueFront extends DarienOpModeAuto {
             setWristPosition("dropGround"); // extends the wrist
         waitForMotors();
         switch (propPosition) {
-            //TODO modify 1 and 3 to move forward and back proper amounts
             case 3:
                 AutoRotate(-90, 0.3,1); // turns to spike mark
                 MoveY(3, 0.1); // move toward the spike mark
@@ -34,7 +33,7 @@ public class BlueFront extends DarienOpModeAuto {
                 autoRunMacro("dropPixel"); // places the purple pixel on the ground
                 MoveY(-1, 0.1);
                 waitForMotors();
-                MoveX(-24, 0.3);  // strafe left to center on the tile
+                MoveX(-19.5, 0.3);  // strafe left to center on the tile
                 autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
                 AutoRotate(90, 0.3, -1);
@@ -47,10 +46,10 @@ public class BlueFront extends DarienOpModeAuto {
                     autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
                 AutoRotate(0, 0.1 ,1);
-                MoveY(24, 0.3);
+                MoveY(20, 0.3);
                 waitForMotors();
                 AutoRotate(90, 0.3, -1); // turns towards backdrop
-                MoveY(18, 0.3); // moves in line with top case
+                MoveY(16.5, 0.3); // moves in line with top case
                 waitForMotors();
                 break;
             case 1:
@@ -61,7 +60,7 @@ public class BlueFront extends DarienOpModeAuto {
                 MoveY(-4.5, 0.1);
                 autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
-                MoveX(24, 0.3); // moves in line with top case
+                MoveX(19.5, 0.3); // moves in line with top case
                 waitForMotors();
                 break;
         }
@@ -72,6 +71,7 @@ public class BlueFront extends DarienOpModeAuto {
         MoveY(72, 0.5); // moves past stage door towards backdrop
         waitForMotors();
             setClawPosition("closed"); // grabs yellow pixel
+        sleep(200);
 //        AutoRotate(90, 0.3, -1);
         setArmPosition(1250, 0.3); // extends the arm a tiny bit
         while (arm.isBusy()) {}
