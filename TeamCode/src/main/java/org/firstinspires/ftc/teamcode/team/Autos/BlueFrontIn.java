@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 @Autonomous
-public class BlueFront extends DarienOpModeAuto {
+public class BlueFrontIn extends DarienOpModeAuto {
     @Override
     public void runOpMode() throws InterruptedException {
         initCamera(true);
@@ -78,22 +78,7 @@ public class BlueFront extends DarienOpModeAuto {
         autoRunMacro("ReadyToDrop"); // extends the wrist
         print("pls no crash","");
         backDropPlace(true, propPosition);
-        switch (propPosition) {
-            //TODO fix distance strafed to and fro for placing
-            case 3:
-                MoveX(21, 0.3);
-                waitForMotors();
-                break;
-            case 2:
-                MoveX(24, 0.3);
-                waitForMotors();
-                break;
-            case 1:
-                MoveX(32, 0.3);
-                waitForMotors();
-                break;
-        }
-        MoveY(10, 0.05);
-        waitForMotors();
+
+        park(true, true, propPosition);
     }
 }

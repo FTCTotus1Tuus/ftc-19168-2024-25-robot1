@@ -3,12 +3,9 @@ package org.firstinspires.ftc.teamcode.team.Autos;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-
-import java.util.ArrayList;
 
 @Autonomous
-public class BlueBack extends DarienOpModeAuto {
+public class BlueBackOut extends DarienOpModeAuto {
     @Override
     public void runOpMode() throws InterruptedException {
         initCamera(true);
@@ -81,22 +78,8 @@ public class BlueBack extends DarienOpModeAuto {
         alignBackPositions(true, propPosition);
 
         print("pls no crash", "");
-        switch (propPosition) {
-            case 1:
-                MoveX(-15, 0.3);
-                waitForMotors();
-                break;
-            case 2:
-                MoveX(-24, 0.3);
-                waitForMotors();
-                break;
-            case 3:
-                MoveX(-31, 0.3);
-                waitForMotors();
-                break;
-        }
-        MoveY(10, 0.05);
-        waitForMotors();
+
+        park(true, false, propPosition);
     }
 
 }
