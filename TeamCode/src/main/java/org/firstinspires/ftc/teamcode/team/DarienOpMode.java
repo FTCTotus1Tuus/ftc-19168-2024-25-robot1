@@ -23,9 +23,10 @@ import java.util.List;
 public class DarienOpMode extends LinearOpMode {
 
     public CRServo leftIntake, rightIntake, feeder;
-    //public droneLauncher;
+    public CRServo droneLauncher;
     public Servo clawWrist, clawLeft, clawRight;
     public ColorSensor colourSensorLeft, colourSensorRight;
+    public ColorSensor intakeSensor;
     public static int minRedVal = 900, minBlueVal = 1000;
     public static double encoderResolution = 537.7 ; //no change unless we change motors
     public double wheelDiameter = 3.75; // inches
@@ -103,7 +104,7 @@ public class DarienOpMode extends LinearOpMode {
         clawRight = hardwareMap.get(Servo.class, "clawRight");
 
         feeder = hardwareMap.get(CRServo.class, "feeder");
-        //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
+        droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
 
 
 

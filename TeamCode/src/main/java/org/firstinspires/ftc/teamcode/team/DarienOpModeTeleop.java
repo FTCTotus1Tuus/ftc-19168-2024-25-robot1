@@ -21,17 +21,17 @@ public class DarienOpModeTeleop extends DarienOpMode {
         @Override
     public void runOpMode() throws InterruptedException {}
 
-    /*
+
     public void runDroneSystem(){
         if(gamepad2.left_stick_button && gamepad2.b){
             droneLauncher.setPower(0.8);
-            sleep(500);
+            sleep(1000);
         } else {
             droneLauncher.setPower(0);
         }
     }
 
-     */
+
     public void runIntakeSystem() {
         if (gamepad1.right_bumper) {
             // Load pixels
@@ -285,7 +285,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
         armInStopTouchSensor = hardwareMap.get(TouchSensor.class, "armInStopTouchSensor");
         armOutStopTouchSensor = hardwareMap.get(TouchSensor.class, "armOutStopTouchSensor");
-        //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
+        droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
     }
             int move_to_position;
         double y;

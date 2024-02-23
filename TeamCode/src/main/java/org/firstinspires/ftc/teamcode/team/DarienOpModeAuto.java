@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.team;
 
+import android.graphics.Color;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -31,9 +33,81 @@ public class DarienOpModeAuto extends DarienOpMode {
     double timeRot1=0.5, timeRot2=0.75;
 
     double timeout = 3; // In seconds
-    SampleMecanumDrive drive;
     @Override
-    public void runOpMode() throws InterruptedException {}
+    public void runOpMode() throws InterruptedException {}    public void initControls(boolean isAuto) {
+        //isAuto: true=auto false=teleop
+        imu = hardwareMap.get(IMU.class, "imu 1");
+        imu.initialize(
+                new IMU.Parameters(
+                        new RevHubOrientationOnRobot(
+                                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                                RevHubOrientationOnRobot.UsbFacingDirection.UP
+                        )
+                )
+        );
+        imu.resetYaw();
+
+        omniMotor0 = initializeMotor("omniMotor0");
+        omniMotor1 = initializeMotor("omniMotor3");
+        omniMotor2 = initializeMotor("omniMotor1");
+        omniMotor3 = initializeMotor("omniMotor2");
+
+        arm = initializeMotor("arm");
+
+        arm.setDirection(DcMotor.Direction.REVERSE);
+
+        if (isAuto) {
+            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
+            colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
+
+            intakeSensor = hardwareMap.get(ColorSensor.class, "intakeSensor");
+        }
+
+
+        omniMotor0.setDirection(DcMotor.Direction.REVERSE);
+        omniMotor1.setDirection(DcMotor.Direction.FORWARD);
+        omniMotor2.setDirection(DcMotor.Direction.FORWARD);
+        omniMotor3.setDirection(DcMotor.Direction.REVERSE);
+
+        leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
+        rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
+
+        clawWrist = hardwareMap.get(Servo.class, "clawWrist");
+        clawLeft = hardwareMap.get(Servo.class, "clawLeft");
+        clawRight = hardwareMap.get(Servo.class, "clawRight");
+
+        feeder = hardwareMap.get(CRServo.class, "feeder");
+        //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
+
+    }
+
+    public void initCamera(boolean isBlue) {
+        // true = blue false = red
+        teamPropMaskPipeline = new TeamPropMaskPipeline(isBlue);
+        // Create the AprilTag processor.
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        // Create the vision portal by using a builder.
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+
+        // Set and enable the processor.
+        builder.addProcessor(aprilTag);
+        builder.addProcessor(teamPropMaskPipeline);
+
+        // Build the Vision Portal, using the above settings.
+        visionPortal = builder.build();
+
+        // Disable or re-enable the aprilTag processor at any time.
+        //visionPortal.setProcessorEnabled(aprilTag, true);
+
+    }   // end method initAprilTag()
+
+
+
     public void setWristPosition(String position) {
         switch (position) {
             case "pickup":
@@ -85,22 +159,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         arm.setPower(power);
     }
 
-    public void driveArm(String position) {
-        double power = 0.8;
-        switch (position) {
-            case "in":
-                // TODO: power the arm down until it reaches the stopping position. Then turn off the power.
-                arm.setPower(-power);
-                break;
-            case "out":
-                arm.setPower(power);
-                break;
-            case "none":
-                arm.setPower(0);
-            default:
-                // do nothing;
-        }
-    }
+
         public void autoRunMacro(String macro) {
         switch (macro) {
             case "ReadyToPickup":
@@ -131,76 +190,6 @@ public class DarienOpModeAuto extends DarienOpMode {
                 // do nothing;
                 break;
         }
-    }
-        public void initCamera(boolean isBlue) {
-        // true = blue false = red
-        teamPropMaskPipeline = new TeamPropMaskPipeline(isBlue);
-        // Create the AprilTag processor.
-        aprilTag = new AprilTagProcessor.Builder().build();
-
-        // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-
-        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-
-        // Set and enable the processor.
-        builder.addProcessor(aprilTag);
-        builder.addProcessor(teamPropMaskPipeline);
-
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
-
-        // Disable or re-enable the aprilTag processor at any time.
-        //visionPortal.setProcessorEnabled(aprilTag, true);
-
-    }   // end method initAprilTag()
-
-
-    public void initControls(boolean isAuto) {
-        //isAuto: true=auto false=teleop
-        imu = hardwareMap.get(IMU.class, "imu 1");
-        imu.initialize(
-                new IMU.Parameters(
-                        new RevHubOrientationOnRobot(
-                                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                                RevHubOrientationOnRobot.UsbFacingDirection.UP
-                        )
-                )
-        );
-        imu.resetYaw();
-
-        omniMotor0 = initializeMotor("omniMotor0");
-        omniMotor1 = initializeMotor("omniMotor3");
-        omniMotor2 = initializeMotor("omniMotor1");
-        omniMotor3 = initializeMotor("omniMotor2");
-
-        arm = initializeMotor("arm");
-
-        arm.setDirection(DcMotor.Direction.REVERSE);
-
-        if (isAuto) {
-            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
-            colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
-        }
-
-
-        omniMotor0.setDirection(DcMotor.Direction.REVERSE);
-        omniMotor1.setDirection(DcMotor.Direction.FORWARD);
-        omniMotor2.setDirection(DcMotor.Direction.FORWARD);
-        omniMotor3.setDirection(DcMotor.Direction.REVERSE);
-
-        leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
-        rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
-
-        clawWrist = hardwareMap.get(Servo.class, "clawWrist");
-        clawLeft = hardwareMap.get(Servo.class, "clawLeft");
-        clawRight = hardwareMap.get(Servo.class, "clawRight");
-
-        feeder = hardwareMap.get(CRServo.class, "feeder");
-        //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
-
     }
 
     public boolean isOnLine(boolean isBlue) {
@@ -288,6 +277,26 @@ public class DarienOpModeAuto extends DarienOpMode {
             }
 
     }}
+
+    public void park(boolean isBlue, boolean goInwards, int propPosition) {
+        double finalMove = 30;
+
+        if (goInwards) {
+            if ((isBlue && propPosition==3) || (!isBlue && propPosition==1)) { finalMove-=10;}
+        }
+        else {
+            if ((isBlue && propPosition==1) || (!isBlue && propPosition==3)) { finalMove-=10;}
+        }
+
+        finalMove *= isBlue ? 1:-1;
+        finalMove *= goInwards ? 1:-1;
+
+        MoveX(finalMove, 0.3);
+        waitForMotors();
+
+        MoveY(10, 0.1);
+        waitForMotors();
+    }
 
     public void alignBackPositions(boolean isBlue, int propPosition){
 
@@ -442,27 +451,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         setRotatePower(0,0);
         resetEncoder();
     }
-    public int getPropPositionOld() {
-        MoveY(2, 0.3);
-        waitForMotors();
-        AutoRotate(10, 0.3, -1);
-//        drive.turn(10);
-        double firstResults = teamPropMaskPipeline.getLastResults()[0];
-        double secondResults1 = teamPropMaskPipeline.getLastResults()[1];
-        AutoRotate(-10, 0.3, 1);
-//        drive.turn(-20);
-        double thirdResults = teamPropMaskPipeline.getLastResults()[2];
-        double secondResults2 = teamPropMaskPipeline.getLastResults()[1];
 
-        double secondResults = (secondResults1+secondResults2)/2;
-//        drive.turn(10);
-        AutoRotate(0, 0.3, -1);
-
-        if (firstResults > secondResults && firstResults > thirdResults) {return 1;}
-        else if (secondResults > firstResults && secondResults > thirdResults) {return 2;}
-        else {return 3;}
-
-    }
     public int getPropPosition() {
         double[] results = teamPropMaskPipeline.getLastResults();
         if (results[0] > results[1] && results[0] > results[2]) {return 1;}
@@ -573,26 +562,5 @@ public class DarienOpModeAuto extends DarienOpMode {
         public double getRawHeading () {
             return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         }
-
-    public void initControlsRR(boolean isAuto) {
-        //isAuto: true=auto false=teleop
-        arm = initializeMotor("arm");
-
-        arm.setDirection(DcMotor.Direction.REVERSE);
-
-        if (isAuto) {
-            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
-            colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
-        }
-        leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
-        rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
-
-        clawWrist = hardwareMap.get(Servo.class, "clawWrist");
-        clawLeft = hardwareMap.get(Servo.class, "clawLeft");
-        clawRight = hardwareMap.get(Servo.class, "clawRight");
-
-        feeder = hardwareMap.get(CRServo.class, "feeder");
-    }
 
     }
