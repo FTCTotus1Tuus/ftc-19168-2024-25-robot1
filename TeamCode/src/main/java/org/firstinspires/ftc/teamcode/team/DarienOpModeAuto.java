@@ -279,7 +279,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     }}
 
     public void park(boolean isBlue, boolean goInwards, int propPosition) {
-        double finalMove = 30;
+        double finalMove = 28;
 
         if (goInwards) {
             if ((isBlue && propPosition==3) || (!isBlue && propPosition==1)) { finalMove-=10;}
@@ -296,6 +296,7 @@ public class DarienOpModeAuto extends DarienOpMode {
 
         MoveY(10, 0.1);
         waitForMotors();
+
     }
 
     public void alignBackPositions(boolean isBlue, int propPosition){
