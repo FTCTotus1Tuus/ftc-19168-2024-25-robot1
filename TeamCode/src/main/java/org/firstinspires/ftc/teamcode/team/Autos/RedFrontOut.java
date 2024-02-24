@@ -21,7 +21,7 @@ public class RedFrontOut extends DarienOpModeAuto {
         autoRunMacro("ReadyToPickup");
         setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
         MoveY(29, 0.3); //centers on spike tile
-            setArmPosition(400, 0.5); // extends the arm
+            setArmPosition(300, 0.5); // extends the arm
 
 //            sleep(500);
         while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
@@ -33,7 +33,6 @@ public class RedFrontOut extends DarienOpModeAuto {
                 MoveY(2.5, 0.2);
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the purple pixel on the ground
-                MoveY(-2.5, 0.2);
                 waitForMotors();
                 MoveX(21.5, 0.3);  // moves 1 tile right to be facing the backdrop
                 autoRunMacro("ReadyToPickup"); // returns the wrist
@@ -56,13 +55,13 @@ public class RedFrontOut extends DarienOpModeAuto {
                 break;
             case 3:
                 AutoRotate(-90, 0.3,1); // turns to spike mark
-                MoveY(3, 0.1);
+                MoveY(2, 0.1);
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the pixel
                 MoveY(-4, 0.1);
                 autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
-                MoveX(-20.5, 0.3); // strafe left to the center of the tile, facing the backdrop
+                MoveX(-18.5, 0.3); // strafe left to the center of the tile, facing the backdrop
                 waitForMotors();
                 break;
         }

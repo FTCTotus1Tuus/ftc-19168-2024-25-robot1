@@ -20,7 +20,7 @@ public class BlueBackIn extends DarienOpModeAuto {
             print("Prop", teamPropMaskPipeline.getLastResults());
             autoRunMacro("ReadyToPickup");
             setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
-            setArmPosition(500, 0.3); // extends the arm
+            setArmPosition(300, 0.3); // extends the arm
                 while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
             setWristPosition("dropGround"); // extends the wrist
         waitForMotors();

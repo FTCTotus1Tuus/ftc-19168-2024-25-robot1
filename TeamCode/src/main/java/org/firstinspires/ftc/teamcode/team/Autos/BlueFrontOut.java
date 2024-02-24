@@ -21,7 +21,7 @@ public class BlueFrontOut extends DarienOpModeAuto {
         autoRunMacro("ReadyToPickup");
         setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
         MoveY(29, 0.3); //centers on spike tile
-            setArmPosition(400, 0.5); // extends the arm
+            setArmPosition(300, 0.5); // extends the arm
         while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
             setWristPosition("dropGround"); // extends the wrist
         waitForMotors();
@@ -31,7 +31,6 @@ public class BlueFrontOut extends DarienOpModeAuto {
                 MoveY(3, 0.1); // move toward the spike mark
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the purple pixel on the ground
-                MoveY(-1, 0.1);
                 waitForMotors();
                 MoveX(-19.5, 0.3);  // strafe left to center on the tile
                 autoRunMacro("ReadyToPickup"); // returns the wrist

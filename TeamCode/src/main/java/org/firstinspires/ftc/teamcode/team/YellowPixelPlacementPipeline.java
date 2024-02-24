@@ -41,6 +41,7 @@ class YellowPixelPlacementPipeline implements VisionProcessor
 
     boolean lastResults;
 
+    int[]  pixelCount = {0,1};
 
     public YellowPixelPlacementPipeline() {}
 
@@ -49,10 +50,11 @@ class YellowPixelPlacementPipeline implements VisionProcessor
         return lastResults;
     }
 
+    public int[] getPixelCount() {return pixelCount;}
+
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
-
     }
 
     @Override
@@ -62,9 +64,9 @@ class YellowPixelPlacementPipeline implements VisionProcessor
         frameWidth = frame.width();
         frameHeight = frame.height();
 
-        // Define the region of interest (ROI) for each third of the screen
-        leftHalf = new Rect(0, 0, frameWidth / 3, frameHeight);
-        rightHalf = new Rect(frameWidth / 3, 0, frameWidth / 3, frameHeight);
+        // Define the region of interest (ROI) for each half of the screen
+        leftHalf = new Rect(0, 0, frameWidth / 2, frameHeight);
+        rightHalf = new Rect(frameWidth / 2, 0, frameWidth / 2, frameHeight);
 
         workingMat1 = frame.clone();
         // Apply a color mask to the workingMat
@@ -77,6 +79,8 @@ class YellowPixelPlacementPipeline implements VisionProcessor
         leftCount = Core.countNonZero(mask1);
         rightCount = Core.countNonZero(mask2);
 
+        pixelCount[0] = leftCount;
+        pixelCount[1] = rightCount;
 
         lastResults = (leftCount>rightCount); // true is left false is right
 

@@ -21,7 +21,7 @@ public class RedBackOut extends DarienOpModeAuto {
         autoRunMacro("ReadyToPickup");
         setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
         MoveY(27, 0.4); //centers on spike tile
-            setArmPosition(600, 0.3); // extends the arm
+            setArmPosition(300, 0.3); // extends the arm
             while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
         setWristPosition("dropGround"); // extends the wrist
         waitForMotors();

@@ -168,12 +168,13 @@ public class DarienOpModeAuto extends DarienOpMode {
         public void autoRunMacro(String macro) {
         switch (macro) {
             case "ReadyToPickup":
-                setWristPosition("pickup");
                 setClawPosition("open");
 
                 sleep(50);
 
                 arm.setTargetPosition(0);
+                while(arm.isBusy()) {}
+                setWristPosition("pickup");
 //              changed bc drive doesnt use limit switches
 //                  and it broke the arm on the first ready to pickup
 //                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -285,14 +286,15 @@ public class DarienOpModeAuto extends DarienOpMode {
     }}
 
     public void park(boolean isBlue, boolean goInwards, int propPosition) {
-        double finalMove = 28;
+        double finalMove = 23;
 
         if (goInwards) {
-            if ((isBlue && propPosition==3) || (!isBlue && propPosition==1)) { finalMove-=10;}
+            if ((isBlue && propPosition==3) || (!isBlue && propPosition==1)) { finalMove-=5;}
         }
         else {
-            if ((isBlue && propPosition==1) || (!isBlue && propPosition==3)) { finalMove-=10;}
+            if ((isBlue && propPosition==1) || (!isBlue && propPosition==3)) { finalMove-=5;}
         }
+
 
         finalMove *= isBlue ? 1:-1;
         finalMove *= goInwards ? 1:-1;
@@ -364,19 +366,27 @@ public class DarienOpModeAuto extends DarienOpMode {
                 break;
         } // where to go
         if (isBlue) {finalMove -= 0.75;}
+
+        if (isFront) {finalMove+= 3.5;}
+
         MoveX(finalMove, 0.3);
         waitForMotors();
 
-        MoveY(tag.ftcPose.y-6, 0.1);
-        waitForMotors();
-
-        if (isFront && !yellowPixelPlacementPipeline.isOnLeft()) {
-            MoveX(-2, 0.1);
-        }
-        setWristPosition("ReadyToDrop");
-
-        waitForMotors();
         MoveY(4, 0.1);
+        waitForMotors();
+
+        telemetry.addData("",yellowPixelPlacementPipeline.getPixelCount());
+        print(yellowPixelPlacementPipeline.isOnLeft() ? "left":"right","");
+        if (isFront && !yellowPixelPlacementPipeline.isOnLeft()) {
+            MoveX(-6.5, 0.1);
+        } else {MoveX(-2.5, 0.1);}
+            setWristPosition("drop");
+            sleep(250);
+        waitForMotors();
+
+        MoveY(tag.ftcPose.y-6.5, 0.1);
+        waitForMotors();
+
         autoPlacePixel();
 
     }
