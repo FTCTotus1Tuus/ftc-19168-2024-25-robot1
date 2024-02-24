@@ -15,7 +15,7 @@ public class NewRobotTest extends DarienOpModeAuto {
 //                setArmPosition(1000, 0.1);
 //            }
 //            else if (gamepad1.left_stick_button) {
-                setArmPosition(-1000, 0.1);
+                setArmPosition(-400, 0.1);
 //            }
 //
 //            else if (gamepad1.b) {

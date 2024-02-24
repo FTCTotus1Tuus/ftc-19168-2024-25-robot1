@@ -10,7 +10,7 @@ public class MotorsDebug extends DarienOpModeAuto {
     public void runOpMode() {
         initControls(true);
         waitForStart();
-        setArmPosition(1000, 0.1);
+        setArmPosition(400, 0.1);
         while (arm.isBusy()) {}
         setArmPosition(0, 0.1);
         while (opModeIsActive()) {

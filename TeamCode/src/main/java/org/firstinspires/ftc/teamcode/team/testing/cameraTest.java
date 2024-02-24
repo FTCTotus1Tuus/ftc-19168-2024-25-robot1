@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.PtzControl;
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 import org.firstinspires.ftc.teamcode.team.TeamPropMaskPipeline;
+import org.firstinspires.ftc.teamcode.team.YellowPixelPlacementPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -44,10 +45,12 @@ public class cameraTest extends DarienOpModeAuto {
     private VisionPortal visionPortal;
 
     TeamPropMaskPipeline teamPropMaskPipeline;
+    YellowPixelPlacementPipeline yellowPixelPlacementPipeline;
 
     @Override
     public void runOpMode() {
         teamPropMaskPipeline = new TeamPropMaskPipeline(true);
+        yellowPixelPlacementPipeline = new YellowPixelPlacementPipeline();
         initAprilTag();
 
         // Wait for the DS start button to be touched.
@@ -136,6 +139,7 @@ public class cameraTest extends DarienOpModeAuto {
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
         builder.addProcessor(teamPropMaskPipeline);
+        builder.addProcessor(yellowPixelPlacementPipeline);
 
 
         // Build the Vision Portal, using the above settings.

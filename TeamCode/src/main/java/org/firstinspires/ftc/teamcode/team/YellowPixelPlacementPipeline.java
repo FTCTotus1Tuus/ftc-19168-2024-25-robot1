@@ -26,39 +26,26 @@ import java.util.Arrays;
 
 @Config
 public
-class TeamPropMaskPipeline implements VisionProcessor
+class YellowPixelPlacementPipeline implements VisionProcessor
 {
-    public static int minHueR = 0, minSaturationR = 40, minValueR = 0 , maxHueR = 10, maxSaturationR = 260, maxValueR = 300,
-                      minHueB = 70, minSaturationB = 100, minValueB = 0 , maxHueB = 117, maxSaturationB = 260, maxValueB = 300, frameWidth, frameHeight;
-    int minHue, minSaturation, minValue, maxHue, maxSaturation, maxValue;
+    public static int minHue = 0, minSaturation = 60, minValue = 200 , maxHue = 256, maxSaturation = 260, maxValue = 256  ;
 
-    double[] lastResults = {1,2,3};
-    Rect firstThird, secondThird, thirdThird;
-    double avgFirstThird, avgSecondThird, avgThirdThird;
+
+    int frameWidth, frameHeight;
+
+    Rect leftHalf, rightHalf;
     Mat workingMat1 = new Mat(), workingMat2 = new Mat(), workingMat3 = new Mat();
-    Mat mask1 = new Mat(), mask2 = new Mat(), mask3 = new Mat();
+    Mat mask1 = new Mat(), mask2 = new Mat();
 
-    public TeamPropMaskPipeline(boolean isBlue) {
-        // true = blue false = red
-        if (isBlue) {
-            minHue = minHueB;
-            minSaturation = minSaturationB;
-            minValue = minValueB;
-            maxHue = maxHueB;
-            maxSaturation = maxSaturationB;
-            maxValue = maxValueB;
-        } else {
-            minHue = minHueR;
-            minSaturation = minSaturationR;
-            minValue = minValueR;
-            maxHue = maxHueR;
-            maxSaturation = maxSaturationR;
-            maxValue = maxValueR;
-        }
-    }
+    int leftCount, rightCount;
+
+    boolean lastResults;
 
 
-    public double[] getLastResults() {
+    public YellowPixelPlacementPipeline() {}
+
+
+    public boolean isOnLeft() {
         return lastResults;
     }
 
@@ -76,26 +63,22 @@ class TeamPropMaskPipeline implements VisionProcessor
         frameHeight = frame.height();
 
         // Define the region of interest (ROI) for each third of the screen
-        firstThird = new Rect(0, 0, frameWidth / 3, frameHeight);
-        secondThird = new Rect(frameWidth / 3, 0, frameWidth / 3, frameHeight);
-        thirdThird = new Rect(2 * (frameWidth / 3), 0, frameWidth / 3, frameHeight);
+        leftHalf = new Rect(0, 0, frameWidth / 3, frameHeight);
+        rightHalf = new Rect(frameWidth / 3, 0, frameWidth / 3, frameHeight);
 
         workingMat1 = frame.clone();
         // Apply a color mask to the workingMat
         Imgproc.cvtColor(workingMat1, workingMat2, Imgproc.COLOR_RGB2HSV);
         Core.inRange(workingMat2, new Scalar(minHue, minSaturation, minValue), new Scalar(maxHue, maxSaturation, maxValue), workingMat3);
 
-        mask1 = workingMat3.submat(firstThird);
-        mask2 = workingMat3.submat(secondThird);
-        mask3 = workingMat3.submat(thirdThird);
+        mask1 = workingMat3.submat(leftHalf);
+        mask2 = workingMat3.submat(rightHalf);
 
-        avgFirstThird = Core.countNonZero(mask1);
-        avgSecondThird = Core.countNonZero(mask2);
-        avgThirdThird = Core.countNonZero(mask3);
+        leftCount = Core.countNonZero(mask1);
+        rightCount = Core.countNonZero(mask2);
 
-        lastResults[0] = avgFirstThird;
-        lastResults[1] = avgSecondThird;
-        lastResults[2] = avgThirdThird;
+
+        lastResults = (leftCount>rightCount); // true is left false is right
 
         workingMat1.release();
         workingMat2.release();
@@ -103,7 +86,6 @@ class TeamPropMaskPipeline implements VisionProcessor
 
         mask1.release();
         mask2.release();
-        mask3.release();
 
 
         return frame;
@@ -114,4 +96,4 @@ class TeamPropMaskPipeline implements VisionProcessor
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
 
-}}
+    }}
