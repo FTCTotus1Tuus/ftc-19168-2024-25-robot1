@@ -29,18 +29,21 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public VisionPortal visionPortal;
     public TeamPropMaskPipeline teamPropMaskPipeline;
+    public YellowPixelPlacementPipeline yellowPixelPlacementPipeline;
     public AprilTagProcessor aprilTag;
     double timeRot1=0.5, timeRot2=0.75;
 
     double timeout = 3; // In seconds
     @Override
-    public void runOpMode() throws InterruptedException {}    public void initControls(boolean isAuto) {
+    public void runOpMode() throws InterruptedException {}
+
+    public void initControls(boolean isAuto) {
         //isAuto: true=auto false=teleop
         imu = hardwareMap.get(IMU.class, "imu 1");
         imu.initialize(
                 new IMU.Parameters(
                         new RevHubOrientationOnRobot(
-                                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                                 RevHubOrientationOnRobot.UsbFacingDirection.UP
                         )
                 )
@@ -86,6 +89,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void initCamera(boolean isBlue) {
         // true = blue false = red
         teamPropMaskPipeline = new TeamPropMaskPipeline(isBlue);
+        yellowPixelPlacementPipeline = new YellowPixelPlacementPipeline();
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder().build();
 
@@ -97,6 +101,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
         builder.addProcessor(teamPropMaskPipeline);
+        builder.addProcessor(yellowPixelPlacementPipeline);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
@@ -204,7 +209,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         if (isBlue) {
             MoveX(-24, 0.5);
             waitForMotors();
-            setArmPosition(1150, 0.3);
+            setArmPosition(450, 0.3);
             ArrayList<AprilTagDetection> currentDetections = null;
             double startTime = getRuntime();
             do { currentDetections = aprilTag.getDetections();}
@@ -214,7 +219,7 @@ public class DarienOpModeAuto extends DarienOpMode {
             // Step through the list of detections and display info for each one.
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) {
-                    alignYellowPixel(detection, propPosition, isBlue);
+                    alignYellowPixel(detection, propPosition, isBlue, true);
                     return;
                 } else {
                     telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
@@ -241,19 +246,20 @@ public class DarienOpModeAuto extends DarienOpMode {
         }
         else {
             // RED: STRAFE RIGHT TO THE CORRECT POSITION BASED ON THE STRIPE MARK - adding using camera to read as well
-            MoveX(24, 0.3);
+            MoveX(27, 0.3);
             waitForMotors();
-            setArmPosition(1150, 0.3);
+            setArmPosition(450, 0.3);
             ArrayList<AprilTagDetection> currentDetections = null;
             double startTime = getRuntime();
+            print("finding april tag","");
             do { currentDetections = aprilTag.getDetections();}
-            while (currentDetections.isEmpty() || getRuntime() - startTime > timeout);
+            while (currentDetections.isEmpty() && (getRuntime() - startTime) < timeout);
             telemetry.addData("# AprilTags Detected", currentDetections.size());
             telemetry.update();
             // Step through the list of detections and display info for each one.
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) {
-                    alignYellowPixel(detection, propPosition, isBlue);
+                    alignYellowPixel(detection, propPosition, isBlue, true);
                     return;
                 } else {
                     telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
@@ -310,7 +316,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
-                alignYellowPixel(detection, propPosition, true);
+                alignYellowPixel(detection, propPosition, true, false);
                 return;
             } else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
@@ -324,9 +330,9 @@ public class DarienOpModeAuto extends DarienOpMode {
         autoPlacePixel();
     }
 
-    public void alignYellowPixel(AprilTagDetection tag, int propPosition, Boolean isBlue) {
-        if (isBlue) {AutoRotate(90, 0.1, 0);}
-        else {AutoRotate(-90, 0.1, 0);} // aligns to the backboard
+    public void alignYellowPixel(AprilTagDetection tag, int propPosition, Boolean isBlue, boolean isFront) {
+//        if (isBlue) {AutoRotate(90, 0.2, 0);}
+//        else {AutoRotate(-90, 0.2, 0);} // aligns to the backboard
         double offset=0, robotPositionX;
         print("out of rotate", "");
         int idOffset = 0;
@@ -361,8 +367,16 @@ public class DarienOpModeAuto extends DarienOpMode {
         MoveX(finalMove, 0.3);
         waitForMotors();
 
-        MoveY(tag.ftcPose.y-1.25, 0.1);
+        MoveY(tag.ftcPose.y-6, 0.1);
         waitForMotors();
+
+        if (isFront && !yellowPixelPlacementPipeline.isOnLeft()) {
+            MoveX(-2, 0.1);
+        }
+        setWristPosition("ReadyToDrop");
+
+        waitForMotors();
+        MoveY(4, 0.1);
         autoPlacePixel();
 
     }
@@ -418,34 +432,36 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void AutoRotate(double TargetPosDegrees, double power, int direction) {
         //direction counter clockwise is -1 clockwise is 1
         double timeoutS = 3;
+        rotationTolerance = 5;
+
 
         setToRotateRunMode();
         double truePower;
         double error;
         boolean isRotating = true;
-
-        if (direction == 0) {
-            // rotate the shortest way.
-            if ((TargetPosDegrees-getRawHeading()) > 0) {direction=-1;}
-            else {direction = 1;}
-            rotationTolerance = 2;
-            power/=2;
-        }
-        double startTime = getRuntime();
-        setRotatePower(power, direction);
         if ( !(Math.abs(TargetPosDegrees-getRawHeading()) < rotationTolerance)){
-            while (isRotating) {
-                error = Math.abs(TargetPosDegrees-getRawHeading());
-//              truePower = Math.min(Math.pow((error/scaleConstant),2),1);
-                telemetry.addData("heading ", getRawHeading());
-                telemetry.addData("error ", error);
-                print("power", power);
+            if (direction == 0) {
+                // rotate the shortest way.
+                if ((TargetPosDegrees-getRawHeading()) > 0) {direction=-1;}
+                else {direction = 1;}
+                rotationTolerance = 2;
+                power/=2;
+            }
+            double startTime = getRuntime();
+            setRotatePower(power, direction);
+                while (isRotating) {
+                    error = Math.abs(TargetPosDegrees-getRawHeading());
+    //              truePower = Math.min(Math.pow((error/scaleConstant),2),1);
+                    telemetry.addData("heading ", getRawHeading());
+                    telemetry.addData("error ", error);
+                    print("power", power);
 
-                if (error<=rotationTolerance) {
-                    isRotating = false;
-                } else if (getRuntime() - startTime > timeoutS) {
-                    isRotating = false;
-                }
+                   if (error<=rotationTolerance) {
+                        isRotating = false;
+                    } else if (getRuntime() - startTime > timeoutS) {
+                        isRotating = false;
+                        telemetry.addData("timeout","");
+                    }
         }}
         telemetry.addData("rotate end", "");
         telemetry.update();

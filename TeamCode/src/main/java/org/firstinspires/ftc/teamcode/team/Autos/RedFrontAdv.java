@@ -21,7 +21,7 @@ public class RedFrontAdv extends DarienOpModeAuto {
         autoRunMacro("ReadyToPickup");
         setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
         MoveY(29, 0.3); //centers on spike tile
-            setArmPosition(1000, 0.5); // extends the arm
+            setArmPosition(400, 0.5); // extends the arm
 
 //            sleep(500);
         while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
@@ -97,7 +97,7 @@ public class RedFrontAdv extends DarienOpModeAuto {
         MoveY(72,0.8); // moves past stage door towards backdrop
         waitForMotors();
             setClawPosition("closed"); // grabs yellow pixel
-        setArmPosition(1250, 0.3); // extends the arm a tiny bit
+        setArmPosition(500, 0.3); // extends the arm a tiny bit
         while (arm.isBusy()) {}
         autoRunMacro("ReadyToDrop"); // extends the wrist
         print("pls no crash","");

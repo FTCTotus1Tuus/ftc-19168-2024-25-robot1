@@ -20,7 +20,7 @@ public class BlueBackIn extends DarienOpModeAuto {
             print("Prop", teamPropMaskPipeline.getLastResults());
             autoRunMacro("ReadyToPickup");
             setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
-            setArmPosition(1250, 0.3); // extends the arm
+            setArmPosition(500, 0.3); // extends the arm
                 while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
             setWristPosition("dropGround"); // extends the wrist
         waitForMotors();
@@ -74,10 +74,10 @@ public class BlueBackIn extends DarienOpModeAuto {
         }
 
         // AT THIS POINT, THE ROBOT SHOULD BE FACING THE BACKDROP READY TO DROP IN THE RIGHT POSITION.
-        setArmPosition(1250, 0.75); // extends the arm a tiny bit
+        setArmPosition(600, 0.75); // extends the arm a tiny bit
         while (arm.isBusy()) {}
-        autoRunMacro("ReadyToDrop"); // extends the wrist
-        setArmPosition(1150, 0.5);
+        autoRunMacro("dropGround"); // extends the wrist
+        setArmPosition(450, 0.5);
 
         alignBackPositions(true, propPosition);
 

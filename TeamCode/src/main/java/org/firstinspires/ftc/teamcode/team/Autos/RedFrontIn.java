@@ -21,7 +21,7 @@ public class RedFrontIn extends DarienOpModeAuto {
         autoRunMacro("ReadyToPickup");
         setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
         MoveY(29, 0.3); //centers on spike tile
-            setArmPosition(1000, 0.5); // extends the arm
+            setArmPosition(400, 0.5); // extends the arm
 
 //            sleep(500);
         while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
@@ -66,6 +66,7 @@ public class RedFrontIn extends DarienOpModeAuto {
                 waitForMotors();
                 break;
         }
+
         // AT THIS POINT, THE ROBOT SHOULD BE IN THE CENTER OF THE TILE.
         autoRunMacro("ReadyToPickup");
         setArmPosition(-10,0.1);
@@ -74,9 +75,9 @@ public class RedFrontIn extends DarienOpModeAuto {
         waitForMotors();
             setClawPosition("closed"); // grabs yellow pixel
         sleep(250);
-        setArmPosition(1250, 0.3); // extends the arm a tiny bit
+        setArmPosition(600, 0.3); // extends the arm a tiny bit
         while (arm.isBusy()) {}
-        autoRunMacro("ReadyToDrop"); // extends the wrist
+        autoRunMacro("dropGround"); // extends the wrist
         print("pls no crash","");
         backDropPlace(false, propPosition);
         setWristPosition("dropGround");
