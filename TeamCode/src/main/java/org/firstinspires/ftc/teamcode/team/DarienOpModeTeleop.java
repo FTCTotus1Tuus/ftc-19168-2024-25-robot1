@@ -24,8 +24,8 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public void runDroneSystem(){
         if(gamepad2.left_stick_button && gamepad2.b){
-            droneLauncher.setPower(0.8);
-            sleep(1000);
+            droneLauncher.setPower(-0.5);
+            sleep(200);
         } else {
             droneLauncher.setPower(0);
         }
