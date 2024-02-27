@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+//import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,10 +25,12 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public void runDroneSystem(){
         if(gamepad2.left_stick_button && gamepad2.b){
-            droneLauncher.setPower(-0.5);
+            //droneLauncher.setPower(-0.5);
+            revDroneLauncher.setPower(1);
             sleep(200);
         } else {
-            droneLauncher.setPower(0);
+            //droneLauncher.setPower(0);
+            revDroneLauncher.setPower(0);
         }
     }
 
@@ -257,6 +260,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
         omniMotor1 = initializeMotor("omniMotor3");
         omniMotor2 = initializeMotor("omniMotor1");
         omniMotor3 = initializeMotor("omniMotor2");
+        revDroneLauncher = initializeMotor("revDroneLauncher");
 
         arm = initializeMotor("arm");
 
@@ -273,6 +277,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
         omniMotor1.setDirection(DcMotor.Direction.FORWARD);
         omniMotor2.setDirection(DcMotor.Direction.FORWARD);
         omniMotor3.setDirection(DcMotor.Direction.REVERSE);
+        revDroneLauncher.setDirection(DcMotor.Direction.FORWARD);
 
         leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
         rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
@@ -285,7 +290,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
         armInStopTouchSensor = hardwareMap.get(TouchSensor.class, "armInStopTouchSensor");
         armOutStopTouchSensor = hardwareMap.get(TouchSensor.class, "armOutStopTouchSensor");
-        droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
+        //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
     }
             int move_to_position;
         double y;

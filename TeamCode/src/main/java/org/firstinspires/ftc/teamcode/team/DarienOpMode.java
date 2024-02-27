@@ -23,7 +23,7 @@ import java.util.List;
 public class DarienOpMode extends LinearOpMode {
 
     public CRServo leftIntake, rightIntake, feeder;
-    public CRServo droneLauncher;
+    //public CRServo droneLauncher;
     public Servo clawWrist, clawLeft, clawRight;
     public ColorSensor colourSensorLeft, colourSensorRight;
     public ColorSensor intakeSensor;
@@ -54,6 +54,7 @@ public class DarienOpMode extends LinearOpMode {
     public DcMotor omniMotor2; // rightRear
     public DcMotor omniMotor3; // rightFront
     public DcMotor arm;
+    public DcMotor revDroneLauncher;
     public IMU imu;
 
     public TouchSensor armInStopTouchSensor;
@@ -78,6 +79,7 @@ public class DarienOpMode extends LinearOpMode {
         omniMotor1 = initializeMotor("omniMotor1");
         omniMotor2 = initializeMotor("omniMotor2");
         omniMotor3 = initializeMotor("omniMotor3");
+        revDroneLauncher = initializeMotor("revDroneLauncher");
 
         arm = initializeMotor("arm");
 
@@ -96,6 +98,8 @@ public class DarienOpMode extends LinearOpMode {
         omniMotor2.setDirection(DcMotor.Direction.FORWARD);
         omniMotor3.setDirection(DcMotor.Direction.REVERSE);
 
+        revDroneLauncher.setDirection(DcMotor.Direction.FORWARD);
+
         leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
         rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
 
@@ -104,7 +108,7 @@ public class DarienOpMode extends LinearOpMode {
         clawRight = hardwareMap.get(Servo.class, "clawRight");
 
         feeder = hardwareMap.get(CRServo.class, "feeder");
-        droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
+       //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
 
 
 
