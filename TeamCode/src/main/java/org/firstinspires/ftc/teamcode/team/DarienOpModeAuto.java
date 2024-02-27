@@ -380,6 +380,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         if (isFront && !yellowPixelPlacementPipeline.isOnLeft()) {
             MoveX(-6.5, 0.1);
         } else {MoveX(-2.5, 0.1);}
+            setClawPosition("leftOpen");
             setWristPosition("drop");
             sleep(250);
         waitForMotors();
