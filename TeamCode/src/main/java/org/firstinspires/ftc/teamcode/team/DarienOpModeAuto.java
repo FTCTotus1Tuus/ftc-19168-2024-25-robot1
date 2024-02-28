@@ -305,7 +305,7 @@ public class DarienOpModeAuto extends DarienOpMode {
                 finalMove = 31; // done
                 break;
             case "BI2":
-                finalMove = 21;// untested
+                finalMove = 25;// done
                 break;
             case "BI3":
                 finalMove = 15;// untested
@@ -433,19 +433,25 @@ public class DarienOpModeAuto extends DarienOpMode {
 
         telemetry.addData("",yellowPixelPlacementPipeline.getPixelCount());
         print(yellowPixelPlacementPipeline.isOnLeft() ? "left":"right","");
-        if (isFront && !yellowPixelPlacementPipeline.isOnLeft()) {
-            if (isBlue) {MoveX(-4.75, 0.1);}
-            else {MoveX(-6.5, 0.1);}
-        } else {
-            MoveX(-2.25, 0.1);
-
-            setArmPosition(775, 0.1);
+        if (isFront) {
+            if (!yellowPixelPlacementPipeline.isOnLeft()) {
+                if (isBlue) {
+                    MoveX(-4.75, 0.1);
+                    if (propPosition==2) {MoveX(-5.25, 0.1);}
+                } else {
+                    MoveX(-6.5, 0.1);
                 }
+            } else {
+                MoveX(-2.25, 0.1);
+                if (propPosition==2 && isBlue) {MoveX(-1.8,0.1);}
+
+                setArmPosition(775, 0.1);
+            }
             setClawPosition("leftOpen");
             setWristPosition("drop");
             sleep(250);
-        waitForMotors();
-
+            waitForMotors();
+        }
         MoveY(tag.ftcPose.y-5.5, 0.1);
         waitForMotors();
 
