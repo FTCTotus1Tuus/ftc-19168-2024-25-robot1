@@ -53,7 +53,7 @@ public class BlueFrontIn extends DarienOpModeAuto {
                 break;
             case 1:
                 AutoRotate(90, 0.3,-1); // turns to spike mark
-                MoveY(2, 0.1);
+                MoveY(3.5, 0.1);
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the pixel
                 MoveY(-4.5, 0.1);

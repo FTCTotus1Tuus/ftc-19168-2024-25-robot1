@@ -286,21 +286,77 @@ public class DarienOpModeAuto extends DarienOpMode {
     }}
 
     public void park(boolean isBlue, boolean goInwards, int propPosition) {
+
         double finalMove = 23;
 
-        if (goInwards) {
-            if ((isBlue && propPosition==3) || (!isBlue && propPosition==1)) { finalMove-=5;}
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(isBlue ? "B":"R");
+        builder.append(goInwards ? "I":"O");
+        builder.append(String.valueOf(propPosition));
+
+        String runSignature = builder.toString();
+
+        print(runSignature,"");
+        sleep(1000);
+
+        switch (runSignature){
+            case "BI1":
+                finalMove = 31; // done
+                break;
+            case "BI2":
+                finalMove = 21;// untested
+                break;
+            case "BI3":
+                finalMove = 15;// untested
+                break;
+            case "BO1":
+                finalMove = -16;// done
+                break;
+            case "BO2":
+                finalMove = -21;// done
+                break;
+            case "BO3":
+                finalMove = -27;// untested
+                break;
+            case "RI1":
+                finalMove = -15;// untested
+                break;
+            case "RI2":
+                finalMove = -21;// untested
+                break;
+            case "RI3":
+                finalMove = -27;// untested
+                break;
+            case "RO1":
+                finalMove = -27;// untested
+                break;
+            case "RO2":
+                finalMove = -21;// untested
+                break;
+            case "RO3":
+                finalMove = -27;// untested
+                break;
+            default:
+                print("sebastian is bad at spelling","");
+                return;
+
         }
-        else {
-            if ((isBlue && propPosition==1) || (!isBlue && propPosition==3)) { finalMove-=5;}
-        }
-
-
-        finalMove *= isBlue ? 1:-1;
-        finalMove *= goInwards ? 1:-1;
-
-        MoveX(finalMove, 0.3);
-        waitForMotors();
+            MoveX(finalMove, 0.3);
+            waitForMotors();
+//        if (goInwards) {
+//            if ((isBlue && propPosition==3) || (!isBlue && propPosition==1)) { finalMove-=5;}
+//        }
+//        else {
+//            if ((isBlue && propPosition==1) || (!isBlue && propPosition==3)) { finalMove-=5;}
+//        }
+//
+//
+//        finalMove *= isBlue ? 1:-1;
+//        finalMove *= goInwards ? 1:-1;
+//
+//        MoveX(finalMove, 0.3);
+//        waitForMotors();
 
         MoveY(10, 0.1);
         waitForMotors();
@@ -365,7 +421,7 @@ public class DarienOpModeAuto extends DarienOpMode {
                 finalMove = 12 - robotPositionX - 3;
                 break;
         } // where to go
-        if (isBlue) {finalMove -= 0.75;}
+        if (isBlue) {finalMove -= 0;}
 
         if (isFront) {finalMove+= 3.5;}
 
@@ -378,14 +434,19 @@ public class DarienOpModeAuto extends DarienOpMode {
         telemetry.addData("",yellowPixelPlacementPipeline.getPixelCount());
         print(yellowPixelPlacementPipeline.isOnLeft() ? "left":"right","");
         if (isFront && !yellowPixelPlacementPipeline.isOnLeft()) {
-            MoveX(-6.5, 0.1);
-        } else {MoveX(-2.5, 0.1);}
+            if (isBlue) {MoveX(-4.75, 0.1);}
+            else {MoveX(-6.5, 0.1);}
+        } else {
+            MoveX(-2.25, 0.1);
+
+            setArmPosition(775, 0.1);
+                }
             setClawPosition("leftOpen");
             setWristPosition("drop");
             sleep(250);
         waitForMotors();
 
-        MoveY(tag.ftcPose.y-6.5, 0.1);
+        MoveY(tag.ftcPose.y-5.5, 0.1);
         waitForMotors();
 
         autoPlacePixel();
