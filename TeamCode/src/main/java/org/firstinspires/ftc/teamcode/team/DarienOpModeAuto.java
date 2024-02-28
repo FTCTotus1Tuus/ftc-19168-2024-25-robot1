@@ -308,7 +308,7 @@ public class DarienOpModeAuto extends DarienOpMode {
                 finalMove = 25;// done
                 break;
             case "BI3":
-                finalMove = 15;// untested
+                finalMove = 19;// done
                 break;
             case "BO1":
                 finalMove = -16;// done
@@ -317,7 +317,7 @@ public class DarienOpModeAuto extends DarienOpMode {
                 finalMove = -21;// done
                 break;
             case "BO3":
-                finalMove = -27;// untested
+                finalMove = -29;// done
                 break;
             case "RI1":
                 finalMove = -15;// untested
