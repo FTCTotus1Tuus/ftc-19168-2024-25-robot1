@@ -167,10 +167,12 @@ public class DarienOpModeTeleop extends DarienOpMode {
         switch (position) {
             case "in":
                 // TODO: power the arm down until it reaches the stopping position. Then turn off the power.
-                arm.setPower(-power);
+                if (!armInStopTouchSensor.isPressed()) {
+                arm.setPower(-power);}
                 break;
             case "out":
-                arm.setPower(power);
+                if (!armOutStopTouchSensor.isPressed()) {
+                arm.setPower(power);}
                 break;
             case "none":
                 arm.setPower(0);

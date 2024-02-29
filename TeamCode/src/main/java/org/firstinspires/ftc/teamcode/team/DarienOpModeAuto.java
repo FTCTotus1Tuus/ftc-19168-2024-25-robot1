@@ -308,13 +308,13 @@ public class DarienOpModeAuto extends DarienOpMode {
                 finalMove = 25;// done
                 break;
             case "BI3":
-                finalMove = 19;// done
+                finalMove = 20.5;// done
                 break;
             case "BO1":
                 finalMove = -16;// done
                 break;
             case "BO2":
-                finalMove = -21;// done
+                finalMove = -22;// done
                 break;
             case "BO3":
                 finalMove = -29;// done
@@ -430,17 +430,17 @@ public class DarienOpModeAuto extends DarienOpMode {
 
         MoveY(4, 0.1);
         waitForMotors();
-
         telemetry.addData("",yellowPixelPlacementPipeline.getPixelCount());
         print(yellowPixelPlacementPipeline.isOnLeft() ? "left":"right","");
         if (isFront) {
             if (!yellowPixelPlacementPipeline.isOnLeft()) {
                 if (isBlue) {
-                    MoveX(-4.75, 0.1);
+                    MoveX(-4.25, 0.1);
                     if (propPosition==2) {MoveX(-5.25, 0.1);}
                 } else {
                     MoveX(-6, 0.1);
                     if (propPosition==3) {MoveX(-6.5, 0.1);}
+                    else if (propPosition==1) {MoveX(-6.5, 0.1);}
                 }
             } else {
                 MoveX(-2.25, 0.1);
@@ -448,9 +448,8 @@ public class DarienOpModeAuto extends DarienOpMode {
                     if (propPosition==1) {MoveX(-2.1, 0.1);}
                     else if (propPosition==2) {MoveX(-2.75, 0.1);}
                     else {MoveX(-2, 0.1);}
-                }
-
-                if (propPosition==2 && isBlue) {MoveX(-1.8,0.1);}
+                } else {if (propPosition==2) {MoveX(-1.4,0.1);}
+                        else if (propPosition==1) {MoveX(-1.8, 0.1);}}
 
                 setArmPosition(775, 0.1);
             }
@@ -458,7 +457,9 @@ public class DarienOpModeAuto extends DarienOpMode {
             setWristPosition("drop");
             sleep(250);
             waitForMotors();
-        }
+        } else if(isBlue) { if (propPosition==1){MoveX(-1.5, 0.1); waitForMotors();}
+                            else if (propPosition==3) {MoveX(-1.5, 0.2); waitForMotors();}}
+        else if (!isBlue) {if (propPosition==3) {MoveX(0.5, 0.1); waitForMotors();}}
         MoveY(tag.ftcPose.y-5.5, 0.1);
         waitForMotors();
 

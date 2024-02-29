@@ -20,7 +20,9 @@ public class BlueFrontIn extends DarienOpModeAuto {
         telemetry.update();
         autoRunMacro("ReadyToPickup");
         setClawPosition("leftClosed"); // makes sure that the purple pixel is picked up
-        MoveY(29, 0.3); //centers on spike tile
+        if (propPosition!=2) {
+            MoveY(28, 0.3); }//centers on spike tile
+        else {MoveY(27, 0.3);}
             setArmPosition(300, 0.5); // extends the arm
         while(arm.isBusy()){print ("arm pos", arm.getCurrentPosition());}
             setWristPosition("dropGround"); // extends the wrist
@@ -28,7 +30,7 @@ public class BlueFrontIn extends DarienOpModeAuto {
         switch (propPosition) {
             case 3:
                 AutoRotate(-90, 0.3,1); // turns to spike mark
-                MoveY(3, 0.1); // move toward the spike mark
+                MoveY(1, 0.1); // move toward the spike mark
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the purple pixel on the ground
                 waitForMotors();
@@ -41,11 +43,11 @@ public class BlueFrontIn extends DarienOpModeAuto {
                 break;
             case 2:
                 autoRunMacro("dropPixel"); // places the pixel
-                MoveX(20, 0.3); // goes 1 tile towards the pixel piles
+                MoveX(18, 0.3); // goes 1 tile towards the pixel piles
                     autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
                 AutoRotate(0, 0.1 ,1);
-                MoveY(20, 0.3);
+                MoveY(22, 0.3);
                 waitForMotors();
                 AutoRotate(90, 0.3, -1); // turns towards backdrop
                 MoveY(16.5, 0.3); // moves in line with top case

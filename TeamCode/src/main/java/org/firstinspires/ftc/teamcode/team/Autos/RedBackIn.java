@@ -28,7 +28,7 @@ public class RedBackIn extends DarienOpModeAuto {
         switch (propPosition) {
             case 1:
                 AutoRotate(90, 0.3,-1); // turns to spike mark
-                MoveY(2,0.1);
+                MoveY(3,0.1);
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the purple pixel on the ground
                 MoveY(-26, 0.3);  // moves 1 tile back to be facing the backdrop

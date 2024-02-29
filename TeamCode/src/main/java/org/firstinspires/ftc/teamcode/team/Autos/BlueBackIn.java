@@ -59,6 +59,8 @@ public class BlueBackIn extends DarienOpModeAuto {
                 MoveY(3, 0.1);
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the pixel
+                MoveY(-1, 0.1);
+                waitForMotors();
 //                MoveY(-2.5, 0.1);
                 autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();

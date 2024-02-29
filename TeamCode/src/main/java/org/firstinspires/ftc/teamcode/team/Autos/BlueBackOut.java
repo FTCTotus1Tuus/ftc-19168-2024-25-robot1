@@ -60,6 +60,8 @@ public class BlueBackOut extends DarienOpModeAuto {
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the pixel
 //                MoveY(-2.5, 0.1);
+                MoveY(-1, 0.1);
+                waitForMotors();
                 autoRunMacro("ReadyToPickup"); // returns the wrist
                 waitForMotors();
                 MoveX(-24, 0.6); // strafe left: moves in line with top case
