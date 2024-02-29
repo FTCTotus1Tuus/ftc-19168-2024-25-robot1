@@ -77,6 +77,10 @@ public class RedFrontOut extends DarienOpModeAuto {
         while (arm.isBusy()) {}
         autoRunMacro("dropGround"); // extends the wrist
         print("pls no crash","");
+
+        AutoRotate(-90, 0.3, 0);
+
+
         backDropPlace(false, propPosition);
         setWristPosition("dropGround");
 

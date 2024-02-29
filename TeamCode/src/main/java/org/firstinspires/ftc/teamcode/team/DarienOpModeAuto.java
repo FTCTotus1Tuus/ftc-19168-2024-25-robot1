@@ -320,22 +320,22 @@ public class DarienOpModeAuto extends DarienOpMode {
                 finalMove = -29;// done
                 break;
             case "RI1":
-                finalMove = -15;// untested
+                finalMove = -15;// done
                 break;
             case "RI2":
-                finalMove = -21;// untested
+                finalMove = -23;// done
                 break;
             case "RI3":
-                finalMove = -27;// untested
+                finalMove = -30;// done
                 break;
             case "RO1":
-                finalMove = -27;// untested
+                finalMove = 31;// untested
                 break;
             case "RO2":
-                finalMove = -21;// untested
+                finalMove = 21;// done
                 break;
             case "RO3":
-                finalMove = -27;// untested
+                finalMove = 20;// done
                 break;
             default:
                 print("sebastian is bad at spelling","");
@@ -439,10 +439,17 @@ public class DarienOpModeAuto extends DarienOpMode {
                     MoveX(-4.75, 0.1);
                     if (propPosition==2) {MoveX(-5.25, 0.1);}
                 } else {
-                    MoveX(-6.5, 0.1);
+                    MoveX(-6, 0.1);
+                    if (propPosition==3) {MoveX(-6.5, 0.1);}
                 }
             } else {
                 MoveX(-2.25, 0.1);
+                if (!isBlue) {
+                    if (propPosition==1) {MoveX(-2.1, 0.1);}
+                    else if (propPosition==2) {MoveX(-2.75, 0.1);}
+                    else {MoveX(-2, 0.1);}
+                }
+
                 if (propPosition==2 && isBlue) {MoveX(-1.8,0.1);}
 
                 setArmPosition(775, 0.1);
@@ -470,7 +477,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void autoPlacePixel() {
         waitForMotors();
         setClawPosition("rightOpen");
-        sleep(150);
+        sleep(350);
         MoveY(-4.5, 0.25);
         waitForMotors();
         setWristPosition("dropGround");
