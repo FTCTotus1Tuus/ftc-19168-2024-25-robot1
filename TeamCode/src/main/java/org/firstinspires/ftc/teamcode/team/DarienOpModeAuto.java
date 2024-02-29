@@ -329,10 +329,10 @@ public class DarienOpModeAuto extends DarienOpMode {
                 finalMove = -30;// done
                 break;
             case "RO1":
-                finalMove = 31;// untested
+                finalMove = 31;// done
                 break;
             case "RO2":
-                finalMove = 21;// done
+                finalMove = 25;// done
                 break;
             case "RO3":
                 finalMove = 20;// done
@@ -368,7 +368,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         ArrayList<AprilTagDetection> currentDetections = null;
         double startTime = getRuntime();
         do { currentDetections = aprilTag.getDetections();}
-        while (currentDetections.isEmpty() || getRuntime() - startTime > timeout);
+        while (currentDetections.isEmpty() && (getRuntime() - startTime) < timeout);
         telemetry.addData("# AprilTags Detected", currentDetections.size());
         telemetry.update();
         // Step through the list of detections and display info for each one.

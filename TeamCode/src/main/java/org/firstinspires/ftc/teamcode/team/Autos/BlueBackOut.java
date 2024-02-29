@@ -76,7 +76,7 @@ public class BlueBackOut extends DarienOpModeAuto {
         // AT THIS POINT, THE ROBOT SHOULD BE FACING THE BACKDROP READY TO DROP IN THE RIGHT POSITION.
         setArmPosition(600, 0.75); // extends the arm a tiny bit
         while (arm.isBusy()) {}
-        autoRunMacro("dropGround"); // extends the wrist
+        autoRunMacro("ReadyToDrop"); // extends the wrist
         setArmPosition(450, 0.5);
 
         alignBackPositions(true, propPosition);

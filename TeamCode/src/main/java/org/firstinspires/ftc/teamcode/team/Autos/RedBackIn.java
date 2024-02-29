@@ -55,7 +55,7 @@ public class RedBackIn extends DarienOpModeAuto {
                 break;
             case 3:
                 AutoRotate(-90, 0.3,1); // turns to spike mark
-                MoveY(2.75, 0.1);
+                MoveY(1.75, 0.1);
                 waitForMotors();
                 autoRunMacro("dropPixel"); // places the pixel
                 MoveY(-1, 0.1);
@@ -76,7 +76,7 @@ public class RedBackIn extends DarienOpModeAuto {
         // AT THIS POINT, THE ROBOT SHOULD BE FACING THE BACKDROP READY TO DROP IN THE RIGHT POSITION.
         setArmPosition(600, 0.3); // extends the arm a tiny bit
         while (arm.isBusy()) {}
-        autoRunMacro("dropGround"); // extends the wrist
+        autoRunMacro("ReadyToDrop"); // extends the wrist
         setArmPosition(450, 0.3);
         alignBackPositions(true, propPosition);
 
