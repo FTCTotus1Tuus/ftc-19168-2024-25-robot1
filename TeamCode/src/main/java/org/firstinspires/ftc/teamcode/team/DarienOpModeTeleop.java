@@ -19,15 +19,28 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
 public class DarienOpModeTeleop extends DarienOpMode {
+    boolean isDroneLaunched = false;
+    boolean isLaunching = true;
+    double maxLaunchTimeMs = 200;
+    double launchPower = 1;
         @Override
     public void runOpMode() throws InterruptedException {}
 
 
     public void runDroneSystem(){
-        if(gamepad2.left_stick_button && gamepad2.b){
+
+        if(gamepad2.left_stick_button && gamepad2.b && !isDroneLaunched){
+            double launchStartTime = getRuntime();
+
             //droneLauncher.setPower(-0.5);
-            revDroneLauncher.setPower(1);
-            sleep(200);
+            while (isLaunching) {
+                revDroneLauncher.setPower(launchPower);
+                if (getRuntime() - launchStartTime > (maxLaunchTimeMs/1000)) {
+                    isLaunching = false;
+                }
+            }
+            revDroneLauncher.setPower(0);
+            isDroneLaunched = true;
         } else {
             //droneLauncher.setPower(0);
             revDroneLauncher.setPower(0);
