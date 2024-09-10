@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 @Disabled
 @Autonomous
 public class colourSensorDebug extends DarienOpModeAuto {
+    /*
     @Override
     public void runOpMode() throws InterruptedException {
         initControls(true);
@@ -24,4 +25,7 @@ public class colourSensorDebug extends DarienOpModeAuto {
         telemetry.addData("rightsensor red", colourSensorRight.red());
 
         telemetry.update();
-}}}
+}}
+*/
+}
+

@@ -13,7 +13,9 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 @Disabled
 @TeleOp
 public class encoderValTest extends DarienOpModeAuto {
+/*
     public void runOpMode() {
+
         initControls(true);
 
         waitForStart();
@@ -30,4 +32,7 @@ public class encoderValTest extends DarienOpModeAuto {
             }
         }
     }
+
+
+ */
 }
