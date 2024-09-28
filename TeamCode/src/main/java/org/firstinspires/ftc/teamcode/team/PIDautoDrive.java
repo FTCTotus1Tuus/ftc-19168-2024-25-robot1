@@ -38,6 +38,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.team.DarienOpMode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Config
 @Autonomous
@@ -65,6 +66,18 @@ public class PIDautoDrive extends DarienOpMode {
     double l = 6.8;
     double b = 5.8;
     double R = 2;
+    double lastTIme;
+    PIDHelper PIDx;
+    PIDHelper PIDy;
+    public double[] command;
+        // command numbers
+            // type, modifiers
+            // movement: x y start time end time
+
+    public List<double[]> commandList;
+
+
+        // 0 = movement, 1 = wait, 2 = do action
 
     TelemetryPacket tp;
     FtcDashboard dash;
@@ -77,11 +90,47 @@ public class PIDautoDrive extends DarienOpMode {
         tp = new TelemetryPacket();
         dash = FtcDashboard.getInstance();
         waitForStart();
+        startPIDMovement();
         while(opModeIsActive()) {
-            setMotorPower(x, y, rot, 1);
-        }
+            tp.addLine("wheel0: " + new String(String.valueOf(wheel0.getCurrentPosition())));
+            tp.addLine("wheel1: " + new String(String.valueOf(wheel1.getCurrentPosition())));
+          tp.addLine("wheel2: " + new String(String.valueOf(wheel2.getCurrentPosition())));
+          tp.addLine("wheel3: " + new String(String.valueOf(wheel3.getCurrentPosition())));
 
+          dash.sendTelemetryPacket(tp);
+
+            //            setMotorPower(x, y, 1);
+//            timeStep = this.time - lastTIme;
+//            lastTime = this.time;
+//            if (command[4] == 1) {
+//                sleep((long) command[0]);
+//            }
+//            if (command[4] == 2) {
+//                doAction();
+//            }
+//            checkIfCommandDone();
+        }
     }
+
+//    public void checkIfCommandDone() {
+//        if (command[4] == 1) {
+//            goNextCommand();
+//            return;
+//        } else if (command[4] == 1) {
+//            if (checkActionDone()) {
+//                goNextCommand();
+//                return;
+//            }
+//
+//        }
+//    }
+//    public void goNextCommand() {
+//            if (!commandList.isEmpty()) {
+//                commandList.remove(0);
+//            }
+//            command = commandList.get(0);
+//        }
+
     public void init_wheel(){
         wheel0 = hardwareMap.get(DcMotor.class, "omniMotor0");
         wheel1 = hardwareMap.get(DcMotor.class, "omniMotor1");
@@ -96,6 +145,10 @@ public class PIDautoDrive extends DarienOpMode {
         wheel2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheel3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        wheel0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheel1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheel2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheel3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -110,17 +163,29 @@ public class PIDautoDrive extends DarienOpMode {
         imu.resetYaw();
 
     }
-    public void setMotorPower (double x, double y, double rot, double speed){
-        double adjX = x*Math.cos(getRawHeading()) - y*Math.sin(getRawHeading());
-        double adjY = x*Math.sin(getRawHeading()) + y*Math.cos(getRawHeading());
 
-        rot = (rot*(l/2 + b/2)) / (Math.sqrt(Math.pow(l/2,2)+Math.pow(b/2,2)));
+    public void startPIDMovement() {
+        PIDx = new PIDHelper();
+        PIDy = new PIDHelper();
 
+        resetEncoderPositions();
+    }
+    public void setMotorPower (double x, double y, double speed){
+        // questionable code
+//        double adjX = x*Math.cos(getRawHeading()) - y*Math.sin(getRawHeading());
+//        double adjY = x*Math.sin(getRawHeading()) + y*Math.cos(getRawHeading());
+//
+//        rot = (rot*(l/2 + b/2)) / (Math.sqrt(Math.pow(l/2,2)+Math.pow(b/2,2)));
+        double errorX = getErrorX();
+        double errorY = getErrorY();
 
-        double motorPower0 = adjY+adjX+rot;
-        double motorPower1 = adjY-adjX-rot;
-        double motorPower2 = adjY-adjX+rot;
-        double motorPower3 = adjY+adjX-rot;
+        double adjX = PIDx.PIDreturnCorrection(errorX, timeStep) * speed;
+        double adjY = PIDy.PIDreturnCorrection(errorY, timeStep) * speed;
+
+        double motorPower0 = adjY+adjX;
+        double motorPower1 = adjY-adjX;
+        double motorPower2 = adjY-adjX;
+        double motorPower3 = adjY+adjX;
 
 
         print("motor 0: ", motorPower0);
@@ -140,6 +205,22 @@ public class PIDautoDrive extends DarienOpMode {
 
     }
 
+    public double getErrorX() {
+        return wheel0.getCurrentPosition() + wheel3.getCurrentPosition() - wheel1.getCurrentPosition() - wheel2.getCurrentPosition();
+    }
+    public double getErrorY() {
+        return wheel0.getCurrentPosition() + wheel3.getCurrentPosition() + wheel1.getCurrentPosition() + wheel2.getCurrentPosition();
+    }
+
+    void resetEncoderPositions() {
+        wheel0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheel1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheel2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheel3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+    }
+
     public double[] scalePower ( double motorPower0, double motorPower1, double motorPower2, double motorPower3)
     {
         double maxPower = Math.max(Math.max(Math.abs(motorPower0),Math.abs(motorPower1)),Math.max(Math.abs(motorPower2), Math.abs(motorPower3)));
@@ -154,21 +235,7 @@ public class PIDautoDrive extends DarienOpMode {
     };
         return returnPower;
     }
-    public double PIDreturnCorrection(double error) {
-        double Kp = 0;
-        double Ki = 0;
-        double Kd = 0;
 
-        return Kp*error + Ki*integral(error) + Kd*derivative(error);
-    }
-
-    public double integral(double error) {
-        return ((lastError+error)/2) * timeStep;
-    }
-
-    public double derivative(double error) {
-        return (error-lastError) / (timeStep);
-    }
 
     public double relativePower ( double intended_power)
     {
