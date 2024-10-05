@@ -19,180 +19,12 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
 public class DarienOpModeTeleop extends DarienOpMode {
-    boolean isDroneLaunched = false;
-    boolean isLaunching = true;
-    double maxLaunchTimeMs = 200;
-    double launchPower = 1;
-        @Override
+@Override
     public void runOpMode() throws InterruptedException {}
 
 
-    public void runDroneSystem(){
-
-        if(gamepad2.left_stick_button && gamepad2.b && !isDroneLaunched){
-            double launchStartTime = getRuntime();
-
-            //droneLauncher.setPower(-0.5);
-            while (isLaunching) {
-                revDroneLauncher.setPower(launchPower);
-                if (getRuntime() - launchStartTime > (maxLaunchTimeMs/1000)) {
-                    isLaunching = false;
-                }
-            }
-            revDroneLauncher.setPower(0);
-            isDroneLaunched = true;
-        } else {
-            //droneLauncher.setPower(0);
-            revDroneLauncher.setPower(0);
-        }
-    }
 
 
-    public void runIntakeSystem() {
-        if (gamepad1.right_bumper) {
-            // Load pixels
-            leftIntake.setPower(1);
-            rightIntake.setPower(-1);
-        } else if (gamepad1.right_trigger > 0) {
-            // Eject pixels
-            leftIntake.setPower(-0.5);
-            rightIntake.setPower(0.5);
-        } else {
-            // Stop
-            leftIntake.setPower(0);
-            rightIntake.setPower(0);
-        }
-    }
-
-    public void runFeederSystem() {
-        if (gamepad1.left_bumper) {
-            // Load pixels
-            feeder.setPower(-1);
-        } else if (gamepad1.left_trigger > 0) {
-            // Eject pixels
-            feeder.setPower(1);
-        } else {
-            // Stop
-            feeder.setPower(0);
-        }
-    }
-
-    public void runWristSystem() {
-        // Wrist to be on fixed positions for grabbing and for dropping on the backboard.
-        /* Removed to make way for individual left and right claw control.
-        if (gamepad2.right_trigger > 0) {
-            // Pick up pixels from the robot tray.
-            setWristPosition("pickup");
-        }
-        if (gamepad2.left_trigger > 0) {
-            // Drop pixels on backboard
-            setWristPosition("drop");
-        }
-         */
-        if (gamepad2.x) {
-            setWristPosition("dropGround");
-        }
-        if( gamepad2.right_stick_y < 0 ){
-            setWristPosition("drop");
-        }
-        if( gamepad2.right_stick_y > 0 ){
-            setWristPosition("pickup");
-        }
-        //clawWrist.setPower(gamepad2.left_stick_y/3); // clawWrist control as a continuous servo (CRServo).
-    }
-
-    public void setWristPosition(String position) {
-        switch (position) {
-            case "pickup":
-                clawWrist.setPosition(clawWristPositionPickup);
-                break;
-            case "drop":
-                clawWrist.setPosition(clawWristPositionDrop);
-                break;
-            case "dropGround":
-                clawWrist.setPosition(clawWristPositionGround);
-                break;
-            default:
-                // do nothing;
-        }
-    }
-
-    public void runClawSystem() {
-        if (gamepad2.right_bumper) {
-            setClawPosition("rightOpen");
-        } else if (gamepad2.right_trigger > 0) {
-            setClawPosition("rightClosed");
-        }
-        if (gamepad2.left_bumper) {
-            setClawPosition("leftOpen");
-        } else if (gamepad2.left_trigger > 0) {
-            setClawPosition("leftClosed");
-        }
-    }
-
-    public void setClawPosition(String position) {
-        switch (position) {
-            case "open":
-                clawLeft.setPosition(clawLeftPositionOpen);
-                clawRight.setPosition(clawRightPositionOpen);
-                break;
-            case "closed":
-                clawLeft.setPosition(clawLeftPositionClosed);
-                clawRight.setPosition(clawRightPositionClosed);
-                break;
-            case "leftOpen":
-                clawLeft.setPosition(clawLeftPositionOpen);
-                break;
-            case "rightOpen":
-                clawRight.setPosition(clawRightPositionOpen);
-                break;
-            case "leftClosed":
-                clawLeft.setPosition(clawLeftPositionClosed);
-                break;
-            case "rightClosed":
-                clawRight.setPosition(clawRightPositionClosed);
-                break;
-            default:
-                // do nothing;
-        }
-    }
-
-    public void runArmSystem() {
-        // DONE: Arm control on the left joystick up/down.
-        // gamepad2.left_stick_y is negative when pushing the joystick up (arm going out). And positive when down (arm coming in).
-        if( gamepad2.left_stick_y > 0 && armInStopTouchSensor.isPressed() ) {
-            // If the arm is fully retracted (in), stop driving the motor to avoid tensioning the linear slide cable.
-            arm.setPower(0);
-            return;
-        }
-        else if( gamepad2.left_stick_y < 0 && armOutStopTouchSensor.isPressed() ) {
-            // If the arm is fully extended (out), stop driving the motor to avoid tensioning the linear slide cable.
-            arm.setPower(0);
-            return;
-        } else {
-            arm.setPower(-gamepad2.left_stick_y);
-        }
-        //print("armInStopTouchSensor.isPressed: ", armInStopTouchSensor.isPressed() );
-    }
-
-    public void driveArm(String position) {
-        double power = 0.8;
-        switch (position) {
-            case "in":
-                // TODO: power the arm down until it reaches the stopping position. Then turn off the power.
-                if (!armInStopTouchSensor.isPressed()) {
-                arm.setPower(-power);}
-                break;
-            case "out":
-                if (!armOutStopTouchSensor.isPressed()) {
-                arm.setPower(power);}
-                break;
-            case "none":
-                arm.setPower(0);
-            default:
-                // do nothing;
-        }
-    }
 
     public void runDriveSystem() {
         direction[0] = -gamepad1.left_stick_x;
@@ -203,39 +35,6 @@ public class DarienOpModeTeleop extends DarienOpMode {
         MoveRobot(direction, -rotation, turboBoost);
     }
 
-    public void runMacro(String macro) {
-        switch (macro) {
-            case "ReadyToPickup":
-                if (gamepad2.a) {
-                    if (clawWrist.getPosition() < clawWristPositionPickup) {
-                        // If the wrist is already in PICKUP position, do nothing.
-                        setWristPosition("pickup");
-                    }
-                    if (clawLeft.getPosition() < clawLeftPositionOpen) {
-                        // If the claw is already in OPEN position, do nothing.
-                        setClawPosition("open");
-                    }
-                }
-                while (gamepad2.a) {
-                    driveArm("in");
-                }
-                break;
-            case "ReadyToDrop":
-                if (gamepad2.y) {
-                    if (clawWrist.getPosition() > clawWristPositionDrop) {
-                        // Only raise the wrist if it's not already in position.
-                        setWristPosition("drop");
-                    }
-                }
-                while (gamepad2.y) {
-                    driveArm("out");
-                }
-                break;
-            default:
-                // do nothing;
-                break;
-        }
-    }
 
 
     public void MoveRobot(double[] direction, double rotation, boolean turboBoost) {
@@ -258,7 +57,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
         MoveMotor(omniMotor2, wheel2 / divBy);
         MoveMotor(omniMotor3, wheel3 / divBy);
     }
-        public void initControls(boolean isAuto) {
+    public void initControls(boolean isAuto) {
         //isAuto: true=auto false=teleop
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(
@@ -275,66 +74,46 @@ public class DarienOpModeTeleop extends DarienOpMode {
         omniMotor1 = initializeMotor("omniMotor3");
         omniMotor2 = initializeMotor("omniMotor1");
         omniMotor3 = initializeMotor("omniMotor2");
-        revDroneLauncher = initializeMotor("revDroneLauncher");
 
-        arm = initializeMotor("arm");
+        //spinnerServo;
 
-        arm.setDirection(DcMotor.Direction.REVERSE);
-
-        if (isAuto) {
-            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
-            colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
-        }
+        //arm = initializeMotor("arm");
+        // arm.setDirection(DcMotor.Direction.REVERSE);
 
 
         omniMotor0.setDirection(DcMotor.Direction.REVERSE);
         omniMotor1.setDirection(DcMotor.Direction.FORWARD);
         omniMotor2.setDirection(DcMotor.Direction.FORWARD);
         omniMotor3.setDirection(DcMotor.Direction.REVERSE);
-        revDroneLauncher.setDirection(DcMotor.Direction.FORWARD);
-
-        leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
-        rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
-
-        clawWrist = hardwareMap.get(Servo.class, "clawWrist");
-        clawLeft = hardwareMap.get(Servo.class, "clawLeft");
-        clawRight = hardwareMap.get(Servo.class, "clawRight");
-
-        feeder = hardwareMap.get(CRServo.class, "feeder");
-
-        armInStopTouchSensor = hardwareMap.get(TouchSensor.class, "armInStopTouchSensor");
-        armOutStopTouchSensor = hardwareMap.get(TouchSensor.class, "armOutStopTouchSensor");
-        //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
     }
-            int move_to_position;
-        double y;
+    int move_to_position;
+    double y;
 
-        public void print (String Name, Object message)
-        {
-            telemetry.addData(Name, message);
-            telemetry.update();
-        }
-        public double relativePower ( double intended_power)
-        {
-            return (13 * intended_power) / getVoltage();
-        }
+    public void print (String Name, Object message)
+    {
+        telemetry.addData(Name, message);
+        telemetry.update();
+    }
+    public double relativePower ( double intended_power)
+    {
+        return (13 * intended_power) / getVoltage();
+    }
 
 
-        public DcMotor initializeMotor (String name){
+    public DcMotor initializeMotor (String name){
          /*This is just a handy dandy function which saves a few lines and looks cool,
          it initializes the motor and it also initializers the motor power logs for this motor*/
-            DcMotor motor = hardwareMap.get(DcMotor.class, name);
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            return motor;
-        }
+        DcMotor motor = hardwareMap.get(DcMotor.class, name);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        return motor;
+    }
 
-        public void MoveMotor (DcMotor motor,double power){
+    public void MoveMotor (DcMotor motor,double power){
          /*This function just moves the motors and updates the
          logs for replay*/
-            motor.setPower(power);
-        }
-        public static double clamp ( double val, double min, double max){
-            return Math.max(min, Math.min(max, val));
-        }
+        motor.setPower(power);
     }
+    public static double clamp ( double val, double min, double max){
+        return Math.max(min, Math.min(max, val));
+    }
+}

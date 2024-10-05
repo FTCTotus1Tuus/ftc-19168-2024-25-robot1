@@ -22,11 +22,9 @@ import java.util.List;
 @Config
 public class DarienOpMode extends LinearOpMode {
 
-    public CRServo leftIntake, rightIntake, feeder;
+//    public CRServo leftIntake, rightIntake, feeder;
     //public CRServo droneLauncher;
-    public Servo clawWrist, clawLeft, clawRight;
-    public ColorSensor colourSensorLeft, colourSensorRight;
-    public ColorSensor intakeSensor;
+//    public Servo clawWrist, clawLeft, clawRight;
     public static int minRedVal = 900, minBlueVal = 1000;
     public static double encoderResolution = 537.7 ; //no change unless we change motors
     public double wheelDiameter = 3.75; // inches
@@ -53,12 +51,9 @@ public class DarienOpMode extends LinearOpMode {
     public DcMotor omniMotor1; // leftRear
     public DcMotor omniMotor2; // rightRear
     public DcMotor omniMotor3; // rightFront
-    public DcMotor arm;
-    public DcMotor revDroneLauncher;
+    //public DcMotor arm;
     public IMU imu;
 
-    public TouchSensor armInStopTouchSensor;
-    public TouchSensor armOutStopTouchSensor;
 
     @Override
     public void runOpMode() throws InterruptedException {}
@@ -79,17 +74,17 @@ public class DarienOpMode extends LinearOpMode {
         omniMotor1 = initializeMotor("omniMotor1");
         omniMotor2 = initializeMotor("omniMotor2");
         omniMotor3 = initializeMotor("omniMotor3");
-        revDroneLauncher = initializeMotor("revDroneLauncher");
+        //revDroneLauncher = initializeMotor("revDroneLauncher");
 
-        arm = initializeMotor("arm");
+        //arm = initializeMotor("arm");
 
-        arm.setDirection(DcMotor.Direction.REVERSE);
+        //arm.setDirection(DcMotor.Direction.REVERSE);
 
         if (isAuto) {
-            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
-            colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
+           // arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+           // arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
+            //colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
         }
 
 
@@ -98,6 +93,7 @@ public class DarienOpMode extends LinearOpMode {
         omniMotor2.setDirection(DcMotor.Direction.FORWARD);
         omniMotor3.setDirection(DcMotor.Direction.REVERSE);
 
+        /*
         revDroneLauncher.setDirection(DcMotor.Direction.FORWARD);
 
         leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
@@ -109,6 +105,8 @@ public class DarienOpMode extends LinearOpMode {
 
         feeder = hardwareMap.get(CRServo.class, "feeder");
        //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
+
+         */
 
 
 
