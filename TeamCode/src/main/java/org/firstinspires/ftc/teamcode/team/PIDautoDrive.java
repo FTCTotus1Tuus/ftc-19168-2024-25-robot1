@@ -69,6 +69,9 @@ public class PIDautoDrive extends DarienOpMode {
     double lastTIme;
     PIDHelper PIDx;
     PIDHelper PIDy;
+    public static double targetPosX = 1;
+    public static double targetPosY = 1;
+    public static double speed = 0.3;
     public double[] command;
         // command numbers
             // type, modifiers
@@ -89,8 +92,11 @@ public class PIDautoDrive extends DarienOpMode {
         init_wheel();
         tp = new TelemetryPacket();
         dash = FtcDashboard.getInstance();
+
         waitForStart();
+
         startPIDMovement();
+
         while(opModeIsActive()) {
             tp.addLine("wheel0: " + new String(String.valueOf(wheel0.getCurrentPosition())));
             tp.addLine("wheel1: " + new String(String.valueOf(wheel1.getCurrentPosition())));
@@ -98,6 +104,7 @@ public class PIDautoDrive extends DarienOpMode {
           tp.addLine("wheel3: " + new String(String.valueOf(wheel3.getCurrentPosition())));
 
           dash.sendTelemetryPacket(tp);
+          setMotorPower(speed);
 
             //            setMotorPower(x, y, 1);
 //            timeStep = this.time - lastTIme;
@@ -145,10 +152,6 @@ public class PIDautoDrive extends DarienOpMode {
         wheel2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheel3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        wheel0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheel1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheel2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheel3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -170,7 +173,7 @@ public class PIDautoDrive extends DarienOpMode {
 
         resetEncoderPositions();
     }
-    public void setMotorPower (double x, double y, double speed){
+    public void setMotorPower (double speed){
         // questionable code
 //        double adjX = x*Math.cos(getRawHeading()) - y*Math.sin(getRawHeading());
 //        double adjY = x*Math.sin(getRawHeading()) + y*Math.cos(getRawHeading());
@@ -206,10 +209,10 @@ public class PIDautoDrive extends DarienOpMode {
     }
 
     public double getErrorX() {
-        return wheel0.getCurrentPosition() + wheel3.getCurrentPosition() - wheel1.getCurrentPosition() - wheel2.getCurrentPosition();
+        return targetPosX - wheel0.getCurrentPosition() + wheel3.getCurrentPosition() - wheel1.getCurrentPosition() - wheel2.getCurrentPosition();
     }
     public double getErrorY() {
-        return wheel0.getCurrentPosition() + wheel3.getCurrentPosition() + wheel1.getCurrentPosition() + wheel2.getCurrentPosition();
+        return targetPosY - wheel0.getCurrentPosition() + wheel3.getCurrentPosition() + wheel1.getCurrentPosition() + wheel2.getCurrentPosition();
     }
 
     void resetEncoderPositions() {
