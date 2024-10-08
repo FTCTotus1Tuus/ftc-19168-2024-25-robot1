@@ -23,19 +23,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.Arrays;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.team.DarienOpMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,18 +61,17 @@ public class PIDautoDrive extends DarienOpMode {
     double l = 6.8;
     double b = 5.8;
     double R = 2;
-    double lastTIme;
     PIDHelper PIDx;
     PIDHelper PIDy;
     public static double targetPosX = 1;
     public static double targetPosY = 1;
     public static double speed = 0.3;
-    public double[] command;
+    public List<Double> command;
         // command numbers
             // type, modifiers
             // movement: x y start time end time
 
-    public List<double[]> commandList;
+    public List<List<Double>> commandList;
 
 
         // 0 = movement, 1 = wait, 2 = do action
@@ -89,54 +83,46 @@ public class PIDautoDrive extends DarienOpMode {
 
     @Override
     public void runOpMode() {
+        commandList = new ArrayList<List<Double>>();
+
         init_wheel();
         tp = new TelemetryPacket();
         dash = FtcDashboard.getInstance();
 
+        addCommand(0,100,0);
+        addCommand(0,0,100);
+        addCommand(0,-100,0);
+        addCommand(0,0,-100);
+        addCommand(0,-100,-100);
+        addCommand(0,100,100);
+        getNextCommand();
         waitForStart();
 
         startPIDMovement();
 
         while(opModeIsActive()) {
-            tp.addLine("wheel0: " + new String(String.valueOf(wheel0.getCurrentPosition())));
-            tp.addLine("wheel1: " + new String(String.valueOf(wheel1.getCurrentPosition())));
-          tp.addLine("wheel2: " + new String(String.valueOf(wheel2.getCurrentPosition())));
-          tp.addLine("wheel3: " + new String(String.valueOf(wheel3.getCurrentPosition())));
 
-          dash.sendTelemetryPacket(tp);
-          setMotorPower(speed);
-
+            setMotorPower(speed);
             //            setMotorPower(x, y, 1);
-//            timeStep = this.time - lastTIme;
-//            lastTime = this.time;
-//            if (command[4] == 1) {
-//                sleep((long) command[0]);
-//            }
-//            if (command[4] == 2) {
-//                doAction();
-//            }
-//            checkIfCommandDone();
+            timeStep = this.time - lastTime;
+            lastTime = this.time;
         }
     }
 
-//    public void checkIfCommandDone() {
-//        if (command[4] == 1) {
-//            goNextCommand();
-//            return;
-//        } else if (command[4] == 1) {
-//            if (checkActionDone()) {
-//                goNextCommand();
-//                return;
-//            }
-//
-//        }
-//    }
-//    public void goNextCommand() {
-//            if (!commandList.isEmpty()) {
-//                commandList.remove(0);
-//            }
-//            command = commandList.get(0);
-//        }
+    public void getNextCommand() {
+            if (!commandList.isEmpty()) {
+                commandList.remove(0);
+            }
+            command = commandList.get(0);
+            if (command.get(0) == 0) {
+                startPIDMovement();
+                return;
+            }
+        }
+    public void addCommand(double type, double x, double y){
+        List<Double> temp = Arrays.asList(type, x, y);
+        commandList.add(temp);
+    }
 
     public void init_wheel(){
         wheel0 = hardwareMap.get(DcMotor.class, "omniMotor0");
@@ -171,6 +157,9 @@ public class PIDautoDrive extends DarienOpMode {
         PIDx = new PIDHelper();
         PIDy = new PIDHelper();
 
+        targetPosX = command.get(1) * constant;
+        targetPosY = command.get(2) * constant;
+
         resetEncoderPositions();
     }
     public void setMotorPower (double speed){
@@ -182,6 +171,11 @@ public class PIDautoDrive extends DarienOpMode {
         double errorX = getErrorX();
         double errorY = getErrorY();
 
+        if (Math.abs(errorX) < 10 && Math.abs(errorY) < 10) {
+            getNextCommand();
+            return;
+        }
+
         double adjX = PIDx.PIDreturnCorrection(errorX, timeStep) * speed;
         double adjY = PIDy.PIDreturnCorrection(errorY, timeStep) * speed;
 
@@ -190,8 +184,13 @@ public class PIDautoDrive extends DarienOpMode {
         double motorPower2 = adjY-adjX;
         double motorPower3 = adjY+adjX;
 
+        telemetry.addData("motor 0 encoder count: ", wheel0.getCurrentPosition());
+        telemetry.addData("adjX: ", adjX);
+        telemetry.addData("adjY: ", adjY);
+        telemetry.addData("timestep: ", timeStep );
+        telemetry.addData("current command: ", command);
+        print("motor 0 power: ", motorPower0);
 
-        print("motor 0: ", motorPower0);
         tp.put("motor 0", motorPower0);
         dash.sendTelemetryPacket(tp);
 //        double motorPower0 = speed * (y-x-(l+b) * rot) / R;
@@ -206,13 +205,15 @@ public class PIDautoDrive extends DarienOpMode {
         wheel2.setPower(scaledMotorPower[2]);
         wheel3.setPower(scaledMotorPower[3]);
 
+
     }
 
     public double getErrorX() {
-        return targetPosX - wheel0.getCurrentPosition() + wheel3.getCurrentPosition() - wheel1.getCurrentPosition() - wheel2.getCurrentPosition();
+        return targetPosX - (wheel0.getCurrentPosition() + wheel3.getCurrentPosition() - wheel1.getCurrentPosition() - wheel2.getCurrentPosition());
     }
+
     public double getErrorY() {
-        return targetPosY - wheel0.getCurrentPosition() + wheel3.getCurrentPosition() + wheel1.getCurrentPosition() + wheel2.getCurrentPosition();
+        return targetPosY - (wheel0.getCurrentPosition() + wheel3.getCurrentPosition() + wheel1.getCurrentPosition() + wheel2.getCurrentPosition());
     }
 
     void resetEncoderPositions() {
@@ -220,6 +221,11 @@ public class PIDautoDrive extends DarienOpMode {
         wheel1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheel2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheel3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        wheel0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheel1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheel2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheel3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
     }
