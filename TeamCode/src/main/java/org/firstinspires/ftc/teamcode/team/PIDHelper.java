@@ -7,10 +7,16 @@ public class PIDHelper {
     public double lastError;
     public double timeStep;
     public double integralAccum;
-public static    double Kp = 1;
-public static     double Ki = 0.00001;
-public static    double Kd = 0.00001;
+public static    double Kp =0.05;
+public static     double Ki = 0.001;
+public static    double Kd = 0;
 double correction = 0;
+
+    PIDHelper(double p, double i, double d) {
+        Kp = p;
+        Ki = i;
+        Kd = d;
+    }
 
     public double PIDreturnCorrection(double error, double deltaTime) {
 
