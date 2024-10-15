@@ -13,9 +13,9 @@ public static    double Kd = 0;
 double correction = 0;
 
     PIDHelper(double p, double i, double d) {
-        Kp = p;
-        Ki = i;
-        Kd = d;
+        Kp = p; // Proportional coefficient = power to error
+        Ki = i; // Integral coefficient = error over time
+        Kd = d; // Derivative coefficient = change in error over time
     }
 
     public double PIDreturnCorrection(double error, double deltaTime) {
