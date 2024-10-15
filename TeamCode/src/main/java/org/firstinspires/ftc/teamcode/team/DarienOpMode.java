@@ -22,10 +22,6 @@ import java.util.List;
 @Config
 public class DarienOpMode extends LinearOpMode {
 
-//    public CRServo leftIntake, rightIntake, feeder;
-    //public CRServo droneLauncher;
-//    public Servo clawWrist, clawLeft, clawRight;
-    public static int minRedVal = 900, minBlueVal = 1000;
     public static double encoderResolution = 537.7 ; //no change unless we change motors
     public double wheelDiameter = 3.75; // inches
     public double constMult = (wheelDiameter * (Math.PI));
@@ -33,14 +29,6 @@ public class DarienOpMode extends LinearOpMode {
     public static double rotationTolerance = 5;
     public static double power = 0.3;
     public int encoderPos0, encoderPos1, encoderPos2, encoderPos3;
-    double clawWristPositionPickup = 0.71;
-    double clawWristPositionDrop = 0.3;
-    public static double clawWristPositionGround = 0.6;
-    public double clawLeftPositionOpen = 0.4;
-    public double clawLeftPositionClosed = 0.07;
-    public double clawRightPositionOpen = 0.6;
-    public double clawRightPositionClosed = 0.93;
-    public static int armOutPosition = 750;
     public double[] direction = {0.0, 0.0};
     public double rotation;
     public int encoderPos;
@@ -74,11 +62,8 @@ public class DarienOpMode extends LinearOpMode {
         omniMotor1 = initializeMotor("omniMotor1");
         omniMotor2 = initializeMotor("omniMotor2");
         omniMotor3 = initializeMotor("omniMotor3");
-        //revDroneLauncher = initializeMotor("revDroneLauncher");
 
-        //arm = initializeMotor("arm");
 
-        //arm.setDirection(DcMotor.Direction.REVERSE);
 
         if (isAuto) {
            // arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -93,20 +78,7 @@ public class DarienOpMode extends LinearOpMode {
         omniMotor2.setDirection(DcMotor.Direction.FORWARD);
         omniMotor3.setDirection(DcMotor.Direction.REVERSE);
 
-        /*
-        revDroneLauncher.setDirection(DcMotor.Direction.FORWARD);
 
-        leftIntake = hardwareMap.get(CRServo.class, "leftIntake");
-        rightIntake = hardwareMap.get(CRServo.class, "rightIntake");
-
-        clawWrist = hardwareMap.get(Servo.class, "clawWrist");
-        clawLeft = hardwareMap.get(Servo.class, "clawLeft");
-        clawRight = hardwareMap.get(Servo.class, "clawRight");
-
-        feeder = hardwareMap.get(CRServo.class, "feeder");
-       //droneLauncher = hardwareMap.get(CRServo.class, "droneLauncher");
-
-         */
 
 
 
