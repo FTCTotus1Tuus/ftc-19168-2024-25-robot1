@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -28,8 +29,9 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public void runDriveSystem() {
         direction[0] = -gamepad1.left_stick_x;
-        direction[1] = -gamepad1.left_stick_y;
-        rotation = -gamepad1.right_stick_x;
+        rotation = gamepad1.left_stick_y;
+        direction[1] = gamepad1.right_stick_x;
+        //TODO fix this bc jankey flipped right now
         turboBoost = gamepad1.left_stick_button;
 
         MoveRobot(direction, -rotation, turboBoost);
@@ -72,8 +74,9 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
         omniMotor0 = initializeMotor("omniMotor0");
         omniMotor1 = initializeMotor("omniMotor3");
-        omniMotor2 = initializeMotor("omniMotor1");
-        omniMotor3 = initializeMotor("omniMotor2");
+        omniMotor2 = initializeMotor("omniMotor2");
+        omniMotor3 = initializeMotor("omniMotor1");
+
 
         //spinnerServo;
 
@@ -82,9 +85,9 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
 
         omniMotor0.setDirection(DcMotor.Direction.REVERSE);
-        omniMotor1.setDirection(DcMotor.Direction.FORWARD);
+        omniMotor1.setDirection(DcMotor.Direction.REVERSE);
         omniMotor2.setDirection(DcMotor.Direction.FORWARD);
-        omniMotor3.setDirection(DcMotor.Direction.REVERSE);
+        omniMotor3.setDirection(DcMotor.Direction.FORWARD);
     }
     int move_to_position;
     double y;
