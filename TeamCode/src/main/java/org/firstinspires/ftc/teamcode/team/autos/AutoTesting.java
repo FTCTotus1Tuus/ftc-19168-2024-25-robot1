@@ -1,35 +1,33 @@
 package org.firstinspires.ftc.teamcode.team.autos;
 
+import androidx.collection.CircularArray;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
-
+@Config
 @Autonomous
 public class AutoTesting extends DarienOpModeAuto {
 
+        public static double servoPosition = 0;
+
     public void runOpMode() {
-        initControls();
+        Servo bucketServo = hardwareMap.get(Servo.class, "bucket");
+        Servo specimenWrist = hardwareMap.get(Servo.class, "specimenWrist");
 
         waitForStart();
+//        bucketServo.setPosition(0);
 
-        moveXY(24, 0, 0.3);
-        waitForMotors();
+//        specimenWrist.setPosition(0);
 
-        moveXY(0, 24, 0.3);
-        waitForMotors();
-
-        moveXY(12, 12, 0.3);
-        waitForMotors();
-
-        moveXY(-12, -6, 0.3);
-        waitForMotors();
-
-//        autoRotate(PI, 0.3);
-//
-//        autoRotate(PI/2, 0.3);
-//
-//        autoRotate(-PI/2, 0.3);
+        while(opModeIsActive()) {
+            if (gamepad1.a) {
+                specimenWrist.setPosition(servoPosition);
+            }
+        }
 
     }
 

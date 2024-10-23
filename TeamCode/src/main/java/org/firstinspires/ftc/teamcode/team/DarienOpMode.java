@@ -40,6 +40,15 @@ public class DarienOpMode extends LinearOpMode {
     public double turboDivBy = 1;
     public boolean turboBoost;
 
+    // Servo tuning constants
+
+    public static double bucketPickup = 0.95;
+    public static double bucketPlace = 0.75;
+
+    public static double specimenWristPlace = 0.13; // change name later?
+    public static double specimenWristPickup = 0.79;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {}
