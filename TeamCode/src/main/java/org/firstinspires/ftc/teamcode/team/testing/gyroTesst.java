@@ -19,7 +19,7 @@ public class gyroTesst extends DarienOpModeAuto {
     public static int rotationAmount;
     public void runOpMode() {
 
-        initControls(true);
+        initControls();
 
 
         waitForStart();

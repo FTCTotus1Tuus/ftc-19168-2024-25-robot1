@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 @TeleOp
 public class NewRobotTest extends DarienOpModeAuto {
     public void runOpMode() {
-        initControls(true);
+        initControls();
 
         waitForStart();
         while (opModeIsActive()) {

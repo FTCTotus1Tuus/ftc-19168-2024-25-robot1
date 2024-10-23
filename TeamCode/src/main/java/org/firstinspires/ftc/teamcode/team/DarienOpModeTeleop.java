@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Config
 public class DarienOpModeTeleop extends DarienOpMode {
 
+
+    public double[] direction = {0.0, 0.0};
+    public double rotation;
     /**
      *  If the GP1 left bumper is pressed, spin the boot wheels in if the joystick is pulled down or spin the boot wheels out if the joystick is pushed up.
      */

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 public class MotorsDebug extends DarienOpModeAuto {
 
     public void runOpMode() {
-        initControls(true);
+        initControls();
         waitForStart();
         //setArmPosition(400, 0.1);
         //while (arm.isBusy()) {}

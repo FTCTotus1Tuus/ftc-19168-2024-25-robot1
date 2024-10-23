@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class DriverControl extends DarienOpModeTeleop{
     @Override
     public void runOpMode(){
-        initControls(false);
+        initControls();
         waitForStart();
         //Start
         while (this.opModeIsActive()) {

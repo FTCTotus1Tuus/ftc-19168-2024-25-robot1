@@ -7,17 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-import java.util.List;
 
 @Config
 public class DarienOpMode extends LinearOpMode {
@@ -39,14 +28,13 @@ public class DarienOpMode extends LinearOpMode {
     public static double encoderResolution = 537.7 ; //no change unless we change motors
     public double wheelDiameter = 3.75; // inches
     public double constMult = (wheelDiameter * (Math.PI));
-    public double constant = encoderResolution / constMult;
+    public double inchesToEncoder = encoderResolution/ constMult;
     public static double rotationTolerance = 5;
     public static double power = 0.3;
+    public static double PI = 3.1415;
 
     // HARDWARE TUNING CONSTANTS
     public int encoderPos0, encoderPos1, encoderPos2, encoderPos3;
-    public double[] direction = {0.0, 0.0};
-    public double rotation;
     public int encoderPos;
     public double regularDivBy = 1;
     public double turboDivBy = 1;
@@ -56,7 +44,7 @@ public class DarienOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {}
 
-    public void initControls(boolean isAuto) {
+    public void initControls() {
         //isAuto: true=auto false=teleop
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(
@@ -88,13 +76,6 @@ public class DarienOpMode extends LinearOpMode {
         intakeWrist = hardwareMap.get(Servo.class, "intakeWrist"); // CH port 1
         intakeWheels = hardwareMap.get(CRServo.class, "intakeWheels"); // CH port 2
 
-        // INITIALIZE DIFFERENTLY FOR AUTONOMOUS
-        if (isAuto) {
-           // arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-           // arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //colourSensorLeft = hardwareMap.get(ColorSensor.class, "colourSensorLeft");
-            //colourSensorRight = hardwareMap.get(ColorSensor.class, "colourSensorRight");
-        }
     }
 
     public double getVoltage () {
