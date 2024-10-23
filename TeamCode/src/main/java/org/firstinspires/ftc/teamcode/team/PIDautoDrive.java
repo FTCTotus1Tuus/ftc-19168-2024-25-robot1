@@ -24,15 +24,12 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import java.util.Arrays;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Config
@@ -42,36 +39,29 @@ public class PIDautoDrive extends DarienOpMode {
     public static double encoderResolution = 537.7 ; //no change unless we change motors
     public static double wheelDiameter = 3.75; // inches
     public static double constMult = (wheelDiameter * (Math.PI));
-    public static double constant = encoderResolution / constMult;
+    public static double numberOfWheels = 4;
+    public static double inchesToEncoder = encoderResolution * numberOfWheels / constMult;
     public double lastTime;
-    public double lastError;
-    public double[] position;
     public DcMotor wheel0;
     public DcMotor wheel1;
     public DcMotor wheel2;
     public DcMotor wheel3;
     public IMU imu;
     public double timeStep;
-    public double[] target;
-    public double timeLeft;
-    public ArrayList<double[]> trajectory;
-    public static double x = 0;
-    public static double y = 0;
-    public static double rot = 0;
-    double l = 6.8;
-    double b = 5.8;
-    double R = 2;
     PIDHelper PIDx;
     PIDHelper PIDy;
+    PIDHelper PIDrot;
     public static double targetPosX = 1;
     public static double targetPosY = 1;
-    public static double speed = 0.3;
+    public static double targetPosRot = 0;
+    public static double speed = 0.05;
     public List<Double> command;
+    public double currentRotation = 0;
         // command numbers
             // type, modifiers
             // movement: x y start time end time
-
-    public List<List<Double>> commandList;
+    public static double movementSpeed = 0.02;
+    public static double rotError = 10;
 
 
         // 0 = movement, 1 = wait, 2 = do action
@@ -83,45 +73,24 @@ public class PIDautoDrive extends DarienOpMode {
 
     @Override
     public void runOpMode() {
-        commandList = new ArrayList<List<Double>>();
-
         init_wheel();
         tp = new TelemetryPacket();
         dash = FtcDashboard.getInstance();
-
-        addCommand(0,100,0);
-        addCommand(0,0,100);
-        addCommand(0,-100,0);
-        addCommand(0,0,-100);
-        addCommand(0,-100,-100);
-        addCommand(0,100,100);
-        getNextCommand();
         waitForStart();
-
-        startPIDMovement();
 
         while(opModeIsActive()) {
 
-            setMotorPower(speed);
-            //            setMotorPower(x, y, 1);
-            timeStep = this.time - lastTime;
-            lastTime = this.time;
-        }
-    }
+            startXYMovement(24, 0, movementSpeed);
 
-    public void getNextCommand() {
-            if (!commandList.isEmpty()) {
-                commandList.remove(0);
-            }
-            command = commandList.get(0);
-            if (command.get(0) == 0) {
-                startPIDMovement();
-                return;
-            }
+            doXYmovement();
+
+            startXYMovement(-24, 0, movementSpeed);
+
+            doXYmovement();
         }
-    public void addCommand(double type, double x, double y){
-        List<Double> temp = Arrays.asList(type, x, y);
-        commandList.add(temp);
+
+        while(opModeIsActive()) {}
+
     }
 
     public void init_wheel(){
@@ -144,8 +113,8 @@ public class PIDautoDrive extends DarienOpMode {
         imu.initialize(
                 new IMU.Parameters(
                         new RevHubOrientationOnRobot(
-                                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                                RevHubOrientationOnRobot.UsbFacingDirection.DOWN
+                                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
                         )
                 )
         );
@@ -153,59 +122,119 @@ public class PIDautoDrive extends DarienOpMode {
 
     }
 
-    public void startPIDMovement() {
-        PIDx = new PIDHelper();
-        PIDy = new PIDHelper();
+    public void startXYMovement(double x, double y, double speed) {
+        PIDx = new PIDHelper(0.15, 0.05, 0);
+        PIDy = new PIDHelper(0.15, 0.05, 0);
 
-        targetPosX = command.get(1) * constant;
-        targetPosY = command.get(2) * constant;
+        targetPosX = x * inchesToEncoder;
+        targetPosY = y * inchesToEncoder;
+
+        movementSpeed = speed;
 
         resetEncoderPositions();
     }
-    public void setMotorPower (double speed){
-        // questionable code
-//        double adjX = x*Math.cos(getRawHeading()) - y*Math.sin(getRawHeading());
-//        double adjY = x*Math.sin(getRawHeading()) + y*Math.cos(getRawHeading());
-//
-//        rot = (rot*(l/2 + b/2)) / (Math.sqrt(Math.pow(l/2,2)+Math.pow(b/2,2)));
-        double errorX = getErrorX();
-        double errorY = getErrorY();
 
-        if (Math.abs(errorX) < 10 && Math.abs(errorY) < 10) {
-            getNextCommand();
-            return;
+    public void startRotMovement(double target, double speed) {
+        PIDrot = new PIDHelper(0.05, 0.003, 0);
+        targetPosRot = target;
+
+        movementSpeed = speed;
+
+        resetEncoderPositions();
+    }
+
+    public void doXYmovement(){
+        boolean isMoving = true;
+        lastTime = this.time;
+        timeStep = this.time - lastTime;
+
+        while (isMoving) {
+            double errorX = getErrorX();
+            double errorY = getErrorY();
+
+            telemetry.addData("error: ", errorX);
+            tp.put("error", errorX);
+            tp.put("error y", errorY);
+
+            if (Math.abs(errorX) < 100 && Math.abs(errorY) < 100) {
+                resetEncoderPositions();
+                sleep(150);
+                isMoving = false;
+                return;
+            }
+
+            double adjX = PIDx.PIDreturnCorrection(errorX, timeStep) * movementSpeed / 20;
+            double adjY = PIDy.PIDreturnCorrection(errorY, timeStep) * movementSpeed / 20;
+
+            double motorPower0 = adjY + adjX;
+            double motorPower1 = adjY - adjX;
+            double motorPower2 = adjY - adjX;
+            double motorPower3 = adjY + adjX;
+
+            telemetry.addData("motor 0 encoder count: ", wheel0.getCurrentPosition());
+            telemetry.addData("adjX: ", adjX);
+            telemetry.addData("adjY: ", adjY);
+            telemetry.addData("timestep: ", timeStep);
+            telemetry.addData("current command: ", command);
+            print("motor 0 power: ", motorPower0);
+
+            tp.put("motor 0", motorPower0);
+            dash.sendTelemetryPacket(tp);
+
+            double[] scaledMotorPower = scalePower(motorPower0, motorPower1, motorPower2, motorPower3);
+
+            wheel0.setPower(scaledMotorPower[0]);
+            wheel1.setPower(scaledMotorPower[1]);
+            wheel2.setPower(scaledMotorPower[2]);
+            wheel3.setPower(scaledMotorPower[3]);
+
+            timeStep = this.time - lastTime;
+            lastTime = this.time;
+
         }
-
-        double adjX = PIDx.PIDreturnCorrection(errorX, timeStep) * speed;
-        double adjY = PIDy.PIDreturnCorrection(errorY, timeStep) * speed;
-
-        double motorPower0 = adjY+adjX;
-        double motorPower1 = adjY-adjX;
-        double motorPower2 = adjY-adjX;
-        double motorPower3 = adjY+adjX;
-
-        telemetry.addData("motor 0 encoder count: ", wheel0.getCurrentPosition());
-        telemetry.addData("adjX: ", adjX);
-        telemetry.addData("adjY: ", adjY);
-        telemetry.addData("timestep: ", timeStep );
-        telemetry.addData("current command: ", command);
-        print("motor 0 power: ", motorPower0);
-
-        tp.put("motor 0", motorPower0);
-        dash.sendTelemetryPacket(tp);
-//        double motorPower0 = speed * (y-x-(l+b) * rot) / R;
-//        double motorPower2 = speed * (y+x-(l+b) * rot) / R;
-//        double motorPower3 = speed * (y-x+(l+b) * rot) / R;
-//        double motorPower1 = speed * (y+x+(l+b) * rot) / R;
-
-        double[] scaledMotorPower = scalePower(motorPower0, motorPower1, motorPower2, motorPower3);
-
-        wheel0.setPower(scaledMotorPower[0]);
-        wheel1.setPower(scaledMotorPower[1]);
-        wheel2.setPower(scaledMotorPower[2]);
-        wheel3.setPower(scaledMotorPower[3]);
+    }
+    public void doPidRotation(double speed) {
+        boolean isRotating = true;
+        while (isRotating) {
+            double errorRot = getErrorRot();
 
 
+            if (Math.abs(errorRot) < rotError) {
+                sleep(50);
+                isRotating = false;
+                return;
+            }
+
+            double adjRot = PIDrot.PIDreturnCorrection(errorRot, timeStep) * speed;
+
+            double motorPower0 = adjRot;
+            double motorPower1 = -adjRot;
+            double motorPower2 = adjRot;
+            double motorPower3 = -adjRot;
+
+            telemetry.addData("motor 0 encoder count: ", wheel0.getCurrentPosition());
+            telemetry.addData("timestep: ", timeStep);
+            telemetry.addData("current command: ", command);
+            print("motor 0 power: ", motorPower0);
+
+            tp.put("motor 0", motorPower0);
+            dash.sendTelemetryPacket(tp);
+
+            double[] scaledMotorPower = scalePower(motorPower0, motorPower1, motorPower2, motorPower3);
+
+            wheel0.setPower(scaledMotorPower[0]);
+            wheel1.setPower(scaledMotorPower[1]);
+            wheel2.setPower(scaledMotorPower[2]);
+            wheel3.setPower(scaledMotorPower[3]);
+
+        }
+    }
+
+    public double getErrorRot() {
+        double errorBig = targetPosRot - getRawHeading();
+        double errorSmol = targetPosRot - getRawHeading(false);
+
+        return Math.min(Math.abs(errorSmol), Math.abs(errorBig));
     }
 
     public double getErrorX() {
@@ -254,8 +283,20 @@ public class PIDautoDrive extends DarienOpMode {
 
 
 
-    public double getRawHeading () {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    public double getRawHeading (boolean convertToTwoPi) {
+
+
+        double tempRot = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        if (convertToTwoPi) {
+            if (tempRot < 0) {
+                tempRot += Math.PI * 2;
+            }
+        }
+        return tempRot;
+    }
+
+    public double getRawHeading() {
+        return getRawHeading(true);
     }
 
 }
