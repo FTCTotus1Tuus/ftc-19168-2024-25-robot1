@@ -15,7 +15,7 @@ public class DriverControl extends DarienOpModeTeleop{
 
             runDriveSystem();
             runIntakeSystem();
-            //runVerticalSlideSystem();
+            runVerticalSlideSystem();
 
 
             //runMacro("ReadyToPickup");

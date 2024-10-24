@@ -23,6 +23,10 @@ public class DarienOpMode extends LinearOpMode {
     public CRServo intakeWheels;
     //public ColorSensor intakeColorSensor;
     //public TouchSensor intakeWristTouchSensor;
+    public Servo bucket;
+    public Servo cameraWrist;
+    public Servo specimenWrist;
+    public Servo specimenClaw;
 
     // HARDWARE FIXED CONSTANTS
     public static double encoderResolution = 537.7 ; //no change unless we change motors
@@ -84,6 +88,7 @@ public class DarienOpMode extends LinearOpMode {
         intakeSlide = hardwareMap.get(CRServo.class, "intakeSlide"); // CH port 3
         intakeWrist = hardwareMap.get(Servo.class, "intakeWrist"); // CH port 1
         intakeWheels = hardwareMap.get(CRServo.class, "intakeWheels"); // CH port 2
+        bucket = hardwareMap.get(Servo.class, "bucket");
 
     }
 

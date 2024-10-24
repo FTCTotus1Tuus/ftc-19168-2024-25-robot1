@@ -30,6 +30,15 @@ public class DarienOpModeTeleop extends DarienOpMode {
         }
     }
 
+    public void runVerticalSlideSystem() {
+
+        if (gamepad2.a) {
+            bucket.setPosition(bucketPlace);
+        } else {
+            bucket.setPosition(bucketPickup);
+        }
+    }
+
     public void runDriveSystem() {
         direction[0] = -gamepad1.left_stick_x;
         direction[1] = -gamepad1.left_stick_y;
