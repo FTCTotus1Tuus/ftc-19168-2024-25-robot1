@@ -32,6 +32,8 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public void runVerticalSlideSystem() {
 
+        verticalSlide.setPower(-gamepad2.left_stick_y);
+
         if (gamepad2.a) {
             bucket.setPosition(bucketPlace);
         } else {
@@ -42,7 +44,9 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public void runDriveSystem() {
         direction[0] = -gamepad1.left_stick_x;
         direction[1] = -gamepad1.left_stick_y;
-        rotation = -gamepad1.right_stick_x;
+        if (!gamepad1.left_bumper) {
+            rotation = -gamepad1.right_stick_x;
+        }
         turboBoost = gamepad1.left_stick_button;
 
         MoveRobot(direction, -rotation, turboBoost);

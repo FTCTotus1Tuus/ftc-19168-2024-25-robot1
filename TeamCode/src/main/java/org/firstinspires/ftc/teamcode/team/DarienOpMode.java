@@ -81,8 +81,9 @@ public class DarienOpMode extends LinearOpMode {
         omniMotor2.setDirection(DcMotor.Direction.FORWARD);
         omniMotor3.setDirection(DcMotor.Direction.REVERSE);
 
-        //verticalSlide = initializeMotor("verticalSlide");
-        //verticalSlide.setDirection(DcMotor.Direction.FORWARD);
+        verticalSlide = initializeMotor("verticalSlide");
+        verticalSlide.setDirection(DcMotor.Direction.REVERSE);
+        verticalSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // INITIALIZE SERVOS
         intakeSlide = hardwareMap.get(CRServo.class, "intakeSlide"); // CH port 3
