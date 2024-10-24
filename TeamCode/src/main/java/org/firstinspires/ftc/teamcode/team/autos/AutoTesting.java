@@ -25,7 +25,7 @@ public class AutoTesting extends DarienOpModeAuto {
 
         while(opModeIsActive()) {
             if (gamepad1.a) {
-                specimenWrist.setPosition(servoPosition);
+                bucketServo.setPosition(servoPosition);
             }
         }
 
