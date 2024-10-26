@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class DarienOpModeAuto extends DarienOpMode {
 
-
+    public double normalPower = 0.3;
 
     @Override
     public void initControls() {
@@ -22,7 +22,72 @@ public class DarienOpModeAuto extends DarienOpMode {
     }
 
 
+    public void moveArm(String where) {
+        switch (where) {
+            case "2nd bar above":
+                break;
+            case "2nd bar place":
+                break;
+            case "1st bar above":
+                break;
+            case "1st bar place":
+                break;
+            case "basket low":
+                break;
+            case "basket high":
+                break;
+            case "low":
+                break;
+            default:
+                break;
+        }
+    }
 
+    public void setSpecimenClaw(String position) {
+        switch(position) {
+            case "closed":
+                break;
+            case "open":
+                break;
+            default:
+                break;
+
+        }
+    }
+    public void setIntakeBucket(String position) {
+        switch (position) {
+            case "down":
+                break;
+            case "up":
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void setBasketPosition(String position) {
+        switch(position) {
+            case "carry":
+                break;
+            case "drop":
+                break;
+        }
+    }
+
+    public void startIntake(){
+
+    }
+
+    public void stopIntake() {
+
+    }
+
+    public void placeSampleInBucket() {
+
+    }
+    public boolean bucketSensorOn() {
+        return true;
+    }
 
     public void moveXY(double x, double y, double power) {
         resetEncoder();
@@ -141,6 +206,9 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void waitForMotors() {
         while (omniMotor0.isBusy() && omniMotor1.isBusy() && omniMotor2.isBusy() && omniMotor3.isBusy()) {
         }
+    }
+    public void waitForArm() {
+        while (armMotor.isBusy) {}
     }
 
     public double getErrorRot(double targetPosRot) {
