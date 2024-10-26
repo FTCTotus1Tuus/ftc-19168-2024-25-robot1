@@ -17,7 +17,8 @@ public class AutoTesting extends DarienOpModeAuto {
     public void runOpMode() {
         Servo bucketServo = hardwareMap.get(Servo.class, "bucket");
         Servo specimenWrist = hardwareMap.get(Servo.class, "specimenWrist");
-
+        Servo intakeWrist = hardwareMap.get(Servo.class, "intakeWrist");
+        Servo specimenClaw = hardwareMap.get(Servo.class, "specimenClaw");
         waitForStart();
 //        bucketServo.setPosition(0);
 
@@ -25,7 +26,7 @@ public class AutoTesting extends DarienOpModeAuto {
 
         while(opModeIsActive()) {
             if (gamepad1.a) {
-                specimenWrist.setPosition(servoPosition);
+                specimenClaw.setPosition(servoPosition);
             }
         }
 

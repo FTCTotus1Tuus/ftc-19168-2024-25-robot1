@@ -25,8 +25,16 @@ public class DarienOpModeTeleop extends DarienOpMode {
             intakeWheels.setPower(0);
         }
 
+
         if (gamepad1.left_bumper){
             intakeSlide.setPower(-gamepad1.right_stick_y);
+        }
+
+        if (gamepad1.right_bumper) {
+            intakeWrist.setPosition(intakeWristGroundPosition);
+        }
+        else {
+            intakeWrist.setPosition(iintakeWristUpPosition);
         }
     }
 
@@ -51,6 +59,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
         MoveRobot(direction, -rotation, turboBoost);
     }
+
 
     public void MoveRobot(double[] direction, double rotation, boolean turboBoost) {
 
