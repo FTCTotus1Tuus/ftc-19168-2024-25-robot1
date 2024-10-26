@@ -53,7 +53,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double specimenWristPickup = 0.79;
 
     public static double intakeWristGroundPosition = 0.6;
-    public static double iintakeWristUpPosition = 0.025;
+    public static double intakeWristUpPosition = 0.025;
 
     public static double specimenClawOpen = 0.82;
     public static double specimenClawClosed = 0.88;
@@ -93,6 +93,8 @@ public class DarienOpMode extends LinearOpMode {
         intakeSlide = hardwareMap.get(CRServo.class, "intakeSlide"); // CH port 3
         intakeWrist = hardwareMap.get(Servo.class, "intakeWrist"); // CH port 1
         intakeWheels = hardwareMap.get(CRServo.class, "intakeWheels"); // CH port 2
+        specimenClaw = hardwareMap.get(Servo.class, "specimenClaw");
+        specimenWrist = hardwareMap.get(Servo.class, "specimenWrist");
         bucket = hardwareMap.get(Servo.class, "bucket");
 
     }
