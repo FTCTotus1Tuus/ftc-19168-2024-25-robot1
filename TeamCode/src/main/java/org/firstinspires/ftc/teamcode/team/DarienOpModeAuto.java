@@ -1,14 +1,25 @@
 package org.firstinspires.ftc.teamcode.team;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 //import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+@Config
 public class DarienOpModeAuto extends DarienOpMode {
 
-    public double normalPower = 0.3;
+    public static double normalPower = 0.3;
+    public static double verticalSlidePower = 0.3;
+
+    //vertical slide positions
+    public static int barBelow2Pos;
+    public static int barPlace2Pos;
+    public static int barBelow1Pos;
+    public static int barPlace1Pos;
+    public static int basketLowPos = 2450;
+    public static int basketHighPos = 4380;
+    public static int armGroundPos = 0;
 
     @Override
     public void initControls() {
@@ -18,74 +29,103 @@ public class DarienOpModeAuto extends DarienOpMode {
         omniMotor2.setDirection(DcMotor.Direction.REVERSE);
         omniMotor3.setDirection(DcMotor.Direction.FORWARD);
 
+        verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        verticalSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // this is key
+
 
     }
 
 
-    public void moveArm(String where) {
+    public void setVerticalSlide(String where, double power) {
         switch (where) {
-            case "2nd bar above":
+            case "2nd bar below":
+                verticalSlide.setTargetPosition(barBelow2Pos);
                 break;
             case "2nd bar place":
+                verticalSlide.setTargetPosition(barPlace2Pos);
                 break;
-            case "1st bar above":
+            case "1st bar below":
+                verticalSlide.setTargetPosition(barBelow1Pos);
                 break;
             case "1st bar place":
+                verticalSlide.setTargetPosition(barPlace1Pos);
                 break;
             case "basket low":
+                verticalSlide.setTargetPosition(basketLowPos);
                 break;
             case "basket high":
+                verticalSlide.setTargetPosition(basketHighPos);
                 break;
             case "low":
+                verticalSlide.setTargetPosition(armGroundPos);
                 break;
             default:
                 break;
         }
+        verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        verticalSlide.setPower(power);
     }
 
     public void setSpecimenClaw(String position) {
         switch(position) {
             case "closed":
+                specimenClaw.setPosition(specimenClawClosed);
                 break;
             case "open":
+                specimenClaw.setPosition(specimenClawOpen);
                 break;
             default:
                 break;
 
         }
     }
-    public void setIntakeBucket(String position) {
+    public void setIntakeWrist(String position) {
         switch (position) {
             case "down":
+                intakeWrist.setPosition(intakeWristGroundPosition);
                 break;
             case "up":
+                intakeWrist.setPosition(intakeWristUpPosition);
                 break;
             default:
                 break;
         }
     }
 
-    public void setBasketPosition(String position) {
+    public void setBucketPosition(String position) {
         switch(position) {
             case "carry":
+                bucket.setPosition(bucketPickup);
                 break;
             case "drop":
+                bucket.setPosition(bucketPlace);
                 break;
         }
     }
 
     public void startIntake(){
-
+        intakeWheels.setPower(1);
     }
 
     public void stopIntake() {
+        intakeWheels.setPower(0);
+    }
 
+    public void reverseIntake() {
+        intakeWheels.setPower(-0.5);
     }
 
     public void placeSampleInBucket() {
+        intakeSlide.setPower(-0.5);
+        setIntakeWrist("up");
+        setBucketPosition("carry");
+        sleep(2000); // TODO change to set to how long for intake slide to go in
+        reverseIntake();
+        sleep(500);
+        stopIntake();
 
     }
-    public boolean bucketSensorOn() {
+    public boolean isIntakeSensorOn() {
         return true;
     }
 
@@ -208,7 +248,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         }
     }
     public void waitForArm() {
-        while (armMotor.isBusy) {}
+        while (verticalSlide.isBusy()) {}
     }
 
     public double getErrorRot(double targetPosRot) {

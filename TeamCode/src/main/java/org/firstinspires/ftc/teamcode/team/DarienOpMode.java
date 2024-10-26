@@ -50,7 +50,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double bucketPlace = 0.75;
 
     public static double specimenWristPlace = 0.13; // towards inside of robot - change name later?
-    public static double specimenWristPickup = 0.79;
+    public static double specimenWristPickup = 0.85;
 
     public static double intakeWristGroundPosition = 0.6;
     public static double intakeWristUpPosition = 0.025;

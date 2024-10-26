@@ -19,9 +19,9 @@ public class BasketSideAuto extends DarienOpModeAuto {
 
         //From start intake towards wall
         moveXY(0, -33, normalPower);
-        moveArm("2nd bar above");
+        setVerticalSlide("2nd bar below", verticalSlidePower);
         waitForMotors();
-        moveArm("2nd bar place");
+        setVerticalSlide("2nd bar place", verticalSlidePower);
         waitForArm();
         setSpecimenClaw("open");
 
@@ -33,24 +33,24 @@ public class BasketSideAuto extends DarienOpModeAuto {
         autoRotate(3*PI / 2, normalPower);
         moveXY(10, 0, normalPower); // at position to pick up sample
         waitForMotors();
-        setIntakeBucket("down");
+        setIntakeWrist("down");
         startIntake();
         moveXY(0, 10, 0.15);
-        while (!bucketSensorOn()) {}
+        while (!isIntakeSensorOn()) {}
         stopIntake();
         placeSampleInBucket();
         moveXY(-24, 0, normalPower);
         sleep(250);
-        moveArm("basket high");
+        setVerticalSlide("basket high", verticalSlidePower);
         waitForMotors();
         autoRotate(3*PI / 4, normalPower);
         moveXY(0,12, normalPower);
         waitForMotors();
-        setBasketPosition("drop");
+        setBucketPosition("drop");
         sleep(250);
-        setBasketPosition("carry");
+        setBucketPosition("carry");
         moveXY(0, -12, normalPower);
-        moveArm("low");
+        setVerticalSlide("low", verticalSlidePower);
 
 
     }
