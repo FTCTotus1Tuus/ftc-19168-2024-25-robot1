@@ -11,12 +11,13 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public static double normalPower = 0.3;
     public static double verticalSlidePower = 0.3;
+    public static double strafingInefficiencyFactor = 1.145;
 
     //vertical slide positions
     public static int barBelow2Pos;
     public static int barPlace2Pos;
     public static int barBelow1Pos;
-    public static int barPlace1Pos;
+    public static int barPlace1Pos = 2500; // TODO fix value random guess made in the delerium of exhaustion
     public static int basketLowPos = 2450;
     public static int basketHighPos = 4380;
     public static int armGroundPos = 0;
@@ -133,7 +134,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         resetEncoder();
 
         int adjY = (int) Math.floor((y * inchesToEncoder + 0.5));
-        int adjX = (int) Math.floor((x * inchesToEncoder + 0.5));
+        int adjX = (int) Math.floor((x * inchesToEncoder * strafingInefficiencyFactor + 0.5));
 
         omniMotor0.setTargetPosition(adjY+adjX);
         omniMotor1.setTargetPosition(adjY-adjX);
@@ -147,7 +148,6 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void autoRotate(double targetPosRadians, double power) {
         //direction counter clockwise is -1 clockwise is 1
         double timeoutS = 3;
-        rotationTolerance = PI/8;
 
 
         setToRotateRunMode();
@@ -165,9 +165,6 @@ public class DarienOpModeAuto extends DarienOpMode {
 
                 if (error<=rotationTolerance) {
                     isRotating = false;
-                } else if (getRuntime() - startTime > timeoutS) {
-                    isRotating = false;
-                    telemetry.addData("timeout","");
                 }
             }
         telemetry.addData("rotate end", "");
@@ -230,8 +227,8 @@ public class DarienOpModeAuto extends DarienOpMode {
 
 
     public void setRotatePower(double power, double direction) {
-        omniMotor0.setPower(relativePower(direction * power));
-        omniMotor1.setPower(relativePower(-direction * power));
+        omniMotor0.setPower(relativePower(-direction * power));
+        omniMotor1.setPower(relativePower(direction * power));
         omniMotor2.setPower(relativePower(-direction * power));
         omniMotor3.setPower(relativePower(direction * power));
     }
@@ -251,11 +248,21 @@ public class DarienOpModeAuto extends DarienOpMode {
         while (verticalSlide.isBusy()) {}
     }
 
+    public void setBreakpoint() {
+        while (!gamepad1.a) {}
+    }
+
     public double getErrorRot(double targetPosRot) {
         double errorBig = targetPosRot - getRawHeading();
         double errorSmol = targetPosRot - getRawHeading(false);
 
-        return Math.min(Math.abs(errorSmol), Math.abs(errorBig));
+//        if (Math.min(Math.abs(errorSmol), Math.abs(errorBig)) == Math.abs(errorSmol)) {
+//            return errorSmol;
+//        }
+//        else {
+//            return errorBig;
+//        }
+        return Math.min(Math.abs(errorSmol), Math.abs(errorBig)); // maybe multiply this by sign of the other
     }
 
 
@@ -265,7 +272,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         double tempRot = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         if (convertToTwoPi) {
             if (tempRot < 0) {
-                tempRot += Math.PI * 2;
+                tempRot += PI * 2;
             }
         }
         return tempRot;

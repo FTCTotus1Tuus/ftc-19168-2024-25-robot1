@@ -33,7 +33,7 @@ public class DarienOpMode extends LinearOpMode {
     public double wheelDiameter = 3.75; // inches
     public double constMult = (wheelDiameter * (Math.PI));
     public double inchesToEncoder = encoderResolution/ constMult;
-    public static double rotationTolerance = 5;
+    public static double rotationTolerance = 0.1;
     public static double power = 0.3;
     public static double PI = 3.1415;
 
