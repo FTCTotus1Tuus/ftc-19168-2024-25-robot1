@@ -9,15 +9,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class DarienOpModeAuto extends DarienOpMode {
 
-    public static double normalPower = 0.3;
-    public static double verticalSlidePower = 0.3;
+    public static double normalPower = 0.4;
+    public static double verticalSlidePower = 0.8;
     public static double strafingInefficiencyFactor = 1.145;
 
     //vertical slide positions
     public static int barBelow2Pos;
     public static int barPlace2Pos;
     public static int barBelow1Pos;
-    public static int barPlace1Pos = 2500; // TODO fix value random guess made in the delerium of exhaustion
+    public static int barPlace1Pos = 950; // TODO fix value random guess made in the delerium of exhaustion
     public static int basketLowPos = 2450;
     public static int basketHighPos = 4380;
     public static int armGroundPos = 0;

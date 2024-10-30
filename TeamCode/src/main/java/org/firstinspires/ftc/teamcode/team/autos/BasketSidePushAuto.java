@@ -10,9 +10,11 @@ public class BasketSidePushAuto extends DarienOpModeAuto {
         initControls();
 
         waitForStart();
-
-        setVerticalSlide("basket high", verticalSlidePower);
-        sleep(5500);
+        intakeSlide.setPower(-0.1);
+        setIntakeWrist("slightly up");
+        setBucketPosition("carry");
+        setVerticalSlide("basket high", 0.8);
+        sleep(1800);
         moveXY(0, -16, normalPower);
         waitForArm();
         waitForMotors();
@@ -20,39 +22,41 @@ public class BasketSidePushAuto extends DarienOpModeAuto {
         setBucketPosition("drop");
         sleep(1000);
         setBucketPosition("carry");
+        sleep(200);
 // sample number 1
-        moveXY(-36, 22.5, normalPower);
-        setVerticalSlide("low",verticalSlidePower);
-        waitForMotors();
-        moveXY(-15, 0, normalPower);
-        waitForMotors();
-        moveXY(0,-12, normalPower);
+        moveXY(-10, 21, normalPower);
+        sleep(200);
+        setVerticalSlide("low",0.3);
         waitForMotors();
         autoRotate(PI/2, normalPower);
-        moveXY(-6, -48, normalPower);
+        moveXY(0, 37, normalPower);
+        waitForMotors();
+        moveXY(-11,0, normalPower);
+        waitForMotors();
+        moveXY(-3, -46, normalPower);
         waitForMotors();
         // sample number 2
-        moveXY(10, 48, normalPower);
+        moveXY(3, 48, normalPower);
         waitForMotors();
-        autoRotate(PI/2, normalPower);
+//        autoRotate(PI/2, normalPower);
         moveXY(-13, 0, normalPower);
         waitForMotors();
-        moveXY(3, -48, normalPower);
+        moveXY(3, -47, 0.5);
         waitForMotors();
         // sample number 3
-        moveXY(5, 48, normalPower);
+        moveXY(1, 47, normalPower);
         waitForMotors();
-        autoRotate(PI/2, normalPower);
-        moveXY(-17, 0, normalPower); //untested change
+//        autoRotate(PI/2, normalPower);
+        moveXY(-12, 0, normalPower);
         waitForMotors();
-        moveXY(0, -50, normalPower);
+        moveXY(-1, -40, normalPower);
         waitForMotors();
         // start level 1 ascent
-        moveXY(0, 60, normalPower);
+        moveXY(0, 32, normalPower);
         waitForMotors();
         autoRotate(PI, normalPower);
-        setVerticalSlide("1st bar place", verticalSlidePower);
-        moveXY(0, -48, normalPower); //untested change
+        setVerticalSlide("1st bar place", 0.8);
+        moveXY(0, -44, normalPower);
         waitForMotors();
         waitForArm();
 
