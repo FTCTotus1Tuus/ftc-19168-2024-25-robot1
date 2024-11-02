@@ -14,6 +14,8 @@ public class DarienOpModeAuto extends DarienOpMode {
     public static double strafingInefficiencyFactor = 1.145;
 
     //vertical slide positions
+    public static int highChamberBelowPos = 2000;
+    public static int highChamberPlacePos = 2600;
     public static int barBelow2Pos;
     public static int barPlace2Pos;
     public static int barBelow1Pos;
@@ -39,6 +41,12 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public void setVerticalSlide(String where, double power) {
         switch (where) {
+            case "high chamber below":
+                verticalSlide.setTargetPosition(highChamberBelowPos);
+                break;
+            case "high chamber place":
+                verticalSlide.setTargetPosition(highChamberPlacePos);
+                break;
             case "2nd bar below":
                 verticalSlide.setTargetPosition(barBelow2Pos);
                 break;
@@ -74,6 +82,19 @@ public class DarienOpModeAuto extends DarienOpMode {
                 break;
             case "open":
                 specimenClaw.setPosition(specimenClawOpen);
+                break;
+            default:
+                break;
+
+        }
+    }
+    public void setSpecimenWrist(String position) {
+        switch(position) {
+            case "pickup":
+                specimenWrist.setPosition(specimenWristPickup);
+                break;
+            case "place":
+                specimenWrist.setPosition(specimenWristPlace);
                 break;
             default:
                 break;
