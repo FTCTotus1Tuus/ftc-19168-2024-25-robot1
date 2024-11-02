@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 @Autonomous
 public class AutoTesting extends DarienOpModeAuto {
 
-        public static double servoPosition = 0;
+    public static double servoPosition = 0;
 
     public void runOpMode() {
 //        Servo bucketServo = hardwareMap.get(Servo.class, "bucket");
@@ -26,14 +26,28 @@ public class AutoTesting extends DarienOpModeAuto {
 
 //        specimenWrist.setPosition(0);
 
-        while(opModeIsActive()) {
-            if (gamepad1.a) {setVerticalSlide("1nd bar below", verticalSlidePower);}
-            if (gamepad1.b) {setVerticalSlide("2nd bar place", verticalSlidePower);}
-            if (gamepad1.x) {setVerticalSlide("2nd bar below", verticalSlidePower);}
-            if (gamepad1.y) {setVerticalSlide("1st bar place", verticalSlidePower);}
-            if (gamepad1.dpad_down) {setVerticalSlide("low", verticalSlidePower);}
-            if (gamepad1.dpad_left) {setVerticalSlide("basket low", verticalSlidePower);}
-            if (gamepad1.dpad_right) {setVerticalSlide("basket high", verticalSlidePower);}
+        while (opModeIsActive()) {
+            if (gamepad1.a) {
+                setVerticalSlide("1st bar below", verticalSlidePower);
+            }
+            if (gamepad1.b) {
+                setVerticalSlide("1st bar place", verticalSlidePower);
+            }
+            if (gamepad1.x) {
+                setVerticalSlide("2nd bar below", verticalSlidePower);
+            }
+            if (gamepad1.y) {
+                setVerticalSlide("2nd bar place", verticalSlidePower);
+            }
+            if (gamepad1.dpad_down) {
+                setVerticalSlide("low", verticalSlidePower);
+            }
+            if (gamepad1.dpad_left) {
+                setVerticalSlide("basket low", verticalSlidePower);
+            }
+            if (gamepad1.dpad_right) {
+                setVerticalSlide("basket high", verticalSlidePower);
+            }
         }
 
     }
