@@ -29,12 +29,15 @@ public class DarienOpMode extends LinearOpMode {
     public Servo specimenClaw;
 
     // HARDWARE FIXED CONSTANTS
-    public static double encoderResolution = 537.7 ; //no change unless we change motors
+    public static double encoderResolution = 537.7; //no change unless we change motors
     public double wheelDiameter = 3.75; // inches
     public double constMult = (wheelDiameter * (Math.PI));
-    public double inchesToEncoder = encoderResolution/ constMult;
+    public double inchesToEncoder = encoderResolution / constMult;
     public static double rotationTolerance = 0.1;
     public static double power = 0.3;
+    public static double powerIntakeWheelToPickupSample = 0.8;
+    public static double powerIntakeWheelToEjectSample = -0.3;
+    public static double powerIntakeSlideIn = -0.45;
     public static double PI = 3.1415;
 
     // HARDWARE TUNING CONSTANTS
@@ -50,7 +53,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double bucketPlace = 0.75;
 
     public static double specimenWristPlace = 0.13; // towards inside of robot - change name later?
-    public static double specimenWristPickup = 0.85;
+    public static double specimenWristPickup = 0.82;
 
     public static double intakeWristGroundPosition = 0.6;
     public static double intakeWristUpPosition = 0.025;
@@ -59,7 +62,8 @@ public class DarienOpMode extends LinearOpMode {
     public static double specimenClawClosed = 0.88;
 
     @Override
-    public void runOpMode() throws InterruptedException {}
+    public void runOpMode() throws InterruptedException {
+    }
 
     public void initControls() {
         //isAuto: true=auto false=teleop
@@ -67,8 +71,8 @@ public class DarienOpMode extends LinearOpMode {
         imu.initialize(
                 new IMU.Parameters(
                         new RevHubOrientationOnRobot(
-                                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                                RevHubOrientationOnRobot.UsbFacingDirection.UP
+                                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
                         )
                 )
         );
@@ -99,24 +103,22 @@ public class DarienOpMode extends LinearOpMode {
 
     }
 
-    public double getVoltage () {
+    public double getVoltage() {
         return (hardwareMap.voltageSensor.iterator().next().getVoltage());
     }
 
-    public void print (String Name, Object message)
-    {
+    public void print(String Name, Object message) {
         //saves a line for quick debug messages
         telemetry.addData(Name, message);
         telemetry.update();
     }
 
-    public double relativePower ( double intended_power)
-    {
+    public double relativePower(double intended_power) {
         //makes sure the power going to the motors is constant over battery life
         return (13 * intended_power) / getVoltage();
     }
 
-    public DcMotor initializeMotor (String name){
+    public DcMotor initializeMotor(String name) {
          /*This is just a handy dandy function which saves a few lines and looks cool,
          it initializes the motor and it also initializers the motor power logs for this motor*/
         DcMotor motor = hardwareMap.get(DcMotor.class, name);

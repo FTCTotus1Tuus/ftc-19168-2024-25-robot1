@@ -9,38 +9,50 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public double[] direction = {0.0, 0.0};
     public double rotation;
+
     /**
-     *  If the GP1 left bumper is pressed, spin the boot wheels in if the joystick is pulled down or spin the boot wheels out if the joystick is pushed up.
+     * If the GP1 left bumper is pressed, spin the boot wheels in if the joystick is pulled down or spin the boot wheels out if the joystick is pushed up.
      */
     public void runIntakeSystem() {
 
+        // CONTROL: INTAKE WHEELS
         if (gamepad1.right_bumper) {
             print("INTAKE", "Load sample");
-            intakeWheels.setPower(1);
+            intakeWheels.setPower(powerIntakeWheelToPickupSample);
         } else if (gamepad1.x) {
             print("INTAKE", "Eject sample");
-            intakeWheels.setPower(-0.5);
-        } else if (intakeWheels.getPower() == -0.5 && !gamepad1.x){
+            intakeWheels.setPower(powerIntakeWheelToEjectSample);
+        } else if (!gamepad1.x) {
             // Stop
             intakeWheels.setPower(0);
         }
 
-
-        if (gamepad1.left_bumper){
+        // CONTROL: INTAKE SLIDE
+        if (gamepad1.left_bumper) {
+            // Control the intake slide with the right stick if and only if the left bumper is pressed.
             intakeSlide.setPower(-gamepad1.right_stick_y);
         } else if (gamepad1.a) {
-            intakeSlide.setPower(-0.5);
+            // Pull the intake slide IN only for a few seconds to avoid running the servo continuously and burning it out.
+            intakeSlide.setPower(powerIntakeSlideIn);
+
+            /* TODO: This code causes the robot to freeze when button A is pressed. Needs fixing.
+            double durationSecondsIntakeSlideIn = 4;
+            double startTime = getRuntime();
+            while ((getRuntime() - startTime) < durationSecondsIntakeSlideIn) {
+                intakeSlide.setPower(powerIntakeSlideIn);
+            }
+             */
         }
 
         if (gamepad1.right_bumper) {
             intakeWrist.setPosition(intakeWristGroundPosition);
-        }
-        else if (gamepad1.a){
+        } else if (gamepad1.a) {
+            intakeWheels.setPower(0);
             intakeWrist.setPosition(intakeWristUpPosition);
         }
 
 
-        intakeWrist.setPosition(intakeWrist.getPosition() - gamepad1.right_trigger/5);
+        intakeWrist.setPosition(intakeWrist.getPosition() - gamepad1.right_trigger / 5);
     }
 
     public void runVerticalSlideSystem() {
@@ -61,16 +73,14 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public void runSpecimenSystem() {
 
         if (-gamepad2.right_stick_y > 0.5) {
-            specimenWrist.setPosition(specimenWristPickup);
-        }
-        else if (-gamepad2.right_stick_y < -0.5) {
             specimenWrist.setPosition(specimenWristPlace);
+        } else if (-gamepad2.right_stick_y < -0.5) {
+            specimenWrist.setPosition(specimenWristPickup);
         }
 
         if (gamepad2.right_trigger > 0.5) {
             specimenClaw.setPosition(specimenClawOpen);
-        }
-        else {
+        } else {
             specimenClaw.setPosition(specimenClawClosed);
         }
 
@@ -109,13 +119,13 @@ public class DarienOpModeTeleop extends DarienOpMode {
         MoveMotor(omniMotor3, wheel3 / divBy);
     }
 
-    public void MoveMotor (DcMotor motor,double power){
+    public void MoveMotor(DcMotor motor, double power) {
          /*This function just moves the motors and updates the
          logs for replay*/
         motor.setPower(power);
     }
 
-    public static double clamp ( double val, double min, double max){
+    public static double clamp(double val, double min, double max) {
         return Math.max(min, Math.min(max, val));
     }
 

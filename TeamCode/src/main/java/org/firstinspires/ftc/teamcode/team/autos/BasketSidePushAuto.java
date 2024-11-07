@@ -26,12 +26,13 @@ public class BasketSidePushAuto extends DarienOpModeAuto {
 // sample number 1
         moveXY(-10, 21, normalPower);
         sleep(200);
-        setVerticalSlide("low",0.3);
+        setVerticalSlide("low", 0.3);
         waitForMotors();
-        autoRotate(PI/2, normalPower);
+        encoderRotate(PI / 2, normalPower, false);
+        waitForMotors();
         moveXY(0, 37, normalPower);
         waitForMotors();
-        moveXY(-11,0, normalPower);
+        moveXY(-11, 0, normalPower);
         waitForMotors();
         moveXY(-3, -46, normalPower);
         waitForMotors();
@@ -44,22 +45,22 @@ public class BasketSidePushAuto extends DarienOpModeAuto {
         moveXY(3, -47, 0.5);
         waitForMotors();
         // sample number 3
-        moveXY(1, 47, normalPower);
-        waitForMotors();
-//        autoRotate(PI/2, normalPower);
-        moveXY(-12, 0, normalPower);
-        waitForMotors();
-        moveXY(-1, -40, normalPower);
-        waitForMotors();
+//        moveXY(1, 47, normalPower);
+//        waitForMotors();
+////        autoRotate(PI/2, normalPower);
+//        moveXY(-12, 0, normalPower);
+//        waitForMotors();
+//        moveXY(-1, -40, normalPower);
+//        waitForMotors();
         // start level 1 ascent
-        moveXY(0, 32, normalPower);
+        moveXY(0, 48, normalPower); // untested
         waitForMotors();
-        autoRotate(PI, normalPower);
+        encoderRotate(PI / 2, normalPower, false);
+        waitForMotors();
         setVerticalSlide("1st bar place", 0.8);
         moveXY(0, -44, normalPower);
         waitForMotors();
         waitForArm();
-
 
 
     }
