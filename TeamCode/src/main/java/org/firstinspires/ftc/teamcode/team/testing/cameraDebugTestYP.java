@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.team.testing;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,6 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @TeleOp
+@Disabled
 public class cameraDebugTestYP extends LinearOpMode {
 
 
@@ -21,17 +23,15 @@ public class cameraDebugTestYP extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         ypppDebug = new ypppDebug();
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 camera.setPipeline(ypppDebug);
             }
+
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
                 telemetry.addData("error openCv", errorCode);
             }
         });
@@ -39,11 +39,14 @@ public class cameraDebugTestYP extends LinearOpMode {
 
         waitForStart();
 
-            if (opModeIsActive()) {
-                while (opModeIsActive()) {
-                    telemetry.addData("cound", getRuntime());
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
+                telemetry.addData("cound", getRuntime());
 
-                    telemetry.addData("Partisian", ypppDebug.getLastResults());
-                    telemetry.update();
+                telemetry.addData("Partisian", ypppDebug.getLastResults());
+                telemetry.update();
 
-                }}}}
+            }
+        }
+    }
+}

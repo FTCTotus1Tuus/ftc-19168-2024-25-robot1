@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.team.testing;
 import android.graphics.Canvas;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -12,9 +13,10 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
+@Disabled
 public
 class ypppDebug extends OpenCvPipeline {
-    public static int minHue = 0, minSaturation = 60, minValue = 200 , maxHue = 256, maxSaturation = 260, maxValue = 256  ;
+    public static int minHue = 0, minSaturation = 60, minValue = 200, maxHue = 256, maxSaturation = 260, maxValue = 256;
 
     int frameWidth, frameHeight;
 
@@ -27,13 +29,13 @@ class ypppDebug extends OpenCvPipeline {
     boolean lastResults;
 
 
-    public ypppDebug() {}
+    public ypppDebug() {
+    }
 
 
     public boolean getLastResults() {
         return lastResults;
     }
-
 
 
     @Override
@@ -58,7 +60,7 @@ class ypppDebug extends OpenCvPipeline {
         rightCount = Core.countNonZero(mask2);
 
 
-        lastResults = (leftCount>rightCount); // true is left false is right
+        lastResults = (leftCount > rightCount); // true is left false is right
 
         workingMat1.release();
         workingMat2.release();
@@ -68,11 +70,12 @@ class ypppDebug extends OpenCvPipeline {
 
 
 //        return frame;
-            return workingMat3.adjustROI(0,0,frameWidth,frameHeight);
+        return workingMat3.adjustROI(0, 0, frameWidth, frameHeight);
 //        }
     }
 
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
 
-    }}
+    }
+}

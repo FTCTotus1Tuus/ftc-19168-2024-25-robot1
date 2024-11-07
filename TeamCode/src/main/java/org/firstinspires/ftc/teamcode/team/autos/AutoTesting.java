@@ -4,10 +4,12 @@ import androidx.collection.CircularArray;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
+@Disabled
 @Config
 @Autonomous
 public class AutoTesting extends DarienOpModeAuto {

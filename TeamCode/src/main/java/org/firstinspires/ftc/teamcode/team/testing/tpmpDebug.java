@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.team.testing;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -15,10 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @Config
-class tpmpDebug extends OpenCvPipeline
-{
-    public static int minHueR = 0, minSaturationR = 40, minValueR = 0 , maxHueR = 10, maxSaturationR = 260, maxValueR = 300,
-            minHueB = 70, minSaturationB = 100, minValueB = 0 , maxHueB = 117, maxSaturationB = 260, maxValueB = 300,
+@Disabled
+class tpmpDebug extends OpenCvPipeline {
+    public static int minHueR = 0, minSaturationR = 40, minValueR = 0, maxHueR = 10, maxSaturationR = 260, maxValueR = 300,
+            minHueB = 70, minSaturationB = 100, minValueB = 0, maxHueB = 117, maxSaturationB = 260, maxValueB = 300,
 
     lastResults = 1, frameWidth, frameHeight;
     int minHue, minSaturation, minValue, maxHue, maxSaturation, maxValue;
@@ -32,6 +33,7 @@ class tpmpDebug extends OpenCvPipeline
         // true = blue false = red
         setColour(isBlue);
     }
+
     public void setColour(boolean isBlue) {
         // true = blue false = red
         if (isBlue) {
@@ -50,6 +52,7 @@ class tpmpDebug extends OpenCvPipeline
             maxValue = maxValueR;
         }
     }
+
     @Override
     public Mat processFrame(Mat input) {
 
@@ -92,9 +95,13 @@ class tpmpDebug extends OpenCvPipeline
 
 
 //             You can now use the average values to determine the object's position
-        if (avgFirstThird > avgSecondThird && avgFirstThird > avgThirdThird) {lastResults = 1;}
-        else if (avgSecondThird > avgFirstThird && avgSecondThird > avgThirdThird) {lastResults = 2;}
-        else { lastResults = 3;}
+        if (avgFirstThird > avgSecondThird && avgFirstThird > avgThirdThird) {
+            lastResults = 1;
+        } else if (avgSecondThird > avgFirstThird && avgSecondThird > avgThirdThird) {
+            lastResults = 2;
+        } else {
+            lastResults = 3;
+        }
 
 
 //            if (maskSel == 2) {
@@ -102,7 +109,7 @@ class tpmpDebug extends OpenCvPipeline
 //            } else if (maskSel == 1) {
 //                return mask1;
 //            }else {
-        return workingMat3.adjustROI(0,0,frameWidth,frameHeight);
+        return workingMat3.adjustROI(0, 0, frameWidth, frameHeight);
 //        }
     }
 

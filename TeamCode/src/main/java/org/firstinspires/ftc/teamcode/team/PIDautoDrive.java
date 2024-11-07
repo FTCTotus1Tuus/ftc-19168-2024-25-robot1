@@ -24,6 +24,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -34,9 +35,10 @@ import java.util.List;
 
 @Config
 @Autonomous
+@Disabled
 public class PIDautoDrive extends DarienOpMode {
 
-    public static double encoderResolution = 537.7 ; //no change unless we change motors
+    public static double encoderResolution = 537.7; //no change unless we change motors
     public static double wheelDiameter = 3.75; // inches
     public static double constMult = (wheelDiameter * (Math.PI));
     public static double numberOfWheels = 4;
@@ -57,18 +59,17 @@ public class PIDautoDrive extends DarienOpMode {
     public static double speed = 0.05;
     public List<Double> command;
     public double currentRotation = 0;
-        // command numbers
-            // type, modifiers
-            // movement: x y start time end time
+    // command numbers
+    // type, modifiers
+    // movement: x y start time end time
     public static double movementSpeed = 0.02;
     public static double rotError = 10;
 
 
-        // 0 = movement, 1 = wait, 2 = do action
+    // 0 = movement, 1 = wait, 2 = do action
 
     TelemetryPacket tp;
     FtcDashboard dash;
-
 
 
     @Override
@@ -78,7 +79,7 @@ public class PIDautoDrive extends DarienOpMode {
         dash = FtcDashboard.getInstance();
         waitForStart();
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
 
             startXYMovement(24, 0, movementSpeed);
 
@@ -89,11 +90,12 @@ public class PIDautoDrive extends DarienOpMode {
             doXYmovement();
         }
 
-        while(opModeIsActive()) {}
+        while (opModeIsActive()) {
+        }
 
     }
 
-    public void init_wheel(){
+    public void init_wheel() {
         wheel0 = hardwareMap.get(DcMotor.class, "omniMotor0");
         wheel1 = hardwareMap.get(DcMotor.class, "omniMotor1");
         wheel2 = hardwareMap.get(DcMotor.class, "omniMotor2");
@@ -106,7 +108,6 @@ public class PIDautoDrive extends DarienOpMode {
         wheel1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheel2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheel3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -143,7 +144,7 @@ public class PIDautoDrive extends DarienOpMode {
         resetEncoderPositions();
     }
 
-    public void doXYmovement(){
+    public void doXYmovement() {
         boolean isMoving = true;
         lastTime = this.time;
         timeStep = this.time - lastTime;
@@ -193,6 +194,7 @@ public class PIDautoDrive extends DarienOpMode {
 
         }
     }
+
     public void doPidRotation(double speed) {
         boolean isRotating = true;
         while (isRotating) {
@@ -259,31 +261,28 @@ public class PIDautoDrive extends DarienOpMode {
 
     }
 
-    public double[] scalePower ( double motorPower0, double motorPower1, double motorPower2, double motorPower3)
-    {
-        double maxPower = Math.max(Math.max(Math.abs(motorPower0),Math.abs(motorPower1)),Math.max(Math.abs(motorPower2), Math.abs(motorPower3)));
-        if (maxPower>1){
+    public double[] scalePower(double motorPower0, double motorPower1, double motorPower2, double motorPower3) {
+        double maxPower = Math.max(Math.max(Math.abs(motorPower0), Math.abs(motorPower1)), Math.max(Math.abs(motorPower2), Math.abs(motorPower3)));
+        if (maxPower > 1) {
             motorPower0 /= maxPower;
             motorPower1 /= maxPower;
             motorPower2 /= maxPower;
             motorPower3 /= maxPower;
         }
         double[] returnPower = new double[]{
-                motorPower0,motorPower1,motorPower2,motorPower3
-    };
+                motorPower0, motorPower1, motorPower2, motorPower3
+        };
         return returnPower;
     }
 
 
-    public double relativePower ( double intended_power)
-    {
+    public double relativePower(double intended_power) {
         //makes sure the power going to the motors is constant over battery life
         return (13 * intended_power) / getVoltage();
     }
 
 
-
-    public double getRawHeading (boolean convertToTwoPi) {
+    public double getRawHeading(boolean convertToTwoPi) {
 
 
         double tempRot = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);

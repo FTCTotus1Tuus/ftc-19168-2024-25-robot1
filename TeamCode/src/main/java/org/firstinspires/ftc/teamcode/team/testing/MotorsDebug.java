@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.team.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 @TeleOp
+@Disabled
 public class MotorsDebug extends DarienOpModeAuto {
 
     public void runOpMode() {
@@ -14,5 +16,7 @@ public class MotorsDebug extends DarienOpModeAuto {
         //while (arm.isBusy()) {}
         //setArmPosition(0, 0.1);
         while (opModeIsActive()) {
-    //print("arm Encoder", arm.getCurrentPosition());
-}}}
+            //print("arm Encoder", arm.getCurrentPosition());
+        }
+    }
+}

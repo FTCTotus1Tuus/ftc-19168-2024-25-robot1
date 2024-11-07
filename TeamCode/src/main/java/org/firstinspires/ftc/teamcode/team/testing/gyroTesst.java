@@ -14,9 +14,11 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 //@Disabled
 @TeleOp
 @Config
+@Disabled
 public class gyroTesst extends DarienOpModeAuto {
 
     public static int rotationAmount;
+
     public void runOpMode() {
 
         initControls();
@@ -24,14 +26,14 @@ public class gyroTesst extends DarienOpModeAuto {
 
         waitForStart();
 
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
             telemetry.addData("", imu.getRobotYawPitchRollAngles());
             print("", getRuntime());
 //            if (gamepad1.a) {
 //                AutoRotate(rotationAmount, 0.3, 0);
 //            }
         }
-}
+    }
 
 }
 

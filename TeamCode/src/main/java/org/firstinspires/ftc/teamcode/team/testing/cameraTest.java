@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.team.testing;
 
 
 /* import com.qualcomm.robotcore.eventloop.opmode.Disabled; */
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.PtzControl;
@@ -28,6 +31,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp
+@Disabled
 public class cameraTest extends DarienOpModeAuto {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -36,7 +40,6 @@ public class cameraTest extends DarienOpModeAuto {
      * The variable to store our instance of the AprilTag processor.
      */
     private AprilTagProcessor aprilTag;
-
 
 
     /**

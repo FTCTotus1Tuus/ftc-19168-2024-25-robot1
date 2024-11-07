@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.team.autos;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 @Autonomous
+@Disabled
 public class BasketSideAuto extends DarienOpModeAuto {
 
     public void runOpMode() {
@@ -30,21 +32,22 @@ public class BasketSideAuto extends DarienOpModeAuto {
         waitForMotors();
         moveXY(26, 0, normalPower);
         waitForMotors();
-        autoRotate(3*PI / 2, normalPower);
+        autoRotate(3 * PI / 2, normalPower);
         moveXY(10, 0, normalPower); // at position to pick up sample
         waitForMotors();
         setIntakeWrist("down");
         startIntake();
         moveXY(0, 10, 0.15);
-        while (!isIntakeSensorOn()) {}
+        while (!isIntakeSensorOn()) {
+        }
         stopIntake();
         placeSampleInBucket();
         moveXY(-24, 0, normalPower);
         sleep(250);
         setVerticalSlide("basket high", verticalSlidePower);
         waitForMotors();
-        autoRotate(3*PI / 4, normalPower);
-        moveXY(0,12, normalPower);
+        autoRotate(3 * PI / 4, normalPower);
+        moveXY(0, 12, normalPower);
         waitForMotors();
         setBucketPosition("drop");
         sleep(250);
