@@ -51,7 +51,7 @@ public class ObservationSidePushAuto extends DarienOpModeAuto {
         waitForMotors();
         moveXY(9, 0, normalPower);
         waitForMotors();
-        moveXY(0, -45, normalPower);
+        moveXY(0, -48, normalPower);
         waitForMotors();
         //park
         moveXY(0, 1, normalPower);

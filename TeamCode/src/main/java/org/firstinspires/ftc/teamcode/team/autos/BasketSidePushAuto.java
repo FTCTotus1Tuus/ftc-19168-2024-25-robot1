@@ -15,7 +15,7 @@ public class BasketSidePushAuto extends DarienOpModeAuto {
         setBucketPosition("carry");
         setVerticalSlide("basket high", 0.8);
         sleep(1800);
-        moveXY(0, -16, normalPower);
+        moveXY(-3, -16, normalPower);
         waitForArm();
         waitForMotors();
 
