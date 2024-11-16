@@ -19,13 +19,13 @@ public class DarienOpModeTeleop extends DarienOpMode {
         if (gamepad1.right_bumper) {
             print("INTAKE", "Load sample");
             intakeWheels.setPower(powerIntakeWheelToPickupSample);
-        } else if (gamepad1.x) {
+       /* } else if (gamepad1.x) {
             print("INTAKE", "Eject sample");
-            intakeWheels.setPower(powerIntakeWheelToEjectSample);
+            intakeWheels.setPower(powerIntakeWheelToEjectSample);*/
         } else if (!gamepad1.x) {
             // Stop
             intakeWheels.setPower(0);
-        }
+        } intakeWheels.setPower(-gamepad1.left_trigger / 2);
 
         // CONTROL: INTAKE SLIDE
         if (gamepad1.left_bumper) {
