@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.team;
 
 import com.acmerobotics.dashboard.config.Config;
-//import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-//import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -21,7 +21,7 @@ public class DarienOpMode extends LinearOpMode {
     public DcMotor omniMotor2; // left rear
     public DcMotor omniMotor3; // right rear
     public DcMotor verticalSlide;
-    //public IMU imu;
+    public IMU imu;
     public CRServo intakeSlide;
     public Servo intakeWrist;
     public CRServo intakeWheels;
@@ -72,8 +72,7 @@ public class DarienOpMode extends LinearOpMode {
     }
 
     public void initControls() {
-        // We're not using the imu on the REV Control Hub
-        /*
+        //isAuto: true=auto false=teleop
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(
                 new IMU.Parameters(
@@ -84,7 +83,6 @@ public class DarienOpMode extends LinearOpMode {
                 )
         );
         imu.resetYaw();
-        */
 
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         configureOtos();
