@@ -57,14 +57,15 @@ public class DarienOpMode extends LinearOpMode {
     public static double bucketPickup = 0.95;
     public static double bucketPlace = 0.75;
 
-    public static double specimenWristPlace = 0.13; // towards inside of robot - change name later?
+    public static double specimenWristPlace = 0.20; // towards inside of robot - change name later?
     public static double specimenWristPickup = 0.82;
 
     public static double intakeWristGroundPosition = 0.6;
     public static double intakeWristUpPosition = 0.025;
 
+    // calibrated for torque servo
     public static double specimenClawOpen = 0.82;
-    public static double specimenClawClosed = 0.88;
+    public static double specimenClawClosed = 0.91;
 
     @Override
     public void runOpMode() throws InterruptedException {
