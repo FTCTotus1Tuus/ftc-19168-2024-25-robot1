@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -25,8 +27,8 @@ public class DarienOpMode extends LinearOpMode {
     public CRServo intakeSlide;
     public Servo intakeWrist;
     public CRServo intakeWheels;
-    //public ColorSensor intakeColorSensor;
-    //public TouchSensor intakeWristTouchSensor;
+    public ColorSensor intakeColorSensor;
+    public TouchSensor intakeWristTouchSensor;
     public Servo bucket;
     public Servo cameraWrist;
     public Servo specimenWrist;
@@ -72,7 +74,12 @@ public class DarienOpMode extends LinearOpMode {
     }
 
     public void initControls() {
-        //isAuto: true=auto false=teleop
+
+        // INITIALIZE SENSORS
+        intakeColorSensor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
+        intakeWristTouchSensor = hardwareMap.get(TouchSensor.class, "intakeWristTouchSensor");
+
+        // Initialize IMU on the REV Control Hub
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(
                 new IMU.Parameters(
@@ -84,6 +91,7 @@ public class DarienOpMode extends LinearOpMode {
         );
         imu.resetYaw();
 
+        // Initialize the SparkFun Odometry Tracking Optical Sensor (OTOS), which includes an IMU.
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         configureOtos();
 
@@ -103,12 +111,13 @@ public class DarienOpMode extends LinearOpMode {
         verticalSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // INITIALIZE SERVOS
-        intakeSlide = hardwareMap.get(CRServo.class, "intakeSlide"); // CH port 3
+        intakeSlide = hardwareMap.get(CRServo.class, "intakeSlide"); // Expansion Hub port 0
+        //cameraWrist = hardwareMap.get(Servo.class, "cameraWrist"); // CH port 0
         intakeWrist = hardwareMap.get(Servo.class, "intakeWrist"); // CH port 1
         intakeWheels = hardwareMap.get(CRServo.class, "intakeWheels"); // CH port 2
-        specimenClaw = hardwareMap.get(Servo.class, "specimenClaw");
-        specimenWrist = hardwareMap.get(Servo.class, "specimenWrist");
-        bucket = hardwareMap.get(Servo.class, "bucket");
+        specimenClaw = hardwareMap.get(Servo.class, "specimenClaw"); // CH port 4
+        specimenWrist = hardwareMap.get(Servo.class, "specimenWrist"); // CH port 5
+        bucket = hardwareMap.get(Servo.class, "bucket"); // CH port 3
 
     }
 
