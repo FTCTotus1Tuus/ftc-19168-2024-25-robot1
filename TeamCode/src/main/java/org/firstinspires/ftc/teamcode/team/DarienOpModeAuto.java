@@ -24,6 +24,10 @@ public class DarienOpModeAuto extends DarienOpMode {
     public static int basketHighPos = 4380;
     public static int armGroundPos = 0;
 
+    //encoder movement targets
+    public double targetPosX = 0;
+    public double targetPosY = 0;
+
     public double specimenWristUp = 0.48;
 
     public double currentPosition = 0;
@@ -162,6 +166,33 @@ public class DarienOpModeAuto extends DarienOpMode {
         return true;
     }
 
+    public void moveToPosition(double x, double y, double power) {
+        double errorX = x - getXPos();
+        double errorY = y - getYPos();
+        targetPosX = x;
+        targetPosY = y;
+        moveXY(double x, double y, double power);
+    }
+
+    public boolean updateXYMovement() {
+        errorX = targetPosX - getXPos();
+        errorY = targetPosY - getYPos();
+
+        if (Math.sqrt(Math.pow(errorX, 2) + Math.Pow(errorY, 2)) < acceptableXYError) {
+            return true
+        }
+    
+        int adjY = (int) Math.floor((y * inchesToEncoder + 0.5));
+        int adjX = (int) Math.floor((x * inchesToEncoder * strafingInefficiencyFactor + 0.5));
+
+        omniMotor0.setTargetPosition(adjY + adjX);
+        omniMotor1.setTargetPosition(adjY - adjX);
+        omniMotor2.setTargetPosition(adjY - adjX);
+        omniMotor3.setTargetPosition(adjY + adjX);
+
+        return false;
+    }
+
     public void moveXY(double x, double y, double power) {
         resetEncoder();
 
@@ -198,25 +229,21 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public void autoRotate(double targetPosRadians, double power) {
         //direction counter clockwise is -1 clockwise is 1
-        double timeoutS = 3;
-
-
+    
         setToRotateRunMode();
-
-        double error;
-        boolean isRotating = true;
-        double startTime = getRuntime();
+        
+        double isRotating = true;
         double direction = Math.signum(getErrorRot(targetPosRadians));
         setRotatePower(power, direction);
         while (isRotating) {
             error = getErrorRot(targetPosRadians);
-            telemetry.addData("heading ", getRawHeading());
-            telemetry.addData("error ", error);
-            print("power", power);
 
             if (error <= rotationTolerance) {
                 isRotating = false;
             }
+
+            double direction = Math.signum(getErrorRot(targetPosRadians));
+            setRotatePower(power, direction);
         }
         telemetry.addData("rotate end", "");
         telemetry.update();
@@ -298,6 +325,13 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public void waitForMotors() {
         while (omniMotor0.isBusy() && omniMotor1.isBusy() && omniMotor2.isBusy() && omniMotor3.isBusy()) {
+            if (updateXYMovement()) {
+                return;
+            }
+        }
+    }
+    public void waitForMotors(boolean usingJustEncoders) {
+        while (omniMotor0.isBusy() && omniMotor1.isBusy() && omniMotor2.isBusy() && omniMotor3.isBusy()) {
         }
     }
 
@@ -312,32 +346,16 @@ public class DarienOpModeAuto extends DarienOpMode {
     }
 
     public double getErrorRot(double targetPosRot) {
-        double errorBig = targetPosRot - getRawHeading();
-        double errorSmol = targetPosRot - getRawHeading(false);
-
-//        if (Math.min(Math.abs(errorSmol), Math.abs(errorBig)) == Math.abs(errorSmol)) {
-//            return errorSmol;
-//        }
-//        else {
-//            return errorBig;
-//        }
-        return Math.min(Math.abs(errorSmol), Math.abs(errorBig)); // maybe multiply this by sign of the other
+        // pos is clockwwise neg is counterclockwise
+        return ((targetPosRot - getRawHeading())+180) % 360 - 180;
     }
 
 
     public double getRawHeading(boolean convertToTwoPi) {
 
 
-        double tempRot = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        if (convertToTwoPi) {
-            if (tempRot < 0) {
-                tempRot += PI * 2;
-            }
-        }
-        return tempRot;
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        
     }
 
-    public double getRawHeading() {
-        return getRawHeading(true);
-    }
 }
