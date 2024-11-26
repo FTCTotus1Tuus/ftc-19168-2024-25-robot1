@@ -18,7 +18,7 @@ public class ObservationSidePushAuto extends DarienOpModeAuto {
         waitForMotors();
         waitForArm();
 
-        // place specimen on high chamber
+        // place specimen 1 on high chamber
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
         // release the specimen and move the specimenWrist away to avoid hitting the submersible when strafing.
@@ -28,6 +28,19 @@ public class ObservationSidePushAuto extends DarienOpModeAuto {
         moveXY(0, -5, normalPower);
         waitForMotors();
         setSpecimenWrist("place");
+        // specimen 2
+        moveXY(normalPower);
+        setSpecimenWrist("pickup");
+        setSpecimenClaw("open");
+        waitForMotors();
+        setSpecimenClaw("closed");
+        moveXY(normalPower);
+        setSpecimenWrist("place");
+        setVerticalSlide("high chamber place", verticalSlidePower);
+        moveXY(normalPower);
+        waitForMotors();
+        waitForArm();
+
 
         // push samples to observation zone
         // sample 1
@@ -46,7 +59,7 @@ public class ObservationSidePushAuto extends DarienOpModeAuto {
         waitForMotors();
         moveXY(0, -45, normalPower);
         waitForMotors();
-        //sampe 3
+        //sample 3
         moveXY(0, 45, normalPower);
         waitForMotors();
         moveXY(9, 0, normalPower);
