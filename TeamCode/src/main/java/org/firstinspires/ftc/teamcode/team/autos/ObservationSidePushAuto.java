@@ -29,17 +29,17 @@ public class ObservationSidePushAuto extends DarienOpModeAuto {
         waitForMotors();
         setSpecimenWrist("place");
         // specimen 2
-        moveXY(normalPower);
-        setSpecimenWrist("pickup");
-        setSpecimenClaw("open");
-        waitForMotors();
-        setSpecimenClaw("closed");
-        moveXY(normalPower);
-        setSpecimenWrist("place");
-        setVerticalSlide("high chamber place", verticalSlidePower);
-        moveXY(normalPower);
-        waitForMotors();
-        waitForArm();
+//        moveXY(normalPower);
+//        setSpecimenWrist("pickup");
+//        setSpecimenClaw("open");
+//        waitForMotors();
+//        setSpecimenClaw("closed");
+//        moveXY(normalPower);
+//        setSpecimenWrist("place");
+//        setVerticalSlide("high chamber place", verticalSlidePower);
+//        moveXY(normalPower);
+//        waitForMotors();
+//        waitForArm();
 
 
         // push samples to observation zone

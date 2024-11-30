@@ -29,7 +29,8 @@ public class DarienOpModeAuto extends DarienOpMode {
     //encoder movement targets
     public double targetPosX = 0;
     public double targetPosY = 0;
-    public double acceptableXYError = 0.1; //how many inches off the xy movement can be - does not compound
+    public double acceptableXYError = 1; //how many inches off the xy movement can be - does not compound
+    public double currentMovementPower = 0;
 
     public double specimenWristUp = 0.48;
 
@@ -167,45 +168,19 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     }
 
-    public boolean isIntakeSensorOn() {
-        return true;
-    }
-
     public void moveToPosition(double x, double y, double power) {
         double errorX = x - getXPos();
         double errorY = y - getYPos();
 
         targetPosX = x;
         targetPosY = y;
+        currentMovementPower = power;
 
-        double errorXp = (errorX * Math.cos(getRawHeading())) + errorY * Math.sin(getRawHeading());
-        double errorYp = (-errorX * Math.sin(getRawHeading())) + errorY * Math.cos(getRawHeading());
+        double errorXp = (errorX * Math.cos(getRawHeading())) - errorY * Math.sin(getRawHeading());
+        double errorYp = (errorX * Math.sin(getRawHeading())) + errorY * Math.cos(getRawHeading());
+
 
         moveXY(errorXp, errorYp, power);
-    }
-
-    public boolean updateXYMovement() {
-
-        //TODO fix half movement bc encoders are not total move so move halfway
-        double errorX = targetPosX - getXPos();
-        double errorY = targetPosY - getYPos();
-
-        double errorXp = (errorX * Math.cos(getRawHeading())) + errorY * Math.sin(getRawHeading());
-        double errorYp = (-errorX * Math.sin(getRawHeading())) + errorY * Math.cos(getRawHeading());
-
-        if (Math.sqrt(Math.pow(errorX, 2) + Math.pow(errorY, 2)) < acceptableXYError) {
-            return true;
-        }
-
-        int adjY = (int) Math.floor((errorYp * inchesToEncoder + 0.5));
-        int adjX = (int) Math.floor((errorXp * inchesToEncoder * strafingInefficiencyFactor + 0.5));
-
-        omniMotor0.setTargetPosition(adjY + adjX);
-        omniMotor1.setTargetPosition(adjY - adjX);
-        omniMotor2.setTargetPosition(adjY - adjX);
-        omniMotor3.setTargetPosition(adjY + adjX);
-
-        return false;
     }
 
     public void moveXY(double x, double y, double power) {
@@ -218,6 +193,12 @@ public class DarienOpModeAuto extends DarienOpMode {
         omniMotor1.setTargetPosition(adjY - adjX);
         omniMotor2.setTargetPosition(adjY - adjX);
         omniMotor3.setTargetPosition(adjY + adjX);
+
+        telemetry.addData("omnimotor 0: ", adjY + adjX);
+        telemetry.addData("omnimotor 1: ", adjY - adjX);
+        telemetry.addData("omnimotor 2: ", adjY - adjX);
+        print("omnimotor 3: ", adjY + adjX);
+        setBreakpoint();
 
         setRunMode();
         setPower(power, adjX, adjY);
@@ -338,11 +319,33 @@ public class DarienOpModeAuto extends DarienOpMode {
         omniMotor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
+    public void resetEncoderNoStop() {
+        //WARNING: this uses a deprecated mode (RESET_ENCODERS) may not work as intended
+        omniMotor0.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        omniMotor1.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        omniMotor2.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        omniMotor3.setMode(DcMotor.RunMode.RESET_ENCODERS);
+    }
+
     public void waitForMotors() {
+        double errorX = 0;
+        double errorY = 0;
         while (omniMotor0.isBusy() && omniMotor1.isBusy() && omniMotor2.isBusy() && omniMotor3.isBusy()) {
-            if (updateXYMovement()) {
-                return;
-            }
+        }
+        errorX = targetPosX - getXPos();
+        errorY = targetPosY - getYPos();
+        telemetry.addData("x pos: ", getXPos());
+        telemetry.addData("y pos: ", getYPos());
+        telemetry.addData("error X: ", errorX);
+        print("error Y: ", errorY);
+        setBreakpoint();
+        if (Math.sqrt(Math.pow(errorX, 2) + Math.pow(errorY, 2)) > acceptableXYError) {
+            double errorXp = (errorX * Math.cos(getRawHeading())) - errorY * Math.sin(getRawHeading());
+            double errorYp = (errorX * Math.sin(getRawHeading())) + errorY * Math.cos(getRawHeading());
+
+
+            moveXY(errorXp, errorYp, currentMovementPower);
+            waitForMotors();
         }
     }
 

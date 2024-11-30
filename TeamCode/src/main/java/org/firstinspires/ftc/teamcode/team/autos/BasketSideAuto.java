@@ -38,8 +38,6 @@ public class BasketSideAuto extends DarienOpModeAuto {
         setIntakeWrist("down");
         startIntake();
         moveXY(0, 10, 0.15);
-        while (!isIntakeSensorOn()) {
-        }
         stopIntake();
         placeSampleInBucket();
         moveXY(-24, 0, normalPower);

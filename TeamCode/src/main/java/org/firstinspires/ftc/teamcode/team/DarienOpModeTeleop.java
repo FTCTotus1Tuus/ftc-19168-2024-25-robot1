@@ -37,7 +37,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
             intakeSlide.setPower(-gamepad1.right_stick_y);
         } else if (gamepad1.a) {
             // Pull the intake slide IN only for a few seconds to avoid running the servo continuously and burning it out.
-            intakeSlide.setPower(powerIntakeSlideIn);
+//            intakeSlide.setPower(powerIntakeSlideIn);
 
             /* TODO: This code causes the robot to freeze when button A is pressed. Needs fixing.
             double durationSecondsIntakeSlideIn = 4;
@@ -51,18 +51,14 @@ public class DarienOpModeTeleop extends DarienOpMode {
         if (gamepad1.right_bumper) {
             intakeWrist.setPosition(intakeWristGroundPosition);
         } else if (gamepad1.a) {
-            if (!intakeWristTouchSensor.isPressed()) {
-                intakeSlide.setPower(-1);
-                intakeWheels.setPower(0);
-                intakeWrist.setPosition(intakeWristUpPosition);
-            } else if (verticalSlide.getCurrentPosition() < verticalSlideLowPosition) {
-                intakeWheels.setPower(powerIntakeWheelToEjectSample);
-
-            }
+            intakeSlide.setPower(-1);
+            intakeWheels.setPower(0);
+            intakeWrist.setPosition(intakeWristUpPosition);
         }
 
-
-        intakeWrist.setPosition(intakeWrist.getPosition() - gamepad1.right_trigger / 5);
+        if (gamepad1.right_trigger > 0.05) {
+            intakeWrist.setPosition(intakeWristGroundPosition - gamepad1.right_trigger / 5);
+        }
     }
 
     public void runVerticalSlideSystem() {

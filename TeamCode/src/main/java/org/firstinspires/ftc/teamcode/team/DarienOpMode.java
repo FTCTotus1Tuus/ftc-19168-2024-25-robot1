@@ -63,11 +63,11 @@ public class DarienOpMode extends LinearOpMode {
     public static double specimenWristPickup = 0.82;
 
     public static double intakeWristGroundPosition = 0.6;
-    public static double intakeWristUpPosition = 0.025;
+    public static double intakeWristUpPosition = 0.023;
 
     // calibrated for torque servo
     public static double specimenClawOpen = 0.82;
-    public static double specimenClawClosed = 0.91;
+    public static double specimenClawClosed = 0.95;
 
     @Override
     public void runOpMode() throws InterruptedException {
