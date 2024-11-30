@@ -9,6 +9,9 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public double[] direction = {0.0, 0.0};
     public double rotation;
+    public static double verticalSlideMaxHeight = 10000;
+    public static double verticalSlideLowPosition = 50;
+
 
     /**
      * If the GP1 left bumper is pressed, spin the boot wheels in if the joystick is pulled down or spin the boot wheels out if the joystick is pushed up.
@@ -48,8 +51,14 @@ public class DarienOpModeTeleop extends DarienOpMode {
         if (gamepad1.right_bumper) {
             intakeWrist.setPosition(intakeWristGroundPosition);
         } else if (gamepad1.a) {
-            intakeWheels.setPower(0);
-            intakeWrist.setPosition(intakeWristUpPosition);
+            if (!intakeWristTouchSensor.isPressed()) {
+                intakeSlide.setPower(-1);
+                intakeWheels.setPower(0);
+                intakeWrist.setPosition(intakeWristUpPosition);
+            } else if (verticalSlide.getCurrentPosition() < verticalSlideLowPosition) {
+                intakeWheels.setPower(powerIntakeWheelToEjectSample);
+
+            }
         }
 
 
@@ -57,7 +66,11 @@ public class DarienOpModeTeleop extends DarienOpMode {
     }
 
     public void runVerticalSlideSystem() {
+
         verticalSlide.setPower(-gamepad2.left_stick_y);
+        if (verticalSlide.getCurrentPosition() > verticalSlideMaxHeight && verticalSlide.getPower() > 0) {
+            verticalSlide.setPower(0.1);
+        }
         if (Math.abs(gamepad2.left_stick_y) < 0.02) {
             verticalSlide.setPower(0);
         }

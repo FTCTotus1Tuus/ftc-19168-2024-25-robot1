@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.team;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 //import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 @Config
 public class DarienOpModeAuto extends DarienOpMode {
@@ -27,6 +29,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     //encoder movement targets
     public double targetPosX = 0;
     public double targetPosY = 0;
+    public double acceptableXYError = 0.1; //how many inches off the xy movement can be - does not compound
 
     public double specimenWristUp = 0.48;
 
@@ -36,6 +39,8 @@ public class DarienOpModeAuto extends DarienOpMode {
     @Override
     public void initControls() {
         super.initControls();
+
+        print("otis", myOtos);
 
         // reverse motors 2 and 3
         omniMotor2.setDirection(DcMotor.Direction.REVERSE);
@@ -169,21 +174,31 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void moveToPosition(double x, double y, double power) {
         double errorX = x - getXPos();
         double errorY = y - getYPos();
+
         targetPosX = x;
         targetPosY = y;
-        moveXY(double x, double y, double power);
+
+        double errorXp = (errorX * Math.cos(getRawHeading())) + errorY * Math.sin(getRawHeading());
+        double errorYp = (-errorX * Math.sin(getRawHeading())) + errorY * Math.cos(getRawHeading());
+
+        moveXY(errorXp, errorYp, power);
     }
 
     public boolean updateXYMovement() {
-        errorX = targetPosX - getXPos();
-        errorY = targetPosY - getYPos();
 
-        if (Math.sqrt(Math.pow(errorX, 2) + Math.Pow(errorY, 2)) < acceptableXYError) {
-            return true
+        //TODO fix half movement bc encoders are not total move so move halfway
+        double errorX = targetPosX - getXPos();
+        double errorY = targetPosY - getYPos();
+
+        double errorXp = (errorX * Math.cos(getRawHeading())) + errorY * Math.sin(getRawHeading());
+        double errorYp = (-errorX * Math.sin(getRawHeading())) + errorY * Math.cos(getRawHeading());
+
+        if (Math.sqrt(Math.pow(errorX, 2) + Math.pow(errorY, 2)) < acceptableXYError) {
+            return true;
         }
-    
-        int adjY = (int) Math.floor((y * inchesToEncoder + 0.5));
-        int adjX = (int) Math.floor((x * inchesToEncoder * strafingInefficiencyFactor + 0.5));
+
+        int adjY = (int) Math.floor((errorYp * inchesToEncoder + 0.5));
+        int adjX = (int) Math.floor((errorXp * inchesToEncoder * strafingInefficiencyFactor + 0.5));
 
         omniMotor0.setTargetPosition(adjY + adjX);
         omniMotor1.setTargetPosition(adjY - adjX);
@@ -227,22 +242,22 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     }
 
-    public void autoRotate(double targetPosRadians, double power) {
+    public void autoRotate(double targetPosDegrees, double power) {
         //direction counter clockwise is -1 clockwise is 1
-    
+
         setToRotateRunMode();
-        
-        double isRotating = true;
-        double direction = Math.signum(getErrorRot(targetPosRadians));
+        double error = getErrorRot(targetPosDegrees);
+        boolean isRotating = true;
+        double direction = Math.signum(error);
         setRotatePower(power, direction);
         while (isRotating) {
-            error = getErrorRot(targetPosRadians);
+            error = getErrorRot(targetPosDegrees);
 
             if (error <= rotationTolerance) {
                 isRotating = false;
             }
 
-            double direction = Math.signum(getErrorRot(targetPosRadians));
+            direction = Math.signum(error);
             setRotatePower(power, direction);
         }
         telemetry.addData("rotate end", "");
@@ -330,6 +345,7 @@ public class DarienOpModeAuto extends DarienOpMode {
             }
         }
     }
+
     public void waitForMotors(boolean usingJustEncoders) {
         while (omniMotor0.isBusy() && omniMotor1.isBusy() && omniMotor2.isBusy() && omniMotor3.isBusy()) {
         }
@@ -347,15 +363,23 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public double getErrorRot(double targetPosRot) {
         // pos is clockwwise neg is counterclockwise
-        return ((targetPosRot - getRawHeading())+180) % 360 - 180;
+        return ((targetPosRot - getRawHeading()) + 180) % 360 - 180;
     }
 
 
-    public double getRawHeading(boolean convertToTwoPi) {
+    public double getRawHeading() {
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        return pos.h;
+    }
 
+    public double getXPos() {
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        return pos.x;
+    }
 
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        
+    public double getYPos() {
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        return pos.y;
     }
 
 }
