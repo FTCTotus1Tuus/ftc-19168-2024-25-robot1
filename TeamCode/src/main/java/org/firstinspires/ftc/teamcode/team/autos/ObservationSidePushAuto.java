@@ -10,10 +10,11 @@ public class ObservationSidePushAuto extends DarienOpModeAuto {
         initControls();
 
         waitForStart();
+        // specimen 1
         // move to chambers with preloaded specimen
         setSpecimenClaw("closed");
         setSpecimenWrist("place");
-        moveXY(-5, 33, normalPower);
+        moveToPosition(-5, 33, normalPower);
         setVerticalSlide("high chamber below", verticalSlidePower);
         waitForMotors();
         waitForArm();
@@ -22,56 +23,63 @@ public class ObservationSidePushAuto extends DarienOpModeAuto {
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
         // release the specimen and move the specimenWrist away to avoid hitting the submersible when strafing.
-        setSpecimenWrist("pickup");
         setSpecimenClaw("open");
-        setVerticalSlide("low", verticalSlidePower);
-        moveXY(0, -5, normalPower);
-        waitForMotors();
-        setSpecimenWrist("place");
+        setSpecimenWrist("pickup");
+
         // specimen 2
-        moveXY(normalPower);
-        setSpecimenWrist("pickup");
-        setSpecimenClaw("open");
-        waitForMotors();
-        setSpecimenClaw("closed");
-        moveXY(normalPower);
-        setSpecimenWrist("place");
-        setVerticalSlide("high chamber place", verticalSlidePower);
-        moveXY(normalPower);
+        // move to observation zone and get specimen 2
+        moveToPosition(30, 0, normalPower);
+        setVerticalSlide("low", verticalSlidePower);
         waitForMotors();
         waitForArm();
+        setSpecimenClaw("closed");
+        setSpecimenWrist("place");
+        // move to chambers
+        moveToPosition(-5, 33, normalPower);
+        setVerticalSlide("high chamber below", verticalSlidePower);
+        waitForMotors();
+        waitForArm();
+        // place specimen 2 on high chamber
+        setVerticalSlide("high chamber place", verticalSlidePower);
+        waitForArm();
+        // release the specimen and move the specimenWrist away to avoid hitting the submersible when strafing.
+        setSpecimenClaw("open");
+        setSpecimenWrist("pickup");
+        setVerticalSlide("low", verticalSlidePower);
+        moveToPosition(-5, 28, normalPower);
+        waitForMotors();
 
 
         // push samples to observation zone
         // sample 1
-        moveXY(33, 0, normalPower);
+        moveToPosition(28, 28, normalPower);
         waitForMotors();
-        moveXY(0, 25, normalPower);
+        moveToPosition(28, 53, normalPower);
         waitForMotors();
-        moveXY(9, 0, normalPower);
+        moveToPosition(37, 53, normalPower);
         waitForMotors();
-        moveXY(0, -45, normalPower);
+        moveToPosition(37, 8, normalPower);
         waitForMotors();
         //sample 2
-        moveXY(0, 45, normalPower);
+        moveToPosition(37, 53, normalPower);
         waitForMotors();
-        moveXY(9, 0, normalPower);
+        moveToPosition(46, 53, normalPower);
         waitForMotors();
-        moveXY(0, -45, normalPower);
+        moveToPosition(46, 8, normalPower);
         waitForMotors();
         //sample 3
-        moveXY(0, 45, normalPower);
+        moveToPosition(46, 53, normalPower);
         waitForMotors();
-        moveXY(9, 0, normalPower);
+        moveToPosition(55, 53, normalPower);
         waitForMotors();
-        moveXY(0, -48, normalPower);
+        moveToPosition(55, 5, normalPower);
         waitForMotors();
         //park
-        moveXY(0, 1, normalPower);
+        moveToPosition(55, 6, normalPower);
         waitForMotors();
 
         // park
-        /*moveXY(0, 28, normalPower);
+        /* moveToPosition(0, 28, normalPower);
         setVerticalSlide("2nd bar below", verticalSlidePower);
         waitForMotors();
 
