@@ -5,8 +5,7 @@ import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 //import org.apache.commons.math3.geometry.euclidean.twod.Line;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
 
 @Config
 public class DarienOpModeAuto extends DarienOpMode {
@@ -29,7 +28,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     //encoder movement targets
     public double targetPosX = 0;
     public double targetPosY = 0;
-    public double acceptableXYError = 1; //how many inches off the xy movement can be - does not compound
+    public double acceptableXYError = 0.5; //how many inches off the xy movement can be - does not compound
     public double currentMovementPower = 0;
 
     public double specimenWristUp = 0.48;
@@ -168,19 +167,22 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     }
 
-    public void moveToPosition(double x, double y, double power) {
-        double errorX = x - getXPos();
-        double errorY = y - getYPos();
 
-        targetPosX = x;
-        targetPosY = y;
+    public void moveToPosition(double globalX, double globalY, double power) {
+        // uses optical sensor to move by setting robot motor power
+        // DOES NOT USE ENCODERS
+        double errorX = globalX - getXPos();
+        double errorY = globalY - getYPos();
+
         currentMovementPower = power;
+        targetPosY = globalY;
+        targetPosX = globalX;
 
-        double errorXp = (errorX * Math.cos(getRawHeading())) - errorY * Math.sin(getRawHeading());
-        double errorYp = (errorX * Math.sin(getRawHeading())) + errorY * Math.cos(getRawHeading());
+        double errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
+        double errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
 
+        setPower(power, errorXp, errorYp); // add pid?
 
-        moveXY(errorXp, errorYp, power);
     }
 
     public void moveXY(double x, double y, double power) {
@@ -226,7 +228,6 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void autoRotate(double targetPosDegrees, double power) {
         //direction counter clockwise is -1 clockwise is 1
 
-        setToRotateRunMode();
         double error = getErrorRot(targetPosDegrees);
         boolean isRotating = true;
         double direction = Math.signum(error);
@@ -234,7 +235,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         while (isRotating) {
             error = getErrorRot(targetPosDegrees);
 
-            if (error <= rotationTolerance) {
+            if (Math.abs(error) <= rotationTolerance) {
                 isRotating = false;
             }
 
@@ -244,9 +245,16 @@ public class DarienOpModeAuto extends DarienOpMode {
         telemetry.addData("rotate end", "");
         telemetry.update();
         setRotatePower(0, 0);
+
+    }
+
+    public void autoRotate(double targetPosDegrees, double power, boolean isEncoder) {
+        setToRotateRunMode();
+        autoRotate(targetPosDegrees, power);
         resetEncoder();
 
     }
+
 
     public double sigmoid(double x) {
         //takes in any x value returns from (0,0) to (1,1) scale x accordingly
@@ -328,25 +336,31 @@ public class DarienOpModeAuto extends DarienOpMode {
     }
 
     public void waitForMotors() {
+        boolean looping = true;
         double errorX = 0;
         double errorY = 0;
-        while (omniMotor0.isBusy() && omniMotor1.isBusy() && omniMotor2.isBusy() && omniMotor3.isBusy()) {
+        double errorXp;
+        double errorYp;
+        while (looping) {
+            telemetry.addData("x: ", errorX);
+            print("y: ", errorY);
+            errorX = targetPosX - getXPos();
+            errorY = targetPosY - getYPos();
+
+            errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
+            errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
+
+            setPower(currentMovementPower, errorXp, errorYp); // add pid?
+
+
+            if (Math.sqrt(Math.pow(errorX, 2) + Math.pow(errorY, 2)) < acceptableXYError) {
+                looping = false;
+            }
         }
-        errorX = targetPosX - getXPos();
-        errorY = targetPosY - getYPos();
+        setPower(0, 0, 0);
         telemetry.addData("x pos: ", getXPos());
-        telemetry.addData("y pos: ", getYPos());
-        telemetry.addData("error X: ", errorX);
-        print("error Y: ", errorY);
-        setBreakpoint();
-        if (Math.sqrt(Math.pow(errorX, 2) + Math.pow(errorY, 2)) > acceptableXYError) {
-            double errorXp = (errorX * Math.cos(getRawHeading())) - errorY * Math.sin(getRawHeading());
-            double errorYp = (errorX * Math.sin(getRawHeading())) + errorY * Math.cos(getRawHeading());
+        print("y pos: ", getYPos());
 
-
-            moveXY(errorXp, errorYp, currentMovementPower);
-            waitForMotors();
-        }
     }
 
     public void waitForMotors(boolean usingJustEncoders) {

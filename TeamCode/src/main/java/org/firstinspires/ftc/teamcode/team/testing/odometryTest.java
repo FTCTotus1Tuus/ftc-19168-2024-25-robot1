@@ -12,21 +12,24 @@ public class odometryTest extends DarienOpModeAuto {
 
         moveToPosition(10, 0, normalPower);
         waitForMotors();
-        print("done 1", "");
-        setBreakpoint();
         moveToPosition(0, 10, normalPower);
         waitForMotors();
-        print("done 2", "");
-        setBreakpoint();
-        autoRotate(90, normalPower);
         moveToPosition(0, 0, normalPower);
         waitForMotors();
-        print("done 3", "");
-        setBreakpoint();
-        moveToPosition(5, -5, normalPower);
+        autoRotate(90, normalPower);
+        moveToPosition(15, 5, normalPower);
         waitForMotors();
-        print("done 4", "");
-        setBreakpoint();
-    }
+        moveToPosition(-10, 5, normalPower);
+        waitForMotors();
+        moveToPosition(0, 0, normalPower);
+        waitForMotors();
+        autoRotate(45, normalPower);
+        moveToPosition(10, -10, normalPower);
+        waitForMotors();
+        moveToPosition(-5, 5, normalPower);
+        waitForMotors();
+        moveToPosition(0, 0, normalPower);
+        waitForMotors();
 
+    }
 }
