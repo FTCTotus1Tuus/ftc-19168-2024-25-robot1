@@ -40,7 +40,7 @@ public class DarienOpMode extends LinearOpMode {
     public double wheelDiameter = 3.75; // inches
     public double constMult = (wheelDiameter * (Math.PI));
     public double inchesToEncoder = encoderResolution / constMult;
-    public static double rotationTolerance = 0.1;
+    public static double rotationTolerance = 2; //in degrees
     public static double power = 0.3;
     public static double powerIntakeWheelToPickupSample = 0.8;
     public static double powerIntakeWheelToEjectSample = -0.3;
@@ -224,6 +224,10 @@ public class DarienOpMode extends LinearOpMode {
         telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
         telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
         telemetry.update();
+    }
+
+    public double getHypotenuse(double x, double y) {
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
 }

@@ -15,8 +15,8 @@ public class DarienOpModeAuto extends DarienOpMode {
     public static double strafingInefficiencyFactor = 1.145;
 
     //vertical slide positions
-    public static int highChamberBelowPos = 2000;
-    public static int highChamberPlacePos = 2600;
+    public static int highChamberBelowPos = 1700; //untested
+    public static int highChamberPlacePos = 2300;
     public static int barBelow2Pos;
     public static int barPlace2Pos;
     public static int barBelow1Pos;
@@ -29,7 +29,11 @@ public class DarienOpModeAuto extends DarienOpMode {
     public double targetPosX = 0;
     public double targetPosY = 0;
     public double acceptableXYError = 0.5; //how many inches off the xy movement can be - does not compound
+    public static double minimumXYspeed = 0.5;
     public double currentMovementPower = 0;
+    public static double ProportionalCoefficient = 0.3;
+
+    public double currentHeading = 0;
 
     public double specimenWristUp = 0.48;
 
@@ -232,12 +236,20 @@ public class DarienOpModeAuto extends DarienOpMode {
         boolean isRotating = true;
         double direction = Math.signum(error);
         setRotatePower(power, direction);
+
+        if (Math.abs(error) <= rotationTolerance) {
+            print("no rotate needed", "");
+            return;
+        }
         while (isRotating) {
             error = getErrorRot(targetPosDegrees);
 
             if (Math.abs(error) <= rotationTolerance) {
                 isRotating = false;
             }
+//            else if (Math.abs(error) <= rotationTolerance * 3) {
+//                power /= 3;
+//            }
 
             direction = Math.signum(error);
             setRotatePower(power, direction);
@@ -245,6 +257,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         telemetry.addData("rotate end", "");
         telemetry.update();
         setRotatePower(0, 0);
+        currentHeading = targetPosDegrees; // updates global heading so we can realign after each movment
 
     }
 
@@ -335,12 +348,13 @@ public class DarienOpModeAuto extends DarienOpMode {
         omniMotor3.setMode(DcMotor.RunMode.RESET_ENCODERS);
     }
 
-    public void waitForMotors() {
+    public void waitForMotors(double timeout) {
         boolean looping = true;
         double errorX = 0;
         double errorY = 0;
         double errorXp;
         double errorYp;
+        double startTime = this.time;
         while (looping) {
             telemetry.addData("x: ", errorX);
             print("y: ", errorY);
@@ -350,17 +364,36 @@ public class DarienOpModeAuto extends DarienOpMode {
             errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
             errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
 
-            setPower(currentMovementPower, errorXp, errorYp); // add pid?
+            if (getHypotenuse(errorXp, errorYp) > 5) {
+                setPower(currentMovementPower, errorXp, errorYp); // add pid?
+            } else {
+                setPower(currentMovementPower / 2, errorXp, errorYp); // add pid?
+            }
+            telemetry.addData("x vel: ", myOtos.getVelocity().x);
+            telemetry.addData("y vel: ", myOtos.getVelocity().y);
 
-
-            if (Math.sqrt(Math.pow(errorX, 2) + Math.pow(errorY, 2)) < acceptableXYError) {
+            if (getHypotenuse(errorX, errorY) <= acceptableXYError) {
+                looping = false;
+            } else if (getHypotenuse(myOtos.getVelocity().x, myOtos.getVelocity().y) <= minimumXYspeed &&
+                    getHypotenuse(errorX, errorY) < acceptableXYError * 4) {
+                looping = false;
+            } else if ((this.time - startTime) > timeout) {
                 looping = false;
             }
         }
         setPower(0, 0, 0);
+        if (Math.abs(getErrorRot(currentHeading)) > rotationTolerance) {
+            print("need to realign", "");
+            autoRotate(currentHeading, normalPower);
+        }
+
         telemetry.addData("x pos: ", getXPos());
         print("y pos: ", getYPos());
 
+    }
+
+    public void waitForMotors() {
+        waitForMotors(4);
     }
 
     public void waitForMotors(boolean usingJustEncoders) {
@@ -376,6 +409,10 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void setBreakpoint() {
         while (!gamepad1.a) {
         }
+    }
+
+    public double getProportionalSlowdown(double errorX, double errorY) {
+        return getHypotenuse(errorX, errorY) * ProportionalCoefficient;
     }
 
     public double getErrorRot(double targetPosRot) {
