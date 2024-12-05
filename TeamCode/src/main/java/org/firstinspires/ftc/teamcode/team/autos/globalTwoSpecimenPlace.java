@@ -14,8 +14,8 @@ public class globalTwoSpecimenPlace extends DarienOpModeAuto {
         setSpecimenClaw("closed");
         setSpecimenWrist("place");
         setVerticalSlide("high chamber below", verticalSlidePower);
-        moveToPosition(-2, 31, normalPower);
-        waitForMotors();
+        moveToPosition(-2, 31, 0.4);
+        waitForMotors(2);
         waitForArm();
 
         setVerticalSlide("high chamber place", verticalSlidePower);
@@ -24,27 +24,25 @@ public class globalTwoSpecimenPlace extends DarienOpModeAuto {
         setSpecimenClaw("open");
         setVerticalSlide("low", verticalSlidePower);
 
-        sleep(500);
-
         moveToPosition(-1, 25, normalPower);
         waitForMotors(2);
-        moveToPosition(36, 25, normalPower);
+        moveToPosition(36, 25, 0.4);
         waitForMotors();
-        moveToPosition(36, -3, normalPower);
-        waitForMotors(5);
+        moveToPosition(36, -3, 0.4);
+        waitForMotors(3);
 
         //pickup specimen from wall
         setSpecimenClaw("closed");
         sleep(250);
         setSpecimenWrist("place");
 
-        moveToPosition(36, 15, normalPower);
+        moveToPosition(36, 15, 0.5);
         setVerticalSlide("high chamber below", verticalSlidePower / 2);
-        waitForMotors(5);
-        moveToPosition(-12, 15, normalPower);
-        waitForMotors(5);
-        moveToPosition(-12, 33, normalPower);
-        waitForMotors(2);
+        waitForMotors();
+        moveToPosition(-5, 15, 0.6);
+        waitForMotors(3);
+        moveToPosition(-5, 37, normalPower);
+        waitForMotors(1);
         waitForArm();
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
@@ -57,10 +55,10 @@ public class globalTwoSpecimenPlace extends DarienOpModeAuto {
         moveToPosition(32, 25, normalPower);
         waitForMotors();
         moveToPosition(32, 47, normalPower);
-        waitForMotors(3);
+        waitForMotors(2);
         moveToPosition(40, 47, normalPower);
-        waitForMotors(3);
-        moveToPosition(40, 0, normalPower);
+        waitForMotors(1);
+        moveToPosition(40, 5, 0.5);
         waitForMotors(4);
     }
 }
