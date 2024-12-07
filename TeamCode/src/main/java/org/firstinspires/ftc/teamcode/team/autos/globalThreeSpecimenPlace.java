@@ -39,7 +39,7 @@ public class globalThreeSpecimenPlace extends DarienOpModeAuto {
         moveToPosition(36, 15, 0.5);
         setVerticalSlide("high chamber below", verticalSlidePower / 2);
         waitForMotors();
-        moveToPosition(-5, 15, 0.6);
+        moveToPosition(-5, 16, 0.6);
         waitForMotors(3);
         moveToPosition(-5, 37, normalPower);
         waitForMotors(1);
