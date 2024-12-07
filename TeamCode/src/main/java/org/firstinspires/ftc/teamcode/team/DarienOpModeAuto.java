@@ -15,7 +15,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     public static double strafingInefficiencyFactor = 1.145;
 
     //vertical slide positions
-    public static int highChamberBelowPos = 1700; //untested
+    public static int highChamberBelowPos = 1600;
     public static int highChamberPlacePos = 2300;
     public static int barBelow2Pos;
     public static int barPlace2Pos;
