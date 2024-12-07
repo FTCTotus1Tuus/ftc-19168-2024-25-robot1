@@ -46,8 +46,11 @@ public class DarienOpModeTeleop extends DarienOpMode {
                 intakeSlide.setPower(powerIntakeSlideIn);
             }
              */
+        } else {
+            intakeSlide.setPower(0);
         }
 
+        // Intake macro
         if (gamepad1.right_bumper) {
             intakeWrist.setPosition(intakeWristGroundPosition);
         } else if (gamepad1.a) {
@@ -56,6 +59,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
             intakeWrist.setPosition(intakeWristUpPosition);
         }
 
+        // Allow driver to lift the intake wrist slightly.
         if (gamepad1.right_trigger > 0.05) {
             intakeWrist.setPosition(intakeWristGroundPosition - gamepad1.right_trigger / 5);
         }

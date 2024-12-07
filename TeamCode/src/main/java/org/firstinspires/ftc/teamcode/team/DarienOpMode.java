@@ -42,7 +42,7 @@ public class DarienOpMode extends LinearOpMode {
     public double inchesToEncoder = encoderResolution / constMult;
     public static double rotationTolerance = 2; //in degrees
     public static double power = 0.3;
-    public static double powerIntakeWheelToPickupSample = 0.8;
+    public static double powerIntakeWheelToPickupSample = 1;
     public static double powerIntakeWheelToEjectSample = -0.3;
     public static double powerIntakeSlideIn = -0.45;
     public static double PI = 3.1415;
@@ -62,7 +62,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double specimenWristPlace = 0.20; // towards inside of robot - change name later?
     public static double specimenWristPickup = 0.82;
 
-    public static double intakeWristGroundPosition = 0.72;
+    public static double intakeWristGroundPosition = 0.73;
     public static double intakeWristUpPosition = 0.15;
 
     // calibrated for torque servo

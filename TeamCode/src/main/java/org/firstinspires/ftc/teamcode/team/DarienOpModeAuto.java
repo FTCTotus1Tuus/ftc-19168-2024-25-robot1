@@ -149,7 +149,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     }
 
     public void startIntake() {
-        intakeWheels.setPower(1);
+        intakeWheels.setPower(powerIntakeWheelToPickupSample);
     }
 
     public void stopIntake() {
