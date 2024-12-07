@@ -11,57 +11,58 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public double rotation;
     public static double verticalSlideMaxHeight = 10000;
     public static double verticalSlideLowPosition = 50;
-
+    public double durationSecondsIntakeSlideIn = 2;
 
     /**
      * If the GP1 left bumper is pressed, spin the boot wheels in if the joystick is pulled down or spin the boot wheels out if the joystick is pushed up.
      */
     public void runIntakeSystem() {
 
-        // CONTROL: INTAKE WHEELS
-        if (gamepad1.right_bumper) {
-            print("INTAKE", "Load sample");
-            intakeWheels.setPower(powerIntakeWheelToPickupSample);
-        } else if (gamepad1.x) {
-            print("INTAKE", "Eject sample");
-            intakeWheels.setPower(powerIntakeWheelToEjectSample);
-        } else if (gamepad1.left_trigger != 0) {
-            intakeWheels.setPower(-gamepad1.left_trigger / 2);
-        } else if (!gamepad1.x) {
-            // Stop
+        if (gamepad1.a) {
+            // MACRO: Raise the sample that has been scooped.
             intakeWheels.setPower(0);
-        }
-        // CONTROL: INTAKE SLIDE
-        if (gamepad1.left_bumper) {
-            // Control the intake slide with the right stick if and only if the left bumper is pressed.
-            intakeSlide.setPower(-gamepad1.right_stick_y);
-        } else if (gamepad1.a) {
-            // Pull the intake slide IN only for a few seconds to avoid running the servo continuously and burning it out.
-//            intakeSlide.setPower(powerIntakeSlideIn);
+            intakeWrist.setPosition(intakeWristUpPosition);
 
-            /* TODO: This code causes the robot to freeze when button A is pressed. Needs fixing.
-            double durationSecondsIntakeSlideIn = 4;
+            // Pull the intakeSlide in for only x seconds to avoid burning out the intakeSlide servo.
             double startTime = getRuntime();
             while ((getRuntime() - startTime) < durationSecondsIntakeSlideIn) {
                 intakeSlide.setPower(powerIntakeSlideIn);
             }
-             */
         } else {
-            intakeSlide.setPower(0);
-        }
+            // INDEPENDENT CONTROLS
 
-        // Intake macro
-        if (gamepad1.right_bumper) {
-            intakeWrist.setPosition(intakeWristGroundPosition);
-        } else if (gamepad1.a) {
-            intakeSlide.setPower(-1);
-            intakeWheels.setPower(0);
-            intakeWrist.setPosition(intakeWristUpPosition);
-        }
+            // CONTROL: INTAKE WHEELS
+            if (gamepad1.right_bumper) {
+                print("INTAKE", "Load sample");
+                intakeWheels.setPower(powerIntakeWheelToPickupSample);
+            } else if (gamepad1.x) {
+                print("INTAKE", "Eject sample");
+                intakeWheels.setPower(powerIntakeWheelToEjectSample);
+            } else if (gamepad1.left_trigger != 0) {
+                intakeWheels.setPower(-gamepad1.left_trigger / 2);
+            } else if (!gamepad1.x) {
+                // Stop
+                intakeWheels.setPower(0);
+            }
 
-        // Allow driver to lift the intake wrist slightly.
-        if (gamepad1.right_trigger > 0.05) {
-            intakeWrist.setPosition(intakeWristGroundPosition - gamepad1.right_trigger / 5);
+            // CONTROL: INTAKE SLIDE
+            if (gamepad1.left_bumper) {
+                // Control the intake slide with the right stick if and only if the left bumper is pressed.
+                intakeSlide.setPower(-gamepad1.right_stick_y);
+            } else {
+                intakeSlide.setPower(0);
+            }
+
+            // CONTROL: INTAKE WRIST
+            if (gamepad1.right_bumper) {
+                intakeWrist.setPosition(intakeWristGroundPosition);
+            } else if (gamepad1.right_trigger > 0.05 && intakeWrist.getPosition() > intakeWristUpPosition) {
+                // Allow driver to lift the intake wrist slightly, but don't go beyond the max position.
+                double targetIntakeWristPosition = intakeWristGroundPosition - (gamepad1.right_trigger / 5);
+                if (targetIntakeWristPosition > intakeWristUpPosition) {
+                    intakeWrist.setPosition(targetIntakeWristPosition);
+                }
+            }
         }
     }
 
