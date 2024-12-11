@@ -9,25 +9,30 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public double[] direction = {0.0, 0.0};
     public double rotation;
-    public static double verticalSlideMaxHeight = 10000;
-    public static double verticalSlideLowPosition = 50;
+    public static double verticalSlideMaxHeight = 4400;
     public double durationSecondsIntakeSlideIn = 2;
+    public boolean startedIntakeSlide = false;
+    public double startTime = 0;
 
     /**
      * If the GP1 left bumper is pressed, spin the boot wheels in if the joystick is pulled down or spin the boot wheels out if the joystick is pushed up.
      */
     public void runIntakeSystem() {
-
+        if (startedIntakeSlide) {
+            if (getRuntime() - startTime > durationSecondsIntakeSlideIn) {
+                intakeSlide.setPower(0);
+                startedIntakeSlide = false;
+            }
+        }
         if (gamepad1.a) {
             // MACRO: Raise the sample that has been scooped.
             intakeWheels.setPower(0);
             intakeWrist.setPosition(intakeWristUpPosition);
 
             // Pull the intakeSlide in for only x seconds to avoid burning out the intakeSlide servo.
-            double startTime = getRuntime();
-            while ((getRuntime() - startTime) < durationSecondsIntakeSlideIn) {
-                intakeSlide.setPower(powerIntakeSlideIn);
-            }
+            intakeSlide.setPower(powerIntakeSlideIn);
+            startTime = getRuntime();
+            startedIntakeSlide = true;
         } else {
             // INDEPENDENT CONTROLS
 
@@ -40,17 +45,22 @@ public class DarienOpModeTeleop extends DarienOpMode {
                 intakeWheels.setPower(powerIntakeWheelToEjectSample);
             } else if (gamepad1.left_trigger != 0) {
                 intakeWheels.setPower(-gamepad1.left_trigger / 2);
+            } else if (gamepad2.y) {
+                intakeWheels.setPower(powerIntakeWheelToEjectSample);
+                print("INTAKE", "Eject sample");
             } else {
                 // Stop
                 intakeWheels.setPower(0);
             }
 
             // CONTROL: INTAKE SLIDE
-            if (gamepad1.left_bumper) {
-                // Control the intake slide with the right stick if and only if the left bumper is pressed.
-                intakeSlide.setPower(-gamepad1.right_stick_y);
-            } else {
-                intakeSlide.setPower(0);
+            if (!startedIntakeSlide) {
+                if (gamepad1.left_bumper) {
+                    // Control the intake slide with the right stick if and only if the left bumper is pressed.
+                    intakeSlide.setPower(-gamepad1.right_stick_y);
+                } else {
+                    intakeSlide.setPower(0);
+                }
             }
 
             // CONTROL: INTAKE WRIST
@@ -68,15 +78,23 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
     public void runVerticalSlideSystem() {
 
-        verticalSlide.setPower(-gamepad2.left_stick_y);
-        if (verticalSlide.getCurrentPosition() > verticalSlideMaxHeight && verticalSlide.getPower() > 0) {
+
+        if (verticalSlide.getCurrentPosition() > verticalSlideMaxHeight && -gamepad2.left_stick_y > 0) {
             verticalSlide.setPower(0.1);
-        }
-        if (Math.abs(gamepad2.left_stick_y) < 0.02) {
+        } else if (Math.abs(gamepad2.left_stick_y) < 0.02) {
             verticalSlide.setPower(0);
+        } else {
+            verticalSlide.setPower(-gamepad2.left_stick_y);
         }
+        telemetry.addData("vslide posL ", verticalSlide.getCurrentPosition());
         telemetry.addData("zero power behavior", verticalSlide.getZeroPowerBehavior());
         print("vslide power", verticalSlide.getPower());
+
+        // adds a driver override to the height cap code
+        if (gamepad2.back && gamepad2.b) {
+            verticalSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            verticalSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
         if (gamepad2.a) {
             bucket.setPosition(bucketPlace);
@@ -102,13 +120,12 @@ public class DarienOpModeTeleop extends DarienOpMode {
     }
 
     public void runDriveSystem() {
-        direction[0] = -gamepad1.left_stick_x;
-        direction[1] = -gamepad1.left_stick_y;
+        direction[0] = Math.pow(-gamepad1.left_stick_x, 3);
+        direction[1] = Math.pow(-gamepad1.left_stick_y, 3);
         if (!gamepad1.left_bumper) {
-            rotation = -gamepad1.right_stick_x;
+            rotation = Math.pow(-gamepad1.right_stick_x, 3);
         }
         turboBoost = gamepad1.left_stick_button;
-
         MoveRobot(direction, -rotation, turboBoost);
     }
 
