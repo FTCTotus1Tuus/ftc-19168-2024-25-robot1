@@ -20,18 +20,17 @@ public class Meet2SampleSide extends DarienOpModeAuto {
         setBucketPosition("carry");
         setSpecimenWrist("place");
         setVerticalSlide("basket high", 0.8);
-        sleep(1800);
+        sleep(1800); // TODO
         moveToPosition(-3, -17.5, 0.3);// approach slowly
         waitForArm();
         waitForMotors(1.5);
         setBucketPosition("drop");
-        sleep(1000);
-        setBucketPosition("carry");
-        sleep(200);
+        sleep(1000); //TODO
 
         // sample number 1
         moveToPosition(-15, -15, normalPower);
         sleep(500);
+        setBucketPosition("carry");
         setVerticalSlide("low", 0.8);
         waitForMotors(2);
         autoRotate(90, normalPower);
@@ -44,8 +43,8 @@ public class Meet2SampleSide extends DarienOpModeAuto {
         intakeSlide.setPower(-0.1);
         sleep(200);
         intakeSlide.setPower(0);
-        moveToPosition(-28, -15, 0.1); // pickup sample 1
-        waitForMotors(3.5);
+        moveToPosition(-28.5, -15, 0.1); // pickup sample 1
+        waitForMotors(2); //TODO
         setIntakeWrist("up");
         sleep(300);
         autoRotate(0, normalPower);
@@ -63,12 +62,12 @@ public class Meet2SampleSide extends DarienOpModeAuto {
         sleep(1000);
 
         //start sample 2
-        moveToPosition(-15, -25, normalPower);
+        moveToPosition(-15, -18, normalPower);
         setBucketPosition("carry");
         setVerticalSlide("low", 0.8);
         waitForMotors(2);
         autoRotate(90, normalPower);
-        waitForMotors(1);
+        moveToPosition(-15, -25, normalPower);
         intakeSlide.setPower(0.1);
         sleep(200);
         intakeSlide.setPower(0);
@@ -77,8 +76,9 @@ public class Meet2SampleSide extends DarienOpModeAuto {
         intakeSlide.setPower(-0.1);
         sleep(200);
         intakeSlide.setPower(0);
-        moveToPosition(-28, -25, 0.1);
-        waitForMotors();
+        waitForMotors(1);
+        moveToPosition(-25, -25, 0.3);
+        waitForMotors(2);//TODO
         sleep(150);
         setIntakeWrist("up");
         sleep(400);
@@ -93,7 +93,10 @@ public class Meet2SampleSide extends DarienOpModeAuto {
         waitForMotors();
         setBucketPosition("drop"); // place sample 2
         sleep(800);
-        moveToPosition(-15.5, -9.5, normalPower);
+        moveToPosition(-30, -5, normalPower);
+        setVerticalSlide("low", verticalSlidePower);
         waitForMotors();
+        autoRotate(180, normalPower);
+
     }
 }
