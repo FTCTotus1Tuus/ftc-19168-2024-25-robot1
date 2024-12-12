@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.team.autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
+@Disabled
 @Autonomous
 public class BasketSidePushAuto extends DarienOpModeAuto {
     public void runOpMode() {

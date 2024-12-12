@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 @TeleOp
 @Config
+@Disabled
 public class MotorsDebug extends DarienOpModeAuto {
 
     public static double servoPosition = 0;

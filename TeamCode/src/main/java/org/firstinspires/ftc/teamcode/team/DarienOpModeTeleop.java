@@ -45,8 +45,8 @@ public class DarienOpModeTeleop extends DarienOpMode {
                 intakeWheels.setPower(powerIntakeWheelToEjectSample);
             } else if (gamepad1.left_trigger != 0) {
                 intakeWheels.setPower(-gamepad1.left_trigger / 2);
-            } else if (gamepad2.y) {
-                intakeWheels.setPower(powerIntakeWheelToEjectSample);
+            } else if (gamepad2.left_trigger > 0.1) {
+                intakeWheels.setPower(-gamepad2.left_trigger);
                 print("INTAKE", "Eject sample");
             } else {
                 // Stop
