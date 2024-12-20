@@ -94,7 +94,7 @@ public class globalThreeSpecimenPlace extends DarienOpModeAuto {
         double errorY;
         double errorXp;
         double errorYp;
-        
+
         while (opModeIsActive()) {
             errorX = 40 - getXPos();
             errorY = 5 - getYPos();
@@ -102,9 +102,9 @@ public class globalThreeSpecimenPlace extends DarienOpModeAuto {
             errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
 
             if (getHypotenuse(errorXp, errorYp) > 5) {
-                setPower(currentMovementPower, errorXp, errorYp); // add pid?
+                setPower(currentMovementPower, errorXp, errorYp, 0); // add pid?
             } else {
-                setPower(currentMovementPower / 2, errorXp, errorYp); // add pid?
+                setPower(currentMovementPower / 2, errorXp, errorYp, 0); // add pid?
             }
         }
     }

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.team;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -11,8 +13,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class DarienOpModeAuto extends DarienOpMode {
 
     public static double normalPower = 0.3;
-    public static double verticalSlidePower = 0.8;
+    public static double verticalSlidePower = 1; //swapped to 1 from 0.8 needs testing
     public static double strafingInefficiencyFactor = 1.145;
+
+    public TelemetryPacket tp;
+    public FtcDashboard dash;
 
     //vertical slide positions
     public static int highChamberBelowPos = 1600;
@@ -28,6 +33,8 @@ public class DarienOpModeAuto extends DarienOpMode {
     //encoder movement targets
     public double targetPosX = 0;
     public double targetPosY = 0;
+    public double targetPosH = 0;
+    public double rotConst = 1;
     public double acceptableXYError = 0.5; //how many inches off the xy movement can be - does not compound
     public static double minimumXYspeed = 0.5;
     public double currentMovementPower = 0;
@@ -171,21 +178,27 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     }
 
-
     public void moveToPosition(double globalX, double globalY, double power) {
+        moveToPosition(globalX, globalY, currentHeading, power);
+    }
+
+    public void moveToPosition(double globalX, double globalY, double globalH, double power) {
         // uses optical sensor to move by setting robot motor power
         // DOES NOT USE ENCODERS
         double errorX = globalX - getXPos();
         double errorY = globalY - getYPos();
+        double errorH = getErrorRot(globalH);
 
         currentMovementPower = power;
         targetPosY = globalY;
         targetPosX = globalX;
+        targetPosH = globalH;
 
         double errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
         double errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
 
-        setPower(power, errorXp, errorYp); // add pid?
+
+        setPower(power, errorXp, errorYp, errorH); // add pid?
 
     }
 
@@ -207,7 +220,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         setBreakpoint();
 
         setRunMode();
-        setPower(power, adjX, adjY);
+        setPower(power, adjX, adjY, 0);
     }
 
     public void encoderRotate(double targetPosRadians, double power, boolean rotateClockwise) {
@@ -293,24 +306,29 @@ public class DarienOpModeAuto extends DarienOpMode {
         omniMotor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void setPower(double power, double adjX, double adjY) {
+    public void setPower(double power, double adjX, double adjY, double adjH) {
 
-        double[] motorPowers = scalePower((adjY + adjX), (adjY - adjX), (adjY - adjX), (adjY + adjX));
+        double[] motorPowers = scalePower(
+                (adjY + adjX - adjH * rotConst),
+                (adjY - adjX + adjH * rotConst),
+                (adjY - adjX - adjH * rotConst),
+                (adjY + adjX + adjH * rotConst), power);
 
-        omniMotor0.setPower(relativePower(power * motorPowers[0]));
-        omniMotor1.setPower(relativePower(power * motorPowers[1]));
-        omniMotor2.setPower(relativePower(power * motorPowers[2]));
-        omniMotor3.setPower(relativePower(power * motorPowers[3]));
+        omniMotor0.setPower(relativePower(motorPowers[0]));
+        omniMotor1.setPower(relativePower(motorPowers[1]));
+        omniMotor2.setPower(relativePower(motorPowers[2]));
+        omniMotor3.setPower(relativePower(motorPowers[3]));
     }
 
-    public double[] scalePower(double motorPower0, double motorPower1, double motorPower2, double motorPower3) {
+    public double[] scalePower(double motorPower0, double motorPower1, double motorPower2, double motorPower3, double power) {
         double maxPower = Math.max(Math.max(Math.abs(motorPower0), Math.abs(motorPower1)), Math.max(Math.abs(motorPower2), Math.abs(motorPower3)));
-        if (maxPower > 1) {
-            motorPower0 /= maxPower;
-            motorPower1 /= maxPower;
-            motorPower2 /= maxPower;
-            motorPower3 /= maxPower;
+        if (maxPower > power) {
+            motorPower0 = (motorPower0 * power) / maxPower;
+            motorPower1 = (motorPower1 * power) / maxPower;
+            motorPower2 = (motorPower2 * power) / maxPower;
+            motorPower3 = (motorPower3 * power) / maxPower;
         }
+
         double[] returnPower = new double[]{
                 motorPower0, motorPower1, motorPower2, motorPower3
         };
@@ -354,38 +372,42 @@ public class DarienOpModeAuto extends DarienOpMode {
         double errorY = 0;
         double errorXp;
         double errorYp;
+        double errorH;
         double startTime = this.time;
+        tp = new TelemetryPacket();
+        dash = FtcDashboard.getInstance();
         while (looping) {
+
+
             telemetry.addData("x: ", errorX);
             print("y: ", errorY);
             errorX = targetPosX - getXPos();
             errorY = targetPosY - getYPos();
+            errorH = getErrorRot(targetPosH);
 
             errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
             errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
 
-            if (getHypotenuse(errorXp, errorYp) > 5) {
-                setPower(currentMovementPower, errorXp, errorYp); // add pid?
+            if (getHypotenuse(errorXp, errorYp, errorH) > 5) {
+                setPower(currentMovementPower, errorXp, errorYp, errorH); // add pid?
             } else {
-                setPower(currentMovementPower / 2, errorXp, errorYp); // add pid?
+                setPower(currentMovementPower / 2, errorXp, errorYp, errorH); // add pid?
             }
             telemetry.addData("x vel: ", myOtos.getVelocity().x);
             telemetry.addData("y vel: ", myOtos.getVelocity().y);
 
-            if (getHypotenuse(errorX, errorY) <= acceptableXYError) {
+            if (getHypotenuse(errorX, errorY, errorH) <= acceptableXYError) {
                 looping = false;
-            } else if (getHypotenuse(myOtos.getVelocity().x, myOtos.getVelocity().y) <= minimumXYspeed &&
-                    getHypotenuse(errorX, errorY) < acceptableXYError * 4) {
+            } else if (getHypotenuse(myOtos.getVelocity().x, myOtos.getVelocity().y, myOtos.getVelocity().h) <= minimumXYspeed &&
+                    getHypotenuse(errorX, errorY, errorH) < acceptableXYError * 4) {
                 looping = false;
             } else if ((this.time - startTime) > timeout) {
                 looping = false;
             }
         }
-        setPower(0, 0, 0);
-        if (Math.abs(getErrorRot(currentHeading)) > rotationTolerance) {
-            print("need to realign", "");
-            autoRotate(currentHeading, normalPower);
-        }
+
+        currentHeading = getRawHeading();
+        setPower(0, 0, 0, 0);
 
         telemetry.addData("x pos: ", getXPos());
         print("y pos: ", getYPos());
@@ -423,17 +445,20 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public double getRawHeading() {
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return pos.h;
+        SparkFunOTOS.Pose2D pos2 = myOtos2.getPosition();
+        return (pos.h + pos2.h) / 2;
     }
 
     public double getXPos() {
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return pos.x;
+        SparkFunOTOS.Pose2D pos2 = myOtos2.getPosition();
+        return (pos.x + pos2.x) / 2;
     }
 
     public double getYPos() {
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return pos.y;
+        SparkFunOTOS.Pose2D pos2 = myOtos2.getPosition();
+        return (pos.y + pos2.y) / 2;
     }
 
 }

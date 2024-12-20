@@ -34,6 +34,7 @@ public class DarienOpMode extends LinearOpMode {
     public Servo specimenWrist;
     public Servo specimenClaw;
     public SparkFunOTOS myOtos;
+    public SparkFunOTOS myOtos2;
 
     // HARDWARE FIXED CONSTANTS
     public static double encoderResolution = 537.7; //no change unless we change motors
@@ -50,7 +51,7 @@ public class DarienOpMode extends LinearOpMode {
     // HARDWARE TUNING CONSTANTS
     public int encoderPos0, encoderPos1, encoderPos2, encoderPos3;
     public int encoderPos;
-    public double regularDivBy = 1;
+    public double regularDivBy = 2;
     public double turboDivBy = 1;
     public boolean turboBoost;
 
@@ -93,6 +94,7 @@ public class DarienOpMode extends LinearOpMode {
 
         // Initialize the SparkFun Odometry Tracking Optical Sensor (OTOS), which includes an IMU.
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        myOtos2 = hardwareMap.get(SparkFunOTOS.class, "sensor_otos_2");
         configureOtos();
 
         // INITIALIZE MOTORS
@@ -158,6 +160,10 @@ public class DarienOpMode extends LinearOpMode {
         // myOtos.setAngularUnit(AnguleUnit.RADIANS);
         myOtos.setAngularUnit(AngleUnit.DEGREES);
 
+        myOtos2.setLinearUnit(DistanceUnit.INCH);
+        // myOtos.setAngularUnit(AnguleUnit.RADIANS);
+        myOtos2.setAngularUnit(AngleUnit.DEGREES);
+
         // Assuming you've mounted your sensor to a robot and it's not centered,
         // you can specify the offset for the sensor relative to the center of the
         // robot. The units default to inches and degrees, but if you want to use
@@ -171,6 +177,8 @@ public class DarienOpMode extends LinearOpMode {
         // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         myOtos.setOffset(offset);
+        SparkFunOTOS.Pose2D offset2 = new SparkFunOTOS.Pose2D(1.75, -7.25, -90);
+        myOtos2.setOffset(offset2);
 
         // Here we can set the linear and angular scalars, which can compensate for
         // scaling issues with the sensor measurements. Note that as of firmware
@@ -190,6 +198,8 @@ public class DarienOpMode extends LinearOpMode {
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
         myOtos.setLinearScalar(0.977);
         myOtos.setAngularScalar(1.003);
+        myOtos2.setLinearScalar(0.987);
+        myOtos2.setAngularScalar(1.003);
 
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
         // have an offset. Note that as of firmware version 1.0, the calibration
@@ -202,10 +212,12 @@ public class DarienOpMode extends LinearOpMode {
         // it will take 255 samples and wait until done; each sample takes about
         // 2.4ms, so about 612ms total
         myOtos.calibrateImu();
+        myOtos2.calibrateImu();
 
         // Reset the tracking algorithm - this resets the position to the origin,
         // but can also be used to recover from some rare tracking errors
         myOtos.resetTracking();
+        myOtos2.resetTracking();
 
         // After resetting the tracking, the OTOS will report that the robot is at
         // the origin. If your robot does not start at the origin, or you have
@@ -213,6 +225,7 @@ public class DarienOpMode extends LinearOpMode {
         // the OTOS location to match and it will continue to track from there.
         SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
         myOtos.setPosition(currentPosition);
+        myOtos2.setPosition(currentPosition);
 
         // Get the hardware and firmware version
         SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
@@ -229,5 +242,10 @@ public class DarienOpMode extends LinearOpMode {
     public double getHypotenuse(double x, double y) {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
+
+    public double getHypotenuse(double x, double y, double z) {
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+    }
+
 
 }
