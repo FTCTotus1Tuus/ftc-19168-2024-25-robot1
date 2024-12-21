@@ -5,18 +5,20 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
 @Config
-public class DriverControl extends DarienOpModeTeleop{
+public class DriverControl extends DarienOpModeTeleop {
     @Override
-    public void runOpMode(){
+    public void runOpMode() {
         initControls();
         waitForStart();
         //Start
         while (this.opModeIsActive()) {
 
+            pollSensors();
             runDriveSystem();
             runIntakeSystem();
             runVerticalSlideSystem();
             runSpecimenSystem();
+
 
             //runMacro("ReadyToPickup");
             //runMacro("ReadyToDrop");

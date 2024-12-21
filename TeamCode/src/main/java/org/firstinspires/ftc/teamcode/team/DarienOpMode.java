@@ -1,3 +1,7 @@
+// To run on the robot:
+// 1. Make Module   (Top ribbon)
+// 2. Run           (Top ribbon)
+
 package org.firstinspires.ftc.teamcode.team;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -45,7 +49,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double powerIntakeWheelToPickupSample = 1;
     public static double powerIntakeWheelToEjectSample = -0.3;
     public static double powerIntakeSlideIn = -0.45;
-    public static double PI = 3.1415;
+    public static double PI = 3.1416;
 
     // HARDWARE TUNING CONSTANTS
     public int encoderPos0, encoderPos1, encoderPos2, encoderPos3;
@@ -219,10 +223,12 @@ public class DarienOpMode extends LinearOpMode {
         SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
         myOtos.getVersionInfo(hwVersion, fwVersion);
 
+
         telemetry.addLine("OTOS configured! Press start to get position data!");
         telemetry.addLine();
         telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
         telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
+
         telemetry.update();
     }
 

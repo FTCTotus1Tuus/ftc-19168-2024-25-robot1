@@ -14,6 +14,19 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public boolean startedIntakeSlide = false;
     public double startTime = 0;
 
+    public void pollSensors() {
+        intakeColorSensor.enableLed(true);
+        telemetry.addData("Red: ", intakeColorSensor.red());
+        telemetry.addData("Green: ", intakeColorSensor.green());
+        telemetry.addData("Blue: ", intakeColorSensor.blue());
+
+        int[] COLOR_RED = {0, 0, 0};
+        int[] COLOR_BLUE = {0, 0, 0};
+        int[] COLOR_YELLOW = {0, 0, 0};
+
+
+    }
+
     /**
      * If the GP1 left bumper is pressed, spin the boot wheels in if the joystick is pulled down or spin the boot wheels out if the joystick is pushed up.
      */
