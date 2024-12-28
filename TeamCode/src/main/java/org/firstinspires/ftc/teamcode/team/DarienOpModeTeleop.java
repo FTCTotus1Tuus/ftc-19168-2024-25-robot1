@@ -10,20 +10,22 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public double[] direction = {0.0, 0.0};
     public double rotation;
     public static double verticalSlideMaxHeight = 4400;
+    public static double lift1MaxHeight = 4000;
     public double durationSecondsIntakeSlideIn = 2;
     public boolean startedIntakeSlide = false;
     public double startTime = 0;
 
     public void pollSensors() {
         intakeColorSensor.enableLed(true);
-        telemetry.addData("Red: ", intakeColorSensor.red());
-        telemetry.addData("Green: ", intakeColorSensor.green());
-        telemetry.addData("Blue: ", intakeColorSensor.blue());
+        telemetry.addData("R: ", intakeColorSensor.red());
+        telemetry.addData("G: ", intakeColorSensor.green());
+        telemetry.addData("B: ", intakeColorSensor.blue());
+//        telemetry.addData("Distance:", intakeColorSensor) // Possibly use the proximity sensor values from the color sensor.
+        telemetry.update();
 
         int[] COLOR_RED = {0, 0, 0};
         int[] COLOR_BLUE = {0, 0, 0};
         int[] COLOR_YELLOW = {0, 0, 0};
-
 
     }
 
@@ -114,6 +116,21 @@ public class DarienOpModeTeleop extends DarienOpMode {
         } else {
             bucket.setPosition(bucketPickup);
         }
+    }
+
+    public void runLift1System() {
+        // encoder values are positive and motor is in forward mode
+        if (gamepad2.dpad_up && lift1.getCurrentPosition() <= lift1MaxHeight) {
+            //if (gamepad2.dpad_up) {
+            lift1.setPower(1);
+        } else if (gamepad2.dpad_down && lift1.getCurrentPosition() >= 0) {
+            //} else if (gamepad2.dpad_down) {
+            lift1.setPower(-1);
+        } else {
+            lift1.setPower(0);
+        }
+        telemetry.addData("Lift 1 Pos: ", lift1.getCurrentPosition());
+        //telemetry.update();
     }
 
     public void runSpecimenSystem() {

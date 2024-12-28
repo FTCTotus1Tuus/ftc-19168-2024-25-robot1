@@ -38,6 +38,7 @@ public class DarienOpMode extends LinearOpMode {
     public Servo specimenWrist;
     public Servo specimenClaw;
     public SparkFunOTOS myOtos;
+    public DcMotor lift1;
 
     // HARDWARE FIXED CONSTANTS
     public static double encoderResolution = 537.7; //no change unless we change motors
@@ -113,6 +114,12 @@ public class DarienOpMode extends LinearOpMode {
         verticalSlide = initializeMotor("verticalSlide");
         verticalSlide.setDirection(DcMotor.Direction.REVERSE);
         verticalSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        lift1 = initializeMotor("lift1");
+        lift1.setDirection(DcMotor.Direction.FORWARD);
+        lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // INITIALIZE SERVOS
         intakeSlide = hardwareMap.get(CRServo.class, "intakeSlide"); // Expansion Hub port 0
