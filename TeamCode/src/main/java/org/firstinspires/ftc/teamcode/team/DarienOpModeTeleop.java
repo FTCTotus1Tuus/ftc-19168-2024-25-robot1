@@ -10,7 +10,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public double[] direction = {0.0, 0.0};
     public double rotation;
     public static double verticalSlideMaxHeight = 4400;
-    public static double lift1MaxHeight = 4000;
+    public static double lift1MaxHeight = 3700;
     public double durationSecondsIntakeSlideIn = 2;
     public boolean startedIntakeSlide = false;
     public double startTime = 0;
@@ -119,18 +119,42 @@ public class DarienOpModeTeleop extends DarienOpMode {
     }
 
     public void runLift1System() {
+        double lift_power, lift_iduty, lift_pduty, lift_pgain = .002, lift_igain = .00001, lift_sp = 50;
+        boolean doingL2ascent = false;
         // encoder values are positive and motor is in forward mode
         if (gamepad2.dpad_up && lift1.getCurrentPosition() <= lift1MaxHeight) {
             //if (gamepad2.dpad_up) {
             lift1.setPower(1);
-        } else if (gamepad2.dpad_down && lift1.getCurrentPosition() >= 0) {
+        } else if (gamepad2.dpad_down /* && lift1.getCurrentPosition() >= 0*/) {
             //} else if (gamepad2.dpad_down) {
-            lift1.setPower(-1);
+            lift_power = 1;
+            lift_iduty = -lift_power;
+            lift1.setPower(-lift_power);
+            if (gamepad2.x) {
+                doingL2ascent = true;
+                while (doingL2ascent && !gamepad2.b) {
+                    lift_pduty = clamp(lift_pgain * (lift_sp - lift1.getCurrentPosition()), -.5, .5);
+                    lift_iduty = clamp(lift_igain * (lift_sp - lift1.getCurrentPosition()) + lift_iduty, -.7, .7);
+                    lift_power = clamp(lift_pduty + lift_iduty, -.8, .8);
+                    lift1.setPower(lift_power);
+                    telemetry.addData("Pduty: ", lift_pduty);
+                    telemetry.addData("Iduty: ", lift_iduty);
+                    telemetry.addData("lift1: ", lift1.getCurrentPosition());
+                    telemetry.update();
+                    if (gamepad2.b) {
+                        doingL2ascent = false;
+                    }
+                }
+            }
         } else {
             lift1.setPower(0);
         }
         telemetry.addData("Lift 1 Pos: ", lift1.getCurrentPosition());
         //telemetry.update();
+    }
+
+    public void liftLock() {
+
     }
 
     public void runSpecimenSystem() {
