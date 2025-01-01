@@ -123,14 +123,14 @@ public class DarienOpModeTeleop extends DarienOpMode {
         boolean doingL2ascent = false;
         // encoder values are positive and motor is in forward mode
         if (gamepad2.dpad_up && lift1.getCurrentPosition() <= lift1MaxHeight) {
-            //if (gamepad2.dpad_up) {
             lift1.setPower(1);
+            specimenWrist.setPosition(specimenWristPlace);
         } else if (gamepad2.dpad_down /* && lift1.getCurrentPosition() >= 0*/) {
-            //} else if (gamepad2.dpad_down) {
             lift_power = 1;
             lift_iduty = -lift_power;
             lift1.setPower(-lift_power);
             if (gamepad2.x) {
+                double intakeSlideStartTime = getRuntime();
                 doingL2ascent = true;
                 while (doingL2ascent && !gamepad2.b) {
                     lift_pduty = clamp(lift_pgain * (lift_sp - lift1.getCurrentPosition()), -.5, .5);
@@ -144,6 +144,16 @@ public class DarienOpModeTeleop extends DarienOpMode {
                     if (gamepad2.b) {
                         doingL2ascent = false;
                     }
+                    if (getRuntime() - intakeSlideStartTime <= 30) {
+                        /*while within 30 seconds set intake slide power 0.1 */
+                        intakeSlide.setPower(-0.1); //to keep intake slide from rolling out while doing the L2 ascent
+                        intakeWrist.setPosition(intakeWristUpPosition);
+                    } else {
+                        /* otherwise set intake slide power to 0*/
+                        intakeSlide.setPower(0);
+                        intakeWrist.setPosition(intakeWristUpPosition);
+                    }
+
                 }
             }
         } else {
@@ -151,6 +161,11 @@ public class DarienOpModeTeleop extends DarienOpMode {
         }
         telemetry.addData("Lift 1 Pos: ", lift1.getCurrentPosition());
         //telemetry.update();
+        //allow driver to reset encoder to 0 for the lift 1 slide
+        if (gamepad2.back && gamepad2.x) {
+            lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     public void liftLock() {
