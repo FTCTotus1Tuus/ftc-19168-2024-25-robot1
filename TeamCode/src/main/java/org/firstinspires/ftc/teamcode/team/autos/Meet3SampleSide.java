@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.team.autos;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.team.ColorSensorFunctions;
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 @Config
 @Autonomous
 public class Meet3SampleSide extends DarienOpModeAuto {
+    public ColorSensorFunctions csf = new ColorSensorFunctions();
     public double normalPower = 0.5;
 
     @Override
@@ -26,11 +28,11 @@ public class Meet3SampleSide extends DarienOpModeAuto {
         waitForMotors(1.5);
         setBucketPosition("drop");
         sleep(1000); //TODO
+        setBucketPosition("carry");
 
         // sample number 1
         moveToPosition(-15, -15, normalPower);
         sleep(500);
-        setBucketPosition("carry");
         setVerticalSlide("low", 0.8);
         waitForMotors(2);
         autoRotate(90, normalPower);
@@ -40,8 +42,10 @@ public class Meet3SampleSide extends DarienOpModeAuto {
         intakeSlide.setPower(0);
         setIntakeWrist("down");
         startIntake();
+        // Use the color sensor to determine if we have picked up the sample.
+        tryGrabbingSample(80, 0.8);
         intakeSlide.setPower(-0.1);
-        sleep(200);
+        sleep(1000);
         intakeSlide.setPower(0);
         moveToPosition(-28.5, -15, 0.1); // pickup sample 1
         waitForMotors(2); //TODO
@@ -98,5 +102,19 @@ public class Meet3SampleSide extends DarienOpModeAuto {
         waitForMotors();
         autoRotate(180, normalPower);
 
+    }
+
+    public void tryGrabbingSample(int colorIntensityMin, double timeoutSeconds) {
+        boolean looping = true;
+        double startTime = getRuntime();
+        while (looping) {
+            intakeSlide.setPower(.1);
+            if (csf.yellowColorIntensity(intakeColorSensor.red(), intakeColorSensor.green(), intakeColorSensor.blue()) >= colorIntensityMin || getRuntime() - startTime > timeoutSeconds) {
+                // if the yellow color is strong enough, that indicates we have the sample.
+                looping = false;
+                stopIntake();
+                intakeSlide.setPower(0);
+            }
+        }
     }
 }
