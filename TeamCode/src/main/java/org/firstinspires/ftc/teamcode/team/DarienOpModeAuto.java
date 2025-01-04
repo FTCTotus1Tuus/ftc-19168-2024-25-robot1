@@ -44,7 +44,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void initControls() {
         super.initControls();
 
-        print("otis", myOtos);
+        print("otos", myOtos);
 
         // reverse motors 2 and 3
         omniMotor2.setDirection(DcMotor.Direction.REVERSE);
