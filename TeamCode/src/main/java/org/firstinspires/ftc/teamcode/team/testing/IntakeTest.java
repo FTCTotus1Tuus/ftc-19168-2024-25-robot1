@@ -6,7 +6,9 @@ package org.firstinspires.ftc.teamcode.team.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import com.qualcomm.robotcore.hardware.*;
 
 import com.qualcomm.robotcore.*;
@@ -17,7 +19,7 @@ import java.io.*;
 @Disabled
 @TeleOp
 
-public class IntakeTest extends LinearOpMode{
+public class IntakeTest extends LinearOpMode {
 
     CRServo leftIntake;
     CRServo rightIntake;
@@ -28,14 +30,14 @@ public class IntakeTest extends LinearOpMode{
     Servo clawRight;
     // l open is 0.4 closed is 0.1
     // r open is 0.6 closed is 0.9 for claw servos
-    double clawLeftPositionOpen=0.4;
-    double clawLeftPositionClosed=0.08;
-    double clawRightPositionOpen=0.6;
-    double clawRightPositionClosed=0.93;
+    double clawLeftPositionOpen = 0.4;
+    double clawLeftPositionClosed = 0.08;
+    double clawRightPositionOpen = 0.6;
+    double clawRightPositionClosed = 0.93;
 
-    double[] direction = {0.0,0.0};
+    double[] direction = {0.0, 0.0};
     double rotation;
-    double regularDivBy = 1;
+    double regularDivBy = 2;
     double turboDivBy = 1;
     boolean turboBoost;
 
@@ -47,7 +49,7 @@ public class IntakeTest extends LinearOpMode{
     DcMotor leftArm;
     DcMotor rightArm;
 
-    public void runOpMode(){
+    public void runOpMode() {
         omniMotor0 = initializeMotor("omniMotor0");
         omniMotor1 = initializeMotor("omniMotor3");
         omniMotor2 = initializeMotor("omniMotor1");
@@ -92,14 +94,14 @@ public class IntakeTest extends LinearOpMode{
                 feeder.setPower(0);
             }
 
-            if(gamepad1.right_trigger>0) {
+            if (gamepad1.right_trigger > 0) {
                 leftIntake.setPower(-1);
                 rightIntake.setPower(1);
             } else {
                 leftIntake.setPower(0);
                 rightIntake.setPower(0);
             }
-            if (gamepad1.left_trigger>0){
+            if (gamepad1.left_trigger > 0) {
                 feeder.setPower(1);
             } else {
                 feeder.setPower(0);
@@ -107,12 +109,12 @@ public class IntakeTest extends LinearOpMode{
 //          feeder.setPower((gamepad1.right_trigger ? 1:0) + (gamepad1.left_trigger ? -1:0));
 
             // TODO: Wrist to be on fixed positions for grabbing and for dropping on the backboard.
-            if(gamepad2.right_trigger>0) {
+            if (gamepad2.right_trigger > 0) {
                 clawWrist.setPosition(0.7);
             } else {
                 // do nothing
             }
-            if (gamepad2.left_trigger>0){
+            if (gamepad2.left_trigger > 0) {
                 clawWrist.setPosition(0.3);
             } else {
                 // do nothing
@@ -128,15 +130,15 @@ public class IntakeTest extends LinearOpMode{
 //          clawLeft.setPosition(gamepad2.right_stick_x);
 //          clawRight.setPosition(gamepad2.right_stick_y);
 
-        if(gamepad2.right_bumper) {
-            // Open the claw
-            clawLeft.setPosition(clawLeftPositionOpen);
-            clawRight.setPosition(clawRightPositionOpen);
-        } else if (gamepad2.left_bumper){
-            // Close the claw
-            clawLeft.setPosition(clawLeftPositionClosed);
-            clawRight.setPosition(clawRightPositionClosed);
-        }
+            if (gamepad2.right_bumper) {
+                // Open the claw
+                clawLeft.setPosition(clawLeftPositionOpen);
+                clawRight.setPosition(clawRightPositionOpen);
+            } else if (gamepad2.left_bumper) {
+                // Close the claw
+                clawLeft.setPosition(clawLeftPositionClosed);
+                clawRight.setPosition(clawRightPositionClosed);
+            }
 
             // DONE: TODO: Arm control on the left joystick up/down.
             leftArm.setPower(-gamepad2.left_stick_y);
@@ -171,7 +173,7 @@ public class IntakeTest extends LinearOpMode{
 
     }
 
-    public void MoveRobot(double[] direction, double rotation, boolean turboBoost){
+    public void MoveRobot(double[] direction, double rotation, boolean turboBoost) {
 
         double divBy;
         double wheel0 = clamp(-direction[0] + direction[1] + rotation, -1, 1);
@@ -180,20 +182,19 @@ public class IntakeTest extends LinearOpMode{
         double wheel3 = clamp(direction[0] + -direction[1] + rotation, -1, 1);
         if (turboBoost) {
             divBy = turboDivBy;
-        }
-        else {
+        } else {
             divBy = regularDivBy;
 
         }
-        telemetry.addData("", wheel0/divBy);
+        telemetry.addData("", wheel0 / divBy);
 
-        MoveMotor(omniMotor0,wheel0/divBy);
-        MoveMotor(omniMotor1,wheel1/divBy);
-        MoveMotor(omniMotor2,wheel2/divBy);
-        MoveMotor(omniMotor3,wheel3/divBy);
+        MoveMotor(omniMotor0, wheel0 / divBy);
+        MoveMotor(omniMotor1, wheel1 / divBy);
+        MoveMotor(omniMotor2, wheel2 / divBy);
+        MoveMotor(omniMotor3, wheel3 / divBy);
     }
 
-    public DcMotor initializeMotor(String name){
+    public DcMotor initializeMotor(String name) {
          /*This is just a handy dandy function which saves a few lines and looks cool,
          it initializes the motor and it also initializers the motor power logs for this motor*/
         DcMotor motor = hardwareMap.get(DcMotor.class, name);
@@ -201,11 +202,12 @@ public class IntakeTest extends LinearOpMode{
         return motor;
     }
 
-    public void MoveMotor(DcMotor motor, double power){
+    public void MoveMotor(DcMotor motor, double power) {
          /*This function just moves the motors and updates the
          logs for replay*/
         motor.setPower(power);
     }
+
     public static double clamp(double val, double min, double max) {
         return Math.max(min, Math.min(max, val));
     }

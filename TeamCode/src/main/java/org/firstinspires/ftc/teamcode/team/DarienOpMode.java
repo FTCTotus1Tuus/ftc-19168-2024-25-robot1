@@ -55,7 +55,7 @@ public class DarienOpMode extends LinearOpMode {
     // HARDWARE TUNING CONSTANTS
     public int encoderPos0, encoderPos1, encoderPos2, encoderPos3;
     public int encoderPos;
-    public double regularDivBy = 1;
+    public double regularDivBy = 2;
     public double turboDivBy = 1;
     public boolean turboBoost;
 
