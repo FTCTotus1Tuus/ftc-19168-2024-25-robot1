@@ -48,7 +48,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double rotationTolerance = 2; //in degrees
     public static double power = 0.3;
     public static double powerIntakeWheelToPickupSample = 1;
-    public static double powerIntakeWheelToEjectSample = -0.3;
+    public static double powerIntakeWheelToEjectSample = -0.25;
     public static double powerIntakeSlideIn = -0.45;
     public static double PI = 3.1416;
 
