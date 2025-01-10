@@ -239,8 +239,13 @@ public class DarienOpMode extends LinearOpMode {
         telemetry.update();
     }
 
+
     public double getHypotenuse(double x, double y) {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    }
+
+    public double getHypotenuse(double x, double y, double z) {
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
     }
 
 }
