@@ -162,6 +162,10 @@ public class DarienOpModeAuto extends DarienOpMode {
         intakeWheels.setPower(-0.5);
     }
 
+    public void reverseIntake(double power) {
+        intakeWheels.setPower(power);
+    }
+
     public void placeSampleInBucket() {
         intakeSlide.setPower(-0.5);
         setIntakeWrist("up");

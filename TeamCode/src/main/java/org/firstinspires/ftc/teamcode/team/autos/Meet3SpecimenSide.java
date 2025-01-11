@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.team.autos;
 // JMJ
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
@@ -9,6 +10,8 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 public class Meet3SpecimenSide extends DarienOpModeAuto {
     @Override
     public void runOpMode() throws InterruptedException {
+        SparkFunOTOS.Pose2D currentPosition;
+
         initControls();
         waitForStart();
         setBucketPosition("carry");
@@ -21,128 +24,128 @@ public class Meet3SpecimenSide extends DarienOpModeAuto {
         waitForMotors(2);
         waitForArm();
 
+        //reset odometry angle (has tendency to drift)
+        currentPosition = new SparkFunOTOS.Pose2D(myOtos.getPosition().x, myOtos.getPosition().y, 0);
+        myOtos.setPosition(currentPosition);
+
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
-        setSpecimenWrist("pickup");
         setSpecimenClaw("open");
+        setSpecimenWrist("pickup");
         setVerticalSlide("low", verticalSlidePower);
 
-        // Push one floor samples into observation zone, which will become specimens
+        // Pick up one floor samples into observation zone, which will become specimens
         moveToPosition(-2, 25, normalPower); // backup from wall
         waitForMotors(0.5);
-        moveToPosition(36, 8, 0.7); // go to first sample
-        waitForMotors(2);
+        moveToPosition(34.5, 8, 0.7); // go to first sample
+        stopIntake();
         setIntakeWrist("down");
+        waitForMotors(3);
         startIntake();
-        moveToPosition(36, 23, 0.3);
-        waitForMotors(1);
+        moveToPosition(myOtos.getPosition().x, 24, 0.3);
+        waitForMotors(2);
         setIntakeWrist("up");
-        moveToPosition(39, 5, 0.4);
+        moveToPosition(myOtos.getPosition().x, 5, 0.4);
         sleep(500);
-        reverseIntake();
+        reverseIntake(-0.2);
         waitForMotors(1);
         setBucketPosition("drop"); // drop first sample
         sleep(500);
 
-        moveToPosition(44, 8, 0.5); // go to second sample
+        moveToPosition(44, 8, 0.7); // go to second sample
         stopIntake();
-        waitForMotors();
+        waitForMotors(3);
         setBucketPosition("carry");
         setIntakeWrist("down");
         startIntake();
-        moveToPosition(44, 24, 0.2);
+        moveToPosition(myOtos.getPosition().x, 24, 0.3);
         waitForMotors(2);
         setIntakeWrist("up");
-        moveToPosition(48, 4, 0.3);
+        moveToPosition(myOtos.getPosition().x, 4, 0.4);
         sleep(500);
-        reverseIntake();
+        reverseIntake(-0.2);
         waitForMotors(1);
+        stopIntake();
+        // rotate to dump sample in corner
+        autoRotate(45, .5);
         setBucketPosition("drop"); // drop second sample
         sleep(500);
+        autoRotate(0, .5);
 
-//        moveToPosition(56, 8, 0.5); // go to third sample
-//        stopIntake();
-//        waitForMotors(0.75);
-//        setBucketPosition("carry");
-//        setIntakeWrist("down");
-//        startIntake();
-//        moveToPosition(56, 30, 0.3);
-//        waitForMotors(1);
-//        setIntakeWrist("up");
-//        moveToPosition(35, 4, 0.3);
-//        sleep(500);
-//        reverseIntake();
-//        waitForMotors(1);
-//        setBucketPosition("drop"); // drop second sample
-//        setSpecimenWrist("pickup");
-//        sleep(1000);
-//        setBucketPosition("carry");
-//        stopIntake();
-
-// Specimen 2: Pick up specimen from wall
-        moveToPosition(32, -4, 0.4);
-        waitForMotors();
+        // Specimen 2: Pick up specimen from wall
+        moveToPosition(myOtos.getPosition().x, 0, 0.4);
+        waitForMotors(2);
         print("done", "");
         setSpecimenClaw("closed");
-        sleep(150);
+        sleep(300);
         setSpecimenWrist("place");
 
         // Start placing specimens on bar
-        moveToPosition(-5, 31, 0.6);
+        moveToPosition(-5, 27, 0.6);
         setSpecimenClaw("closed");
         setSpecimenWrist("place");
         setVerticalSlide("high chamber below", verticalSlidePower);
         waitForMotors(3);
         waitForArm();
+        moveToPosition(-5, 32, 0.6);
+        waitForMotors(1);
+
+        //reset odometry angle (has tendency to drift), assuming we are flush against the sub wall
+        currentPosition = new SparkFunOTOS.Pose2D(myOtos.getPosition().x, myOtos.getPosition().y, 0);
+        myOtos.setPosition(currentPosition);
 
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
-        setSpecimenWrist("pickup");
         setSpecimenClaw("open");
+        setSpecimenWrist("pickup");
         setVerticalSlide("low", verticalSlidePower);
 
-
-        moveToPosition(32, -4, 0.4);
-        waitForMotors();
+        // Specimen 3: Pickup specimen from wall
+        moveToPosition(33, 4, 0.6);
+        waitForMotors(3);
+        moveToPosition(myOtos.getPosition().x, -1, 0.6);
+        waitForMotors(1);
         print("done", "");
         setSpecimenClaw("closed");
-        sleep(150);
+        sleep(300);
         setSpecimenWrist("place");
 
         // Start placing specimens on bar
-        moveToPosition(-5, 31, 0.6);
-        setSpecimenClaw("closed");
-        setSpecimenWrist("place");
+        moveToPosition(-8, 27, 0.6);
         setVerticalSlide("high chamber below", verticalSlidePower);
         waitForMotors(3);
         waitForArm();
+        moveToPosition(myOtos.getPosition().x, 31, 0.6);
+        waitForMotors(1);
 
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
-        setSpecimenWrist("pickup");
         setSpecimenClaw("open");
+        setSpecimenWrist("pickup");
         setVerticalSlide("low", verticalSlidePower);
 
-
-        moveToPosition(32, -4, 0.4);
-        waitForMotors();
+        // Specimen 4: Pickup specimen from wall
+        moveToPosition(33, 4, 0.6);
+        waitForMotors(3);
+        moveToPosition(myOtos.getPosition().x, -1, 0.6);
+        waitForMotors(1);
         print("done", "");
         setSpecimenClaw("closed");
-        sleep(150);
+        sleep(300);
         setSpecimenWrist("place");
 
         // Start placing specimens on bar
-        moveToPosition(-10, 31, 0.6);
-        setSpecimenClaw("closed");
-        setSpecimenWrist("place");
+        moveToPosition(-10, 27, 0.6);
         setVerticalSlide("high chamber below", verticalSlidePower);
         waitForMotors(3);
         waitForArm();
+        moveToPosition(myOtos.getPosition().x, 31, 0.6);
+        waitForMotors(1);
 
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
-        setSpecimenWrist("pickup");
         setSpecimenClaw("open");
+        setSpecimenWrist("pickup");
         setVerticalSlide("low", verticalSlidePower);
 
         // PARK: Go to observation zone.
