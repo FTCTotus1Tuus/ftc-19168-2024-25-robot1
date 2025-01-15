@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.team.autos;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.team.ColorSensorFunctions;
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 @Config
-@Autonomous
+@Disabled
+@Autonomous(name = "Auto: Meet 3 Sample Side", group = "Auto")
 public class Meet3SampleSide extends DarienOpModeAuto {
     public ColorSensorFunctions csf = new ColorSensorFunctions();
     public double normalPower = 0.5;

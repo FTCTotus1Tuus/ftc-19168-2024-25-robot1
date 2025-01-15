@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
-@Disabled
+
 @Config
-@Autonomous
+
+@Autonomous(name = "Auto: Meet 3 Sample Side", group = "Auto")
 public class Meet3SampleSideSebastianIsCrazy extends DarienOpModeAuto {
     public double normalPower = 0.5;
 
@@ -22,90 +23,92 @@ public class Meet3SampleSideSebastianIsCrazy extends DarienOpModeAuto {
         setBucketPosition("carry");
         setSpecimenWrist("place");
         setVerticalSlide("basket high", 1);
-        sleep(800); // TODO
+        sleep(600); // TODO
         moveToPosition(-3, -17.5, 0.3);// approach slowly
         waitForArm();
-        waitForMotors(1);
+        waitForMotors(0.5);
         setBucketPosition("drop");
+        setIntakeWrist("down");
         sleep(600); //TODO
 
         // sample number 1
-        moveToPosition(-15, -15, 0.4);
+        moveToPosition(-14, -13.65, 0.4);
         sleep(200);
         setBucketPosition("carry");
         setVerticalSlide("low", 0.8);
         waitForMotors(2);
         autoRotate(90, 0.4);
-        waitForMotors(0.8);
-//        intakeSlide.setPower(0.1);
-//        sleep(200);
-//        intakeSlide.setPower(0);
-        setIntakeWrist("down");
         startIntake();
-//        intakeSlide.setPower(-0.1);
-//        sleep(200);
-//        intakeSlide.setPower(0);
-        moveToPosition(-28.5, -15, 0.1); // pickup sample 1
-        waitForMotors(2); //TODO
-        setIntakeWrist("up");
-        sleep(300);
-        autoRotate(0, normalPower);
-        moveToPosition(0, -9.5, 0.4);
-        sleep(300);
-        reverseIntake();
-        sleep(500);
-        setVerticalSlide("basket high", 1); // raise arm for sample 1
-        waitForMotors();//?
+        moveToPosition(-26, getYPos(), 0.27); // pickup sample 1
+        waitForMotors(1.5); //TODO
         stopIntake();
-        moveToPosition(0, -18, 0.4);//move slowly
+        setIntakeWrist("up");
+        moveToPosition(-20, getYPos(), 0.4);
+        sleep(650);
+        reverseIntake();
+        waitForMotors(0.1);
+
+        //go to basket for sample 1
+        autoRotate(45, normalPower);
+        setVerticalSlide("basket high", 1); // raise arm sample 2
+        stopIntake();
+        moveToPosition(-3, -22, 0.4);//approach slowly
+        waitForMotors(1.5);
         waitForArm();
-        waitForMotors(1);
-        setBucketPosition("drop"); // place sample 1
+        setBucketPosition("drop");
+        setIntakeWrist("down");
         sleep(600);
 
         //start sample 2
         moveToPosition(-15, -18, 0.4);
         sleep(200);
         setBucketPosition("carry");
-        setVerticalSlide("low", 0.8);
         waitForMotors(2);
+        setVerticalSlide("low", 0.8);
         autoRotate(90, 0.4);
-        moveToPosition(-18, -25, 0.4);
-//        intakeSlide.setPower(0.1);
-//        sleep(200);
-//        intakeSlide.setPower(0);
-        setIntakeWrist("down");
+        moveToPosition(-18, -26.5, 0.4);
         startIntake();
-//        intakeSlide.setPower(-0.1);
-//        sleep(200);
-//        intakeSlide.setPower(0);
         waitForMotors(1);
-        moveToPosition(-24.5, -25, 0.4);
+        moveToPosition(-25.5, getYPos(), 0.27); // go forward to pickup
         waitForMotors(1);//TODO
         sleep(150);
+        stopIntake();
         setIntakeWrist("up");
-        sleep(300);
-        autoRotate(0, normalPower);
-        moveToPosition(0, -9.5, normalPower);
+        moveToPosition(-15, getYPos(), normalPower);
+        sleep(700);
         reverseIntake();
-        sleep(500);
+        waitForMotors(0.25);
+
+        //go to basket for sample 2
+        autoRotate(45, normalPower);
         setVerticalSlide("basket high", 1); // raise arm sample 2
         stopIntake();
-        waitForMotors();
-        moveToPosition(0, -18, 0.4);//approach slowly
-        waitForMotors(1);
-        setBucketPosition("drop"); // place sample 2
+        moveToPosition(0, -23, 0.5);//approach slowly
+        waitForMotors(1.5);
+        waitForArm();
+        setBucketPosition("drop");
         sleep(600);
-        moveToPosition(-29.412, -5, 0.6);
+
+        //go to third sample
+        moveToPosition(-31, -5, 0.6);
         sleep(200);
         setBucketPosition("carry");
-        setVerticalSlide("low", verticalSlidePower);
         waitForMotors();
+        setVerticalSlide("low", verticalSlidePower);
         autoRotate(180, 0.6);
         autoRotate(180, 0.1);
         sleep(100);
         setIntakeWrist("down");
         startIntake();
+        moveToPosition(getXPos(), -15, 0.3);
+        waitForMotors();
+        setIntakeWrist("up");
+        sleep(500);
+        reverseIntake();
+        moveToPosition(-1, -22, 0.4);
+        waitForMotors();
+        while (opModeIsActive()) {
+        }
 
     }
 }
