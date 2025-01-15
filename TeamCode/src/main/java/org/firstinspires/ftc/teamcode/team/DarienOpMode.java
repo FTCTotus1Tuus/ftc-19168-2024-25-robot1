@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -47,7 +48,7 @@ public class DarienOpMode extends LinearOpMode {
     public double inchesToEncoder = encoderResolution / constMult;
     public static double rotationTolerance = 2; //in degrees
     public static double power = 0.3;
-    public static double powerIntakeWheelToPickupSample = 1;
+    public static double powerIntakeWheelToPickupSample = 0.9;
     public static double powerIntakeWheelToEjectSample = -0.25;
     public static double powerIntakeSlideIn = -0.45;
     public static double PI = 3.1416;
@@ -213,6 +214,7 @@ public class DarienOpMode extends LinearOpMode {
         // it will take 255 samples and wait until done; each sample takes about
         // 2.4ms, so about 612ms total
         myOtos.calibrateImu();
+//        while (myOtos.getImuCalibratio
 
         // Reset the tracking algorithm - this resets the position to the origin,
         // but can also be used to recover from some rare tracking errors

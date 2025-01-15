@@ -58,8 +58,6 @@ public class DarienOpModeTeleop extends DarienOpMode {
             } else if (gamepad1.x) {
                 print("INTAKE", "Eject sample");
                 intakeWheels.setPower(powerIntakeWheelToEjectSample);
-            } else if (gamepad1.left_trigger != 0) {
-                intakeWheels.setPower(-gamepad1.left_trigger / 2);
             } else if (gamepad2.left_trigger > 0.1) {
                 intakeWheels.setPower(-gamepad2.left_trigger);
                 print("INTAKE", "Eject sample");
@@ -206,19 +204,22 @@ public class DarienOpModeTeleop extends DarienOpMode {
         double wheel1 = clamp(direction[0] + direction[1] - rotation, -1, 1);
         double wheel2 = clamp(-direction[0] + -direction[1] - rotation, -1, 1);
         double wheel3 = clamp(direction[0] + -direction[1] + rotation, -1, 1);
-        if (turboBoost) {
-            divBy = turboDivBy;
-        } else {
-            divBy = regularDivBy;
+//        if (turboBoost) {
+//            divBy = turboDivBy;
+//        } else {
+//            divBy = regularDivBy;
+//
+//        }
 
-        }
-        telemetry.addData("", wheel0 / divBy);
+        divBy = (gamepad1.left_trigger / 2) + 0.5;
+        telemetry.addData("", wheel0 * divBy);
 
-        MoveMotor(omniMotor0, wheel0 / divBy);
-        MoveMotor(omniMotor1, wheel1 / divBy);
-        MoveMotor(omniMotor2, wheel2 / divBy);
-        MoveMotor(omniMotor3, wheel3 / divBy);
+        MoveMotor(omniMotor0, wheel0 * divBy);
+        MoveMotor(omniMotor1, wheel1 * divBy);
+        MoveMotor(omniMotor2, wheel2 * divBy);
+        MoveMotor(omniMotor3, wheel3 * divBy);
     }
+
 
     public void MoveMotor(DcMotor motor, double power) {
          /*This function just moves the motors and updates the

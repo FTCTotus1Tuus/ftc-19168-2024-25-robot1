@@ -154,6 +154,10 @@ public class DarienOpModeAuto extends DarienOpMode {
         intakeWheels.setPower(powerIntakeWheelToPickupSample);
     }
 
+    public void setIntakeSlidePower(double power) {
+        intakeSlide.setPower(power);
+    }
+
     public void stopIntake() {
         intakeWheels.setPower(0);
     }
@@ -197,8 +201,8 @@ public class DarienOpModeAuto extends DarienOpMode {
         double errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
         double errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
 
-        if (Math.abs(errorH) <= 2.5) {// attempts to make sure jitters happen less
-            errorH = 0; // if error is within 2.5 degrees on either side we say we're good
+        if (Math.abs(errorH) <= 5) {// attempts to make sure jitters happen less
+            errorH = 0; // if error is within 5 degrees on either side we say we're good
         }
 
         setPower(power, errorXp, errorYp, errorH); // add pid?
@@ -378,23 +382,28 @@ public class DarienOpModeAuto extends DarienOpMode {
         double errorH;
         double startTime = this.time;
         while (looping) {
+            telemetry.addData("heading", getRawHeading());
             telemetry.addData("x: ", errorX);
             print("y: ", errorY);
             errorX = targetPosX - getXPos();
             errorY = targetPosY - getYPos();
             errorH = getErrorRot(targetPosH);
 
-            if (Math.abs(errorH) <= 2.5) {// attempts to make sure jitters happen less
+            if (Math.abs(errorH) <= 5) {// attempts to make sure jitters happen less
                 errorH = 0; // if error is within 2.5 degrees on either side we say we're good
             }
 
             errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
             errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
 
-            if (getHypotenuse(errorXp, errorYp, errorH) > 5) {
-                setPower(currentMovementPower, errorXp, errorYp, errorH); // add pid?
+            if (getHypotenuse(errorXp, errorYp) > 7) {
+                setPower(currentMovementPower, errorXp, errorYp, errorH / 3); // add pid?
+            } else if (getHypotenuse(errorXp, errorYp) > 3.5) {
+                setPower(currentMovementPower / 2, errorXp, errorYp, errorH / 3); // add pid?
+                telemetry.addData("half speed", "");
             } else {
-                setPower(currentMovementPower / 2, errorXp, errorYp, errorH); // add pid?
+                setPower(currentMovementPower / 3, errorXp, errorYp, errorH / 3); // add pid?
+                telemetry.addData("third speed", "");
             }
             telemetry.addData("x vel: ", myOtos.getVelocity().x);
             telemetry.addData("y vel: ", myOtos.getVelocity().y);

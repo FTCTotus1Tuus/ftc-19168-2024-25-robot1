@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
-@Autonomous
+@Autonomous(name = "Auto: Meet 3 Specimen Side", group = "Auto")
 public class Meet3SpecimenSide extends DarienOpModeAuto {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -15,18 +15,14 @@ public class Meet3SpecimenSide extends DarienOpModeAuto {
         initControls();
         waitForStart();
         setBucketPosition("carry");
+        setVerticalSlide("high chamber below", verticalSlidePower);
 
         // Specimen 1
-        moveToPosition(-2, 31, 0.4);
+        moveToPosition(-2, 32, 0.6);
         setSpecimenClaw("closed");
         setSpecimenWrist("place");
-        setVerticalSlide("high chamber below", verticalSlidePower);
-        waitForMotors(2);
+        waitForMotors(1);
         waitForArm();
-
-        //reset odometry angle (has tendency to drift)
-        currentPosition = new SparkFunOTOS.Pose2D(myOtos.getPosition().x, myOtos.getPosition().y, 0);
-        myOtos.setPosition(currentPosition);
 
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
@@ -34,76 +30,88 @@ public class Meet3SpecimenSide extends DarienOpModeAuto {
         setSpecimenWrist("pickup");
         setVerticalSlide("low", verticalSlidePower);
 
+        //reset odometry angle (has tendency to drift)
+        currentPosition = new SparkFunOTOS.Pose2D(getXPos(), getYPos(), 0);
+        myOtos.setPosition(currentPosition);
+
         // Pick up one floor samples into observation zone, which will become specimens
-        moveToPosition(-2, 25, normalPower); // backup from wall
-        waitForMotors(0.5);
-        moveToPosition(34.5, 8, 0.7); // go to first sample
+        moveToPosition(-2, 25, 1); // backup from wall
+        waitForMotors(0.25);
+        moveToPosition(34, 13, 0.8); // go to first sample
+        setIntakeSlidePower(-0.1);
         stopIntake();
         setIntakeWrist("down");
-        waitForMotors(3);
+        waitForMotors(2); // possibly bad idea was 3
         startIntake();
-        moveToPosition(myOtos.getPosition().x, 24, 0.3);
-        waitForMotors(2);
+        moveToPosition(getXPos(), 34, 0.25); // 0.27 is an important number 0.2 may be importanter
+        waitForMotors(1.7);
         setIntakeWrist("up");
-        moveToPosition(myOtos.getPosition().x, 5, 0.4);
+        moveToPosition(getXPos(), 9, 0.7);
         sleep(500);
         reverseIntake(-0.2);
         waitForMotors(1);
         setBucketPosition("drop"); // drop first sample
         sleep(500);
+        setIntakeSlidePower(0);
 
-        moveToPosition(44, 8, 0.7); // go to second sample
+        //sample 2
+        moveToPosition(45, 13, 0.8); // go to second sample
         stopIntake();
-        waitForMotors(3);
+        waitForMotors(2);
+        setIntakeSlidePower(-0.1);
         setBucketPosition("carry");
         setIntakeWrist("down");
         startIntake();
-        moveToPosition(myOtos.getPosition().x, 24, 0.3);
-        waitForMotors(2);
+        moveToPosition(getXPos(), 31, 0.25);
+        waitForMotors(1.5);
         setIntakeWrist("up");
-        moveToPosition(myOtos.getPosition().x, 4, 0.4);
+        moveToPosition(getXPos(), 7, 0.6);
         sleep(500);
-        reverseIntake(-0.2);
+        reverseIntake(-0.25);
         waitForMotors(1);
-        stopIntake();
+        setIntakeSlidePower(0);
         // rotate to dump sample in corner
-        autoRotate(45, .5);
         setBucketPosition("drop"); // drop second sample
+        stopIntake();
+        autoRotate(45, 0.8);
         sleep(500);
-        autoRotate(0, .5);
+        autoRotate(0, 0.8);
 
         // Specimen 2: Pick up specimen from wall
-        moveToPosition(myOtos.getPosition().x, 0, 0.4);
-        waitForMotors(2);
+        moveToPosition(getXPos(), -7, 0.4);
+        waitForMotors(0.75);
         print("done", "");
         setSpecimenClaw("closed");
-        sleep(300);
+        sleep(250);
         setSpecimenWrist("place");
 
         // Start placing specimens on bar
-        moveToPosition(-5, 27, 0.6);
+        moveToPosition(-5, 27, 1);
         setSpecimenClaw("closed");
         setSpecimenWrist("place");
         setVerticalSlide("high chamber below", verticalSlidePower);
-        waitForMotors(3);
+        waitForMotors(2.5);
         waitForArm();
-        moveToPosition(-5, 32, 0.6);
+        moveToPosition(-5, 34, 0.25);
         waitForMotors(1);
 
-        //reset odometry angle (has tendency to drift), assuming we are flush against the sub wall
-        currentPosition = new SparkFunOTOS.Pose2D(myOtos.getPosition().x, myOtos.getPosition().y, 0);
-        myOtos.setPosition(currentPosition);
 
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
         setSpecimenClaw("open");
         setSpecimenWrist("pickup");
         setVerticalSlide("low", verticalSlidePower);
+
+//        //reset odometry angle (has tendency to drift), assuming we are flush against the sub wall
+//        currentPosition = new SparkFunOTOS.Pose2D(getXPos(), getYPos(), 0);
+//        myOtos.setPosition(currentPosition);
+
 
         // Specimen 3: Pickup specimen from wall
-        moveToPosition(33, 4, 0.6);
-        waitForMotors(3);
-        moveToPosition(myOtos.getPosition().x, -1, 0.6);
+        moveToPosition(33, 5, 1);
+        waitForMotors(2);
+        autoRotate(0, normalPower);
+        moveToPosition(getXPos(), -7, 0.3);
         waitForMotors(1);
         print("done", "");
         setSpecimenClaw("closed");
@@ -111,11 +119,11 @@ public class Meet3SpecimenSide extends DarienOpModeAuto {
         setSpecimenWrist("place");
 
         // Start placing specimens on bar
-        moveToPosition(-8, 27, 0.6);
+        moveToPosition(-8, 27, 1);
         setVerticalSlide("high chamber below", verticalSlidePower);
-        waitForMotors(3);
+        waitForMotors(2.5);
         waitForArm();
-        moveToPosition(myOtos.getPosition().x, 31, 0.6);
+        moveToPosition(getXPos(), 32, 0.3);
         waitForMotors(1);
 
         setVerticalSlide("high chamber place", verticalSlidePower);
@@ -124,23 +132,24 @@ public class Meet3SpecimenSide extends DarienOpModeAuto {
         setSpecimenWrist("pickup");
         setVerticalSlide("low", verticalSlidePower);
 
-        // Specimen 4: Pickup specimen from wall
-        moveToPosition(33, 4, 0.6);
-        waitForMotors(3);
-        moveToPosition(myOtos.getPosition().x, -1, 0.6);
-        waitForMotors(1);
-        print("done", "");
-        setSpecimenClaw("closed");
-        sleep(300);
-        setSpecimenWrist("place");
-
-        // Start placing specimens on bar
-        moveToPosition(-10, 27, 0.6);
-        setVerticalSlide("high chamber below", verticalSlidePower);
-        waitForMotors(3);
-        waitForArm();
-        moveToPosition(myOtos.getPosition().x, 31, 0.6);
-        waitForMotors(1);
+//        // Specimen 4: Pickup specimen from wall
+//        moveToPosition(33, 8, 1);
+//        waitForMotors(2);
+//        autoRotate(0, normalPower);
+//        moveToPosition(getXPos(), -7, 0.3);
+//        waitForMotors(1);
+//        print("done", "");
+//        setSpecimenClaw("closed");
+//        sleep(300);
+//        setSpecimenWrist("place");
+//
+//        // Start placing specimens on bar
+//        moveToPosition(-10, 27, 1);
+//        setVerticalSlide("high chamber below", verticalSlidePower);
+//        waitForMotors(2.5);
+//        waitForArm();
+//        moveToPosition(getXPos(), 33, 0.3);
+//        waitForMotors(1);
 
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
@@ -150,22 +159,8 @@ public class Meet3SpecimenSide extends DarienOpModeAuto {
 
         // PARK: Go to observation zone.
         moveToPosition(40, 5, 1);
+        waitForMotors(2);
 
-        double errorX;
-        double errorY;
-        double errorXp;
-        double errorYp;
-        double errorH;
-
-        while (opModeIsActive()) {
-            errorX = 40 - getXPos();
-            errorY = 5 - getYPos();
-            errorH = getErrorRot(currentHeading);
-            errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
-            errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
-
-            setPower(0.6, errorXp, errorYp, errorH); // add pid?
-        }
     }
 }
 
