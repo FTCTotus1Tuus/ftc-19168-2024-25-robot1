@@ -68,7 +68,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double specimenWristPlace = 0.20; // towards inside of robot - change name later?
     public static double specimenWristPickup = 0.82;
 
-    public static double intakeWristGroundPosition = 0.73;
+    public static double intakeWristGroundPosition = 0.74;
     public static double intakeWristUpPosition = 0.15;
 
     // calibrated for torque servo
