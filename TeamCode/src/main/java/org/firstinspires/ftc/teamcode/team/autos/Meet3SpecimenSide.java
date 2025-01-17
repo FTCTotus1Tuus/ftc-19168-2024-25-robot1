@@ -35,52 +35,52 @@ public class Meet3SpecimenSide extends DarienOpModeAuto {
         myOtos.setPosition(currentPosition);
 
         // Pick up one floor samples into observation zone, which will become specimens
-        moveToPosition(-2, 25, 1); // backup from wall
+        moveToPosition(getXPos(), 25, 1); // backup from wall
         waitForMotors(0.25);
-        moveToPosition(34, 13, 0.8); // go to first sample
+        moveToPosition(34, 15, 0.8); // go to first sample
         setIntakeSlidePower(-0.1);
         stopIntake();
         setIntakeWrist("down");
         waitForMotors(2); // possibly bad idea was 3
         startIntake();
-        moveToPosition(getXPos(), 34, 0.25); // 0.27 is an important number 0.2 may be importanter
+        moveToPosition(getXPos(), 30, 0.25); // 0.27 is an important number 0.2 may be importanter
         waitForMotors(1.7);
         setIntakeWrist("up");
         moveToPosition(getXPos(), 9, 0.7);
-        sleep(500);
-        reverseIntake(-0.2);
+        sleep(500); // allows time for intake wrist to go fully up
+        reverseIntake(-0.25);
         waitForMotors(1);
-        setBucketPosition("drop"); // drop first sample
-        sleep(500);
         setIntakeSlidePower(0);
+        setBucketPosition("drop"); // drop first sample
+        sleep(500); // allow time for bucket to fully go to position
 
         //sample 2
-        moveToPosition(45, 13, 0.8); // go to second sample
+        moveToPosition(45, 15, 0.8); // go to second sample
         stopIntake();
+        setIntakeWrist("down");
         waitForMotors(2);
         setIntakeSlidePower(-0.1);
         setBucketPosition("carry");
-        setIntakeWrist("down");
         startIntake();
-        moveToPosition(getXPos(), 31, 0.25);
+        moveToPosition(getXPos(), 30, 0.25);
         waitForMotors(1.5);
         setIntakeWrist("up");
         moveToPosition(getXPos(), 7, 0.6);
-        sleep(500);
+        sleep(500); // allows time for intake wrist to go fully up
         reverseIntake(-0.25);
         waitForMotors(1);
         setIntakeSlidePower(0);
         // rotate to dump sample in corner
         setBucketPosition("drop"); // drop second sample
         stopIntake();
-        autoRotate(45, 0.8);
-        sleep(500);
+        autoRotate(35, 0.8);
+        sleep(500); // allow time for bucket to fully go to position
         autoRotate(0, 0.8);
 
         // Specimen 2: Pick up specimen from wall
         moveToPosition(getXPos(), -7, 0.4);
         waitForMotors(0.75);
-        print("done", "");
+        //print("done", "");
         setSpecimenClaw("closed");
         sleep(250);
         setSpecimenWrist("place");
@@ -113,7 +113,7 @@ public class Meet3SpecimenSide extends DarienOpModeAuto {
         autoRotate(0, normalPower);
         moveToPosition(getXPos(), -7, 0.3);
         waitForMotors(1);
-        print("done", "");
+        //print("done", "");
         setSpecimenClaw("closed");
         sleep(300);
         setSpecimenWrist("place");
@@ -150,12 +150,12 @@ public class Meet3SpecimenSide extends DarienOpModeAuto {
 //        waitForArm();
 //        moveToPosition(getXPos(), 33, 0.3);
 //        waitForMotors(1);
-
-        setVerticalSlide("high chamber place", verticalSlidePower);
-        waitForArm();
-        setSpecimenClaw("open");
-        setSpecimenWrist("pickup");
-        setVerticalSlide("low", verticalSlidePower);
+//
+//        setVerticalSlide("high chamber place", verticalSlidePower);
+//        waitForArm();
+//        setSpecimenClaw("open");
+//        setSpecimenWrist("pickup");
+//        setVerticalSlide("low", verticalSlidePower);
 
         // PARK: Go to observation zone.
         moveToPosition(40, 5, 1);
