@@ -13,7 +13,7 @@ public class DriverControl extends DarienOpModeTeleop {
         //Start
         while (this.opModeIsActive()) {
 
-            pollSensors();
+            //pollSensors();
             runDriveSystem();
             runIntakeSystem();
             runVerticalSlideSystem();

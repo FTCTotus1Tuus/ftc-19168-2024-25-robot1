@@ -151,7 +151,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     }
 
     public void startIntake() {
-        intakeWheels.setPower(powerIntakeWheelToPickupSample);
+        //intakeWheels.setPower(powerIntakeWheelToPickupSample);
     }
 
     public void setIntakeSlidePower(double power) {
@@ -159,15 +159,15 @@ public class DarienOpModeAuto extends DarienOpMode {
     }
 
     public void stopIntake() {
-        intakeWheels.setPower(0);
+        //intakeWheels.setPower(0);
     }
 
     public void reverseIntake() {
-        intakeWheels.setPower(-0.5);
+        //intakeWheels.setPower(-0.5);
     }
 
     public void reverseIntake(double power) {
-        intakeWheels.setPower(power);
+        //intakeWheels.setPower(power);
     }
 
     public void placeSampleInBucket() {
@@ -175,9 +175,9 @@ public class DarienOpModeAuto extends DarienOpMode {
         setIntakeWrist("up");
         setBucketPosition("carry");
         sleep(2000); // TODO change to set to how long for intake slide to go in
-        reverseIntake();
+        //reverseIntake();
         sleep(500);
-        stopIntake();
+        //stopIntake();
 
     }
 

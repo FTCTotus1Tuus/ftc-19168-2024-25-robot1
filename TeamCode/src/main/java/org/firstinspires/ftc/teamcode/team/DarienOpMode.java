@@ -31,9 +31,12 @@ public class DarienOpMode extends LinearOpMode {
     public IMU imu;
     public CRServo intakeSlide;
     public Servo intakeWrist;
-    public CRServo intakeWheels;
-    public ColorSensor intakeColorSensor;
+    //public CRServo intakeWheels;
+    //public ColorSensor intakeColorSensor;
     public TouchSensor intakeWristTouchSensor;
+    public Servo sampleClaw;
+    public CRServo sampleYaw;
+    public CRServo samplePitch;
     public Servo bucket;
     public Servo cameraWrist;
     public Servo specimenWrist;
@@ -68,8 +71,21 @@ public class DarienOpMode extends LinearOpMode {
     public static double specimenWristPlace = 0.20; // towards inside of robot - change name later?
     public static double specimenWristPickup = 0.82;
 
+//    public static double samplePitchPickup = 0.;
+//    public static double samplePitchSkyHigh = 0.;
+//    public static double samplePitchDrop = 0.;
+//
+//    public static double sampleYawLeft2 = 0.;
+//    public static double sampleYawLeft1 = 0.;
+//    public static double sampleYawCenter = 0.;
+//    public static double sampleYawRight1 = 0.;
+//    public static double sampleYawRight2 = 0.;
+
+    public static double sampleClawOpen = 0.75;
+    public static double sampleClawClosed = 0.85;
+
     public static double intakeWristGroundPosition = 0.74;
-    public static double intakeWristUpPosition = 0.15;
+    public static double intakeWristUpPosition = 0.43;
 
     // calibrated for torque servo
     public static double specimenClawOpen = 0.82;
@@ -82,7 +98,7 @@ public class DarienOpMode extends LinearOpMode {
     public void initControls() {
 
         // INITIALIZE SENSORS
-        intakeColorSensor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
+        //intakeColorSensor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
         intakeWristTouchSensor = hardwareMap.get(TouchSensor.class, "intakeWristTouchSensor");
 
         // Initialize IMU on the REV Control Hub
@@ -126,11 +142,13 @@ public class DarienOpMode extends LinearOpMode {
         intakeSlide = hardwareMap.get(CRServo.class, "intakeSlide"); // Expansion Hub port 0
         //cameraWrist = hardwareMap.get(Servo.class, "cameraWrist"); // CH port 0
         intakeWrist = hardwareMap.get(Servo.class, "intakeWrist"); // CH port 1
-        intakeWheels = hardwareMap.get(CRServo.class, "intakeWheels"); // CH port 2
+        //intakeWheels = hardwareMap.get(CRServo.class, "intakeWheels"); // CH port 2
         specimenClaw = hardwareMap.get(Servo.class, "specimenClaw"); // CH port 4
         specimenWrist = hardwareMap.get(Servo.class, "specimenWrist"); // CH port 5
         bucket = hardwareMap.get(Servo.class, "bucket"); // CH port 3
-
+        sampleClaw = hardwareMap.get(Servo.class, "sampleClaw"); // CH port
+        samplePitch = hardwareMap.get(CRServo.class, "samplePitch"); // CH port
+        sampleYaw = hardwareMap.get(CRServo.class, "sampleYaw"); // CH port
     }
 
     public double getVoltage() {

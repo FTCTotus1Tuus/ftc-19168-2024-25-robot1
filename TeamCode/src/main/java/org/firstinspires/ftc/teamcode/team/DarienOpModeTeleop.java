@@ -15,19 +15,19 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public boolean startedIntakeSlide = false;
     public double startTime = 0;
 
-    public void pollSensors() {
-        intakeColorSensor.enableLed(true);
-        telemetry.addData("R: ", intakeColorSensor.red());
-        telemetry.addData("G: ", intakeColorSensor.green());
-        telemetry.addData("B: ", intakeColorSensor.blue());
-//        telemetry.addData("Distance:", intakeColorSensor) // Possibly use the proximity sensor values from the color sensor.
-        telemetry.update();
-
-        int[] COLOR_RED = {0, 0, 0};
-        int[] COLOR_BLUE = {0, 0, 0};
-        int[] COLOR_YELLOW = {0, 0, 0};
-
-    }
+//    public void pollSensors() {
+//        //intakeColorSensor.enableLed(true);
+//        telemetry.addData("R: ", intakeColorSensor.red());
+//        telemetry.addData("G: ", intakeColorSensor.green());
+//        telemetry.addData("B: ", intakeColorSensor.blue());
+////        telemetry.addData("Distance:", intakeColorSensor) // Possibly use the proximity sensor values from the color sensor.
+//        telemetry.update();
+//
+//        int[] COLOR_RED = {0, 0, 0};
+//        int[] COLOR_BLUE = {0, 0, 0};
+//        int[] COLOR_YELLOW = {0, 0, 0};
+//
+//    }
 
     /**
      * If the GP1 left bumper is pressed, spin the boot wheels in if the joystick is pulled down or spin the boot wheels out if the joystick is pushed up.
@@ -41,7 +41,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
         }
         if (gamepad1.a) {
             // MACRO: Raise the sample that has been scooped.
-            intakeWheels.setPower(0);
+            //intakeWheels.setPower(0);
             intakeWrist.setPosition(intakeWristUpPosition);
 
             // Pull the intakeSlide in for only x seconds to avoid burning out the intakeSlide servo.
@@ -51,19 +51,44 @@ public class DarienOpModeTeleop extends DarienOpMode {
         } else {
             // INDEPENDENT CONTROLS
 
+            // CONTROL: SAMPLE CLAW
+            if (gamepad2.left_trigger > 0.5) {
+                sampleClaw.setPosition(sampleClawOpen);
+            } else {
+                sampleClaw.setPosition(sampleClawClosed);
+            }
+
+            if (gamepad2.dpad_left) {
+                sampleYaw.setPower(-.2);
+            } else if (gamepad2.dpad_right) {
+                sampleYaw.setPower(.2);
+            } else {
+                sampleYaw.setPower(0);
+            }
+
+            if (gamepad2.y) {
+                // lift the samplePitch for dropping into bucket
+                samplePitch.setPower(0.1);
+            } else if (gamepad2.b) {
+                // lower the samplePitch for picking up samples from floor
+                samplePitch.setPower(-0.1);
+            } else {
+                samplePitch.setPower(0);
+            }
+
             // CONTROL: INTAKE WHEELS
             if (gamepad1.right_bumper) {
                 print("INTAKE", "Load sample");
-                intakeWheels.setPower(powerIntakeWheelToPickupSample);
+                //intakeWheels.setPower(powerIntakeWheelToPickupSample);
             } else if (gamepad1.x) {
                 print("INTAKE", "Eject sample");
-                intakeWheels.setPower(powerIntakeWheelToEjectSample);
+                //intakeWheels.setPower(powerIntakeWheelToEjectSample);
             } else if (gamepad2.left_trigger > 0.1) {
-                intakeWheels.setPower(-gamepad2.left_trigger);
+                //intakeWheels.setPower(-gamepad2.left_trigger);
                 print("INTAKE", "Eject sample");
             } else {
                 // Stop
-                intakeWheels.setPower(0);
+                //intakeWheels.setPower(0);
             }
 
             // CONTROL: INTAKE SLIDE
@@ -79,13 +104,16 @@ public class DarienOpModeTeleop extends DarienOpMode {
             // CONTROL: INTAKE WRIST
             if (gamepad1.right_bumper) {
                 intakeWrist.setPosition(intakeWristGroundPosition);
-            } else if (gamepad1.right_trigger > 0.05 && intakeWrist.getPosition() > intakeWristUpPosition) {
-                // Allow driver to lift the intake wrist slightly, but don't go beyond the max position.
-                double targetIntakeWristPosition = intakeWristGroundPosition - (gamepad1.right_trigger / 5);
-                if (targetIntakeWristPosition > intakeWristUpPosition) {
-                    intakeWrist.setPosition(targetIntakeWristPosition);
-                }
+            } else if (gamepad1.right_trigger > 0.05) {
+                intakeWrist.setPosition(intakeWristUpPosition);
             }
+//            } else if (gamepad1.right_trigger > 0.05 && intakeWrist.getPosition() > intakeWristUpPosition) {
+//                // Allow driver to lift the intake wrist slightly, but don't go beyond the max position.
+//                double targetIntakeWristPosition = intakeWristGroundPosition - (gamepad1.right_trigger / 5);
+//                if (targetIntakeWristPosition > intakeWristUpPosition) {
+//                    intakeWrist.setPosition(targetIntakeWristPosition);
+//                }
+//            }
         }
     }
 

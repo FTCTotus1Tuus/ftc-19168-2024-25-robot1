@@ -45,7 +45,7 @@ public class Meet3SampleSide extends DarienOpModeAuto {
         setIntakeWrist("down");
         startIntake();
         // Use the color sensor to determine if we have picked up the sample.
-        tryGrabbingSample(80, 0.8);
+        //tryGrabbingSample(80, 0.8);
         intakeSlide.setPower(-0.1);
         sleep(1000);
         intakeSlide.setPower(0);
@@ -106,17 +106,17 @@ public class Meet3SampleSide extends DarienOpModeAuto {
 
     }
 
-    public void tryGrabbingSample(int colorIntensityMin, double timeoutSeconds) {
-        boolean looping = true;
-        double startTime = getRuntime();
-        while (looping) {
-            intakeSlide.setPower(.1);
-            if (csf.yellowColorIntensity(intakeColorSensor.red(), intakeColorSensor.green(), intakeColorSensor.blue()) >= colorIntensityMin || getRuntime() - startTime > timeoutSeconds) {
-                // if the yellow color is strong enough, that indicates we have the sample.
-                looping = false;
-                stopIntake();
-                intakeSlide.setPower(0);
-            }
-        }
-    }
+//    public void tryGrabbingSample(int colorIntensityMin, double timeoutSeconds) {
+//        boolean looping = true;
+//        double startTime = getRuntime();
+//        while (looping) {
+//            intakeSlide.setPower(.1);
+//            if (csf.yellowColorIntensity(intakeColorSensor.red(), intakeColorSensor.green(), intakeColorSensor.blue()) >= colorIntensityMin || getRuntime() - startTime > timeoutSeconds) {
+//                // if the yellow color is strong enough, that indicates we have the sample.
+//                looping = false;
+//                stopIntake();
+//                intakeSlide.setPower(0);
+//            }
+//        }
+//    }
 }
