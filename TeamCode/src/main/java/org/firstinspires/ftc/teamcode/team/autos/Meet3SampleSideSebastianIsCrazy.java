@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 @Config
 
-@Autonomous(name = "Auto: Meet 3 Sample Side", group = "Auto")
+@Autonomous(name = "Meet 3: Sample Side", group = "Meet 3")
 public class Meet3SampleSideSebastianIsCrazy extends DarienOpModeAuto {
     public double normalPower = 0.5;
 

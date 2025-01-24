@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.team.autos;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
+@Disabled
 @Config
 @Autonomous
 public class Meet2SampleSide extends DarienOpModeAuto {

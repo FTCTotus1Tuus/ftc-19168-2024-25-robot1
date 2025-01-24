@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
-@Autonomous(name = "Auto: Meet 3 Specimen Side", group = "Auto")
+@Autonomous(name = "Meet 3: Specimen Side", group = "Meet 3")
 public class Meet3SpecimenSide extends DarienOpModeAuto {
     @Override
     public void runOpMode() throws InterruptedException {
