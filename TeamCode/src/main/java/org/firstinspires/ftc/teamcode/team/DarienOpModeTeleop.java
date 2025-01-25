@@ -41,9 +41,13 @@ public class DarienOpModeTeleop extends DarienOpMode {
         }
         if (gamepad1.a) {
             // MACRO: Raise the sample that has been scooped.
-            //intakeWheels.setPower(0);
-            intakeWrist.setPosition(intakeWristUpPosition);
+            // First, center the sampleYaw servo.
+            sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
+            //sleep(200); // let the servo go to position.
+            samplePitch.setPosition(POS_SAMPLE_PITCH_PICKUP_READY);
+            intakeWristSetPosition(intakeWristUpPosition);
 
+            // TODO: Instead of using a timer, use the intakeWristTouchSensor to stop running the intakeSlide servo.
             // Pull the intakeSlide in for only x seconds to avoid burning out the intakeSlide servo.
             intakeSlide.setPower(powerIntakeSlideIn);
             startTime = getRuntime();
@@ -58,37 +62,28 @@ public class DarienOpModeTeleop extends DarienOpMode {
                 sampleClaw.setPosition(sampleClawClosed);
             }
 
+            telemetry.addData("intakeWrist pos: ", intakeWristGetPosition());
+            telemetry.addData("sampleYaw pos: ", sampleYawGetPosition());
+            telemetry.update();
+
             if (gamepad2.dpad_left) {
-                sampleYaw.setPower(-.2);
+                sampleYawSetPosition(sampleYawGetPosition() - 0.005);
             } else if (gamepad2.dpad_right) {
-                sampleYaw.setPower(.2);
-            } else {
-                sampleYaw.setPower(0);
+                sampleYawSetPosition(sampleYawGetPosition() + 0.005);
             }
 
-            if (gamepad2.y) {
-                // lift the samplePitch for dropping into bucket
-                samplePitch.setPower(0.1);
-            } else if (gamepad2.b) {
-                // lower the samplePitch for picking up samples from floor
-                samplePitch.setPower(-0.1);
+            if (intakeWristGetPosition() >= intakeWristGroundPosition - 0.1) {
+                if (gamepad2.y) {
+                    // lower the samplePitch for picking up samples from floor
+                    samplePitch.setPosition(POS_SAMPLE_PITCH_PICKUP);
+                } else {
+                    // lift the samplePitch for going in/out of the sub (slightly above the floor samples)
+                    samplePitch.setPosition(POS_SAMPLE_PITCH_PICKUP_READY);
+                }
+            } else if (intakeWristGetPosition() <= intakeWristUpPosition + 0.1) {
+                samplePitch.setPosition(POS_SAMPLE_PITCH_DROP_BUCKET);
             } else {
-                samplePitch.setPower(0);
-            }
-
-            // CONTROL: INTAKE WHEELS
-            if (gamepad1.right_bumper) {
-                print("INTAKE", "Load sample");
-                //intakeWheels.setPower(powerIntakeWheelToPickupSample);
-            } else if (gamepad1.x) {
-                print("INTAKE", "Eject sample");
-                //intakeWheels.setPower(powerIntakeWheelToEjectSample);
-            } else if (gamepad2.left_trigger > 0.1) {
-                //intakeWheels.setPower(-gamepad2.left_trigger);
-                print("INTAKE", "Eject sample");
-            } else {
-                // Stop
-                //intakeWheels.setPower(0);
+                samplePitch.setPosition(POS_SAMPLE_PITCH_PICKUP_READY);
             }
 
             // CONTROL: INTAKE SLIDE
@@ -103,9 +98,11 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
             // CONTROL: INTAKE WRIST
             if (gamepad1.right_bumper) {
-                intakeWrist.setPosition(intakeWristGroundPosition);
+                intakeWristSetPosition(intakeWristUpPosition);
+                sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
             } else if (gamepad1.right_trigger > 0.05) {
-                intakeWrist.setPosition(intakeWristUpPosition);
+                intakeWristSetPosition(intakeWristGroundPosition);
+                sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
             }
 //            } else if (gamepad1.right_trigger > 0.05 && intakeWrist.getPosition() > intakeWristUpPosition) {
 //                // Allow driver to lift the intake wrist slightly, but don't go beyond the max position.
@@ -173,11 +170,11 @@ public class DarienOpModeTeleop extends DarienOpMode {
                     if (getRuntime() - intakeSlideStartTime <= 30) {
                         /*while within 30 seconds set intake slide power 0.1 */
                         intakeSlide.setPower(-0.1); //to keep intake slide from rolling out while doing the L2 ascent
-                        intakeWrist.setPosition(intakeWristUpPosition);
+                        intakeWristSetPosition(intakeWristUpPosition);
                     } else {
                         /* otherwise set intake slide power to 0*/
                         intakeSlide.setPower(0);
-                        intakeWrist.setPosition(intakeWristUpPosition);
+                        intakeWristSetPosition(intakeWristUpPosition);
                     }
 
                 }

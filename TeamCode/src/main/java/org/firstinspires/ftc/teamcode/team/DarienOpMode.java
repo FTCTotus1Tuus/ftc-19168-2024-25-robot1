@@ -35,8 +35,8 @@ public class DarienOpMode extends LinearOpMode {
     //public ColorSensor intakeColorSensor;
     public TouchSensor intakeWristTouchSensor;
     public Servo sampleClaw;
-    public CRServo sampleYaw;
-    public CRServo samplePitch;
+    public Servo sampleYaw;
+    public Servo samplePitch;
     public Servo bucket;
     public Servo cameraWrist;
     public Servo specimenWrist;
@@ -71,18 +71,20 @@ public class DarienOpMode extends LinearOpMode {
     public static double specimenWristPlace = 0.20; // towards inside of robot - change name later?
     public static double specimenWristPickup = 0.82;
 
-//    public static double samplePitchPickup = 0.;
-//    public static double samplePitchSkyHigh = 0.;
-//    public static double samplePitchDrop = 0.;
-//
-//    public static double sampleYawLeft2 = 0.;
-//    public static double sampleYawLeft1 = 0.;
-//    public static double sampleYawCenter = 0.;
-//    public static double sampleYawRight1 = 0.;
-//    public static double sampleYawRight2 = 0.;
+    public static double POS_SAMPLE_PITCH_DROP_BUCKET = 0.2;
+    public static double POS_SAMPLE_PITCH_PICKUP_READY = 0.5;
+    public static double POS_SAMPLE_PITCH_PICKUP = 0.63;
 
-    public static double sampleClawOpen = 0.75;
-    public static double sampleClawClosed = 0.85;
+    public static double POS_SAMPLE_YAW_LEFT_MAX = 0.3;
+    public static double POS_SAMPLE_YAW_LEFT2 = 0.3;
+    public static double POS_SAMPLE_YAW_LEFT1 = 0.4;
+    public static double POS_SAMPLE_YAW_CENTER = 0.5;
+    public static double POS_SAMPLE_YAW_RIGHT1 = 0.6;
+    public static double POS_SAMPLE_YAW_RIGHT2 = 0.7;
+    public static double POS_SAMPLE_YAW_RIGHT_MAX = 0.8;
+
+    public static double sampleClawOpen = 0.85;
+    public static double sampleClawClosed = 0.74;
 
     public static double intakeWristGroundPosition = 0.74;
     public static double intakeWristUpPosition = 0.43;
@@ -90,6 +92,10 @@ public class DarienOpMode extends LinearOpMode {
     // calibrated for torque servo
     public static double specimenClawOpen = 0.82;
     public static double specimenClawClosed = 0.95;
+
+    // Variables to track servo position
+    private double sampleYawCurrentPosition;
+    private double intakeWristCurrentPosition;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -147,8 +153,32 @@ public class DarienOpMode extends LinearOpMode {
         specimenWrist = hardwareMap.get(Servo.class, "specimenWrist"); // CH port 5
         bucket = hardwareMap.get(Servo.class, "bucket"); // CH port 3
         sampleClaw = hardwareMap.get(Servo.class, "sampleClaw"); // CH port
-        samplePitch = hardwareMap.get(CRServo.class, "samplePitch"); // CH port
-        sampleYaw = hardwareMap.get(CRServo.class, "sampleYaw"); // CH port
+        samplePitch = hardwareMap.get(Servo.class, "samplePitch"); // CH port
+        sampleYaw = hardwareMap.get(Servo.class, "sampleYaw"); // CH port
+
+        // Initialize the servo positions and record the current position.
+        sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
+        intakeWristSetPosition(intakeWristUpPosition);
+    }
+
+    public void sampleYawSetPosition(double position) {
+        if (POS_SAMPLE_YAW_LEFT_MAX <= position && position <= POS_SAMPLE_YAW_RIGHT_MAX) {
+            sampleYaw.setPosition(position);
+            sampleYawCurrentPosition = position;
+        }
+    }
+
+    public double sampleYawGetPosition() {
+        return sampleYawCurrentPosition;
+    }
+
+    public void intakeWristSetPosition(double position) {
+        intakeWrist.setPosition(position);
+        intakeWristCurrentPosition = position;
+    }
+
+    public double intakeWristGetPosition() {
+        return intakeWristCurrentPosition;
     }
 
     public double getVoltage() {
