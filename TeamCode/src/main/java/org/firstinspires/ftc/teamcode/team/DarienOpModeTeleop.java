@@ -14,6 +14,8 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public double durationSecondsIntakeSlideIn = 2;
     public boolean startedIntakeSlide = false;
     public double startTime = 0;
+    private double intakeWristStartTime = 0;
+    private boolean samplePitchAvoidArm = false;
 
 //    public void pollSensors() {
 //        //intakeColorSensor.enableLed(true);
@@ -64,14 +66,15 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
             telemetry.addData("intakeWrist pos: ", intakeWristGetPosition());
             telemetry.addData("sampleYaw pos: ", sampleYawGetPosition());
-            telemetry.update();
 
+            // CONTROL: SAMPLE YAW
             if (gamepad2.dpad_left) {
                 sampleYawSetPosition(sampleYawGetPosition() - 0.005);
             } else if (gamepad2.dpad_right) {
                 sampleYawSetPosition(sampleYawGetPosition() + 0.005);
             }
 
+            // CONTROL: SAMPLE PITCH
             if (intakeWristGetPosition() >= intakeWristGroundPosition - 0.1) {
                 if (gamepad2.y) {
                     // lower the samplePitch for picking up samples from floor
@@ -80,10 +83,10 @@ public class DarienOpModeTeleop extends DarienOpMode {
                     // lift the samplePitch for going in/out of the sub (slightly above the floor samples)
                     samplePitch.setPosition(POS_SAMPLE_PITCH_PICKUP_READY);
                 }
-            } else if (intakeWristGetPosition() <= intakeWristUpPosition + 0.1) {
+            } else if (intakeWristGetPosition() <= intakeWristUpPosition + 0.1 && !samplePitchAvoidArm) {
                 samplePitch.setPosition(POS_SAMPLE_PITCH_DROP_BUCKET);
             } else {
-                samplePitch.setPosition(POS_SAMPLE_PITCH_PICKUP_READY);
+                //samplePitch.setPosition(POS_SAMPLE_PITCH_PICKUP_READY);
             }
 
             // CONTROL: INTAKE SLIDE
@@ -102,6 +105,9 @@ public class DarienOpModeTeleop extends DarienOpMode {
                 sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
             } else if (gamepad1.right_trigger > 0.05) {
                 intakeWristSetPosition(intakeWristGroundPosition);
+//                intakeWristStartTime = getRuntime();
+//                while (intakeWristGetPosition() < intakeWristGroundPosition && getRuntime() - intakeWristStartTime <= 1) {
+//                }
                 sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
             }
 //            } else if (gamepad1.right_trigger > 0.05 && intakeWrist.getPosition() > intakeWristUpPosition) {
@@ -119,14 +125,28 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
         if (verticalSlide.getCurrentPosition() > verticalSlideMaxHeight && -gamepad2.left_stick_y > 0) {
             verticalSlide.setPower(0.1);
+            samplePitchAvoidArm = false;
         } else if (Math.abs(gamepad2.left_stick_y) < 0.02) {
             verticalSlide.setPower(0);
+            samplePitchAvoidArm = false;
         } else {
             verticalSlide.setPower(-gamepad2.left_stick_y);
+            // To avoid crashing the bucket down onto the intake's sampleClaw when the claw is in the drop position,
+            // rotate the samplePitch away from the bucket so the bucket clears as it comes down,
+            // only when the bucket is just below the claw (vslide pos ~600) or just above the claw (vslide pos ~1000).
+            if (gamepad2.left_stick_y > 0 && verticalSlide.getCurrentPosition() <= 1800) {
+//                if (verticalSlide.getCurrentPosition() <= 1200 && intakeWristGetPosition() <= intakeWristUpPosition + 0.1) {
+//                    samplePitch.setPosition(POS_SAMPLE_PITCH_PICKUP_READY);
+//                }
+                samplePitchAvoidArm = true;
+                samplePitch.setPosition(POS_SAMPLE_PITCH_ARM_DOWN);
+            } else {
+                samplePitchAvoidArm = false;
+            }
         }
         telemetry.addData("vslide posL ", verticalSlide.getCurrentPosition());
         telemetry.addData("zero power behavior", verticalSlide.getZeroPowerBehavior());
-        print("vslide power", verticalSlide.getPower());
+        telemetry.addData("vslide power", verticalSlide.getPower());
 
         // adds a driver override to the height cap code
         if (gamepad2.back && gamepad2.b) {

@@ -10,6 +10,7 @@ public class DriverControl extends DarienOpModeTeleop {
     public void runOpMode() {
         initControls();
         waitForStart();
+        specimenWrist.setPosition(specimenWristPickup);
         //Start
         while (this.opModeIsActive()) {
 

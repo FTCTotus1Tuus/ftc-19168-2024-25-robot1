@@ -72,6 +72,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double specimenWristPickup = 0.82;
 
     public static double POS_SAMPLE_PITCH_DROP_BUCKET = 0.2;
+    public static double POS_SAMPLE_PITCH_ARM_DOWN = 0.3;
     public static double POS_SAMPLE_PITCH_PICKUP_READY = 0.5;
     public static double POS_SAMPLE_PITCH_PICKUP = 0.63;
 
@@ -83,6 +84,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double POS_SAMPLE_YAW_RIGHT2 = 0.7;
     public static double POS_SAMPLE_YAW_RIGHT_MAX = 0.8;
 
+    public static double sampleClawOpenAuto = 0.95;
     public static double sampleClawOpen = 0.85;
     public static double sampleClawClosed = 0.74;
 
@@ -99,6 +101,7 @@ public class DarienOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry.update(); // Send telemetry to the driver controller only here.
     }
 
     public void initControls() {
@@ -159,6 +162,9 @@ public class DarienOpMode extends LinearOpMode {
         // Initialize the servo positions and record the current position.
         sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
         intakeWristSetPosition(intakeWristUpPosition);
+
+        telemetry.addLine("FTC 19168 Robot Initialization Done!");
+        telemetry.update();
     }
 
     public void sampleYawSetPosition(double position) {
@@ -188,7 +194,7 @@ public class DarienOpMode extends LinearOpMode {
     public void print(String Name, Object message) {
         //saves a line for quick debug messages
         telemetry.addData(Name, message);
-        telemetry.update();
+        //telemetry.update();
     }
 
     public double relativePower(double intended_power) {
