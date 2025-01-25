@@ -13,8 +13,9 @@ public class QualifierSpecimenSide extends DarienOpModeAuto {
         SparkFunOTOS.Pose2D currentPosition;
 
         initControls();
+        setSamplePitch("arm down");
         waitForStart();
-        setBucketPosition("carry");
+        setBucketPosition("drop");
         setVerticalSlide("high chamber below", verticalSlidePower);
 
         // Specimen 1
@@ -28,49 +29,49 @@ public class QualifierSpecimenSide extends DarienOpModeAuto {
         waitForArm();
         setSpecimenClaw("open");
         setSpecimenWrist("pickup");
+        setSamplePitch("arm down");
         setVerticalSlide("low", verticalSlidePower);
 
-        //reset odometry angle (has tendency to drift)
-        currentPosition = new SparkFunOTOS.Pose2D(getXPos(), getYPos(), 0);
-        myOtos.setPosition(currentPosition);
+//        //reset odometry angle (has tendency to drift)
+//        currentPosition = new SparkFunOTOS.Pose2D(getXPos(), getYPos(), 0);
+//        myOtos.setPosition(currentPosition);
 
         // Pick up one floor samples into observation zone, which will become specimens
         moveToPosition(getXPos(), 25, 1); // backup from wall
         waitForMotors(0.25);
-        moveToPosition(34, 15, 0.8); // go to first sample
-        setIntakeSlidePower(-0.1);
-        setIntakeWrist("down");
-        waitForMotors(2); // possibly bad idea was 3
-        moveToPosition(getXPos(), 30, 0.25); // 0.27 is an important number 0.2 may be importanter
-        waitForMotors(1.7);
-        setIntakeWrist("up");
-        moveToPosition(getXPos(), 9, 0.7);
-        sleep(500); // allows time for intake wrist to go fully up
-        reverseIntake(-0.25);
+
+        setBucketPosition("carry");
+        moveToPosition(33.5, 19, 0.8); // go to first sample
+        sleep(1000);
+        readyToPickupSample();
+        waitForMotors(3);
+        if (Math.abs(getRawHeading()) > 5) {
+            autoRotate(0, 0.2);
+        }
+        pickupSample();
+        sleep(300);
+        moveToPosition(getXPos(), 9, 0.5);
+        placeSampleInBucket();
         waitForMotors(1);
-        setIntakeSlidePower(0);
         setBucketPosition("drop"); // drop first sample
         sleep(500); // allow time for bucket to fully go to position
 
         //sample 2
-        moveToPosition(45, 15, 0.8); // go to second sample
-        setIntakeWrist("down");
-        waitForMotors(2);
-        setIntakeSlidePower(-0.1);
+        moveToPosition(45, 19, 0.8); // go to second sample
         setBucketPosition("carry");
-        moveToPosition(getXPos(), 30, 0.25);
-        waitForMotors(1.5);
-        setIntakeWrist("up");
-        moveToPosition(getXPos(), 7, 0.6);
-        sleep(500); // allows time for intake wrist to go fully up
-        reverseIntake(-0.25);
+        readyToPickupSample();
+        waitForMotors(2);
+        pickupSample();
+        sleep(100);
+        moveToPosition(getXPos(), 9, 0.6);
+        placeSampleInBucket();
         waitForMotors(1);
-        setIntakeSlidePower(0);
         // rotate to dump sample in corner
         setBucketPosition("drop"); // drop second sample
-        autoRotate(35, 0.8);
+        setSampleClaw("closed");
+        autoRotate(35, 0.3);
         sleep(500); // allow time for bucket to fully go to position
-        autoRotate(0, 0.8);
+        autoRotate(0, 0.3);
 
         // Specimen 2: Pick up specimen from wall
         moveToPosition(getXPos(), -7, 0.4);
@@ -95,6 +96,7 @@ public class QualifierSpecimenSide extends DarienOpModeAuto {
         waitForArm();
         setSpecimenClaw("open");
         setSpecimenWrist("pickup");
+        setSamplePitch("arm down");
         setVerticalSlide("low", verticalSlidePower);
 
 //        //reset odometry angle (has tendency to drift), assuming we are flush against the sub wall
@@ -125,6 +127,7 @@ public class QualifierSpecimenSide extends DarienOpModeAuto {
         waitForArm();
         setSpecimenClaw("open");
         setSpecimenWrist("pickup");
+        setSamplePitch("arm down");
         setVerticalSlide("low", verticalSlidePower);
 
 //        // Specimen 4: Pickup specimen from wall

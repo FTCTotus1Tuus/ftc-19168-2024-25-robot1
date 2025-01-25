@@ -14,6 +14,8 @@ public class DarienOpModeAuto extends DarienOpMode {
     public static double verticalSlidePower = 1; //swapped to 1 from 0.8 needs testing
     public static double strafingInefficiencyFactor = 1.145;
 
+    public double movementStartTime;
+
     //vertical slide positions
     public static int highChamberBelowPos = 1600;
     public static int highChamberPlacePos = 2300;
@@ -89,7 +91,7 @@ public class DarienOpModeAuto extends DarienOpMode {
                 verticalSlide.setTargetPosition(armGroundPos);
                 break;
             default:
-                break;
+                throw new RuntimeException("invalid position for vertical slide");
         }
         verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         verticalSlide.setPower(power);
@@ -104,7 +106,7 @@ public class DarienOpModeAuto extends DarienOpMode {
                 specimenClaw.setPosition(specimenClawOpen);
                 break;
             default:
-                break;
+                throw new RuntimeException("invalid position for specimen claw");
 
         }
     }
@@ -121,7 +123,7 @@ public class DarienOpModeAuto extends DarienOpMode {
                 specimenWrist.setPosition(specimenWristUp);
                 break;
             default:
-                break;
+                throw new RuntimeException("invalid position for specimen wrist");
 
         }
     }
@@ -135,7 +137,7 @@ public class DarienOpModeAuto extends DarienOpMode {
                 intakeWrist.setPosition(intakeWristUpPosition);
                 break;
             default:
-                break;
+                throw new RuntimeException("invalid position for intake wrist");
         }
     }
 
@@ -147,6 +149,8 @@ public class DarienOpModeAuto extends DarienOpMode {
             case "drop":
                 bucket.setPosition(bucketPlace);
                 break;
+            default:
+                throw new RuntimeException("invalid position for bucket position");
         }
     }
 
@@ -156,6 +160,63 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public void setIntakeSlidePower(double power) {
         intakeSlide.setPower(power);
+    }
+
+    public void setSamplePitch(double position) {
+        samplePitch.setPosition(position);
+    }
+
+    public void setSamplePitch(String position) {
+        switch (position) {
+            case "drop":
+                samplePitch.setPosition(POS_SAMPLE_PITCH_DROP_BUCKET);
+                break;
+            case "arm down":
+                samplePitch.setPosition(POS_SAMPLE_PITCH_ARM_DOWN);
+                break;
+            case "ready":
+                samplePitch.setPosition(POS_SAMPLE_PITCH_PICKUP_READY);
+                break;
+            case "ground":
+                samplePitch.setPosition(POS_SAMPLE_PITCH_PICKUP);
+                break;
+            default:
+                throw new RuntimeException("invalid position for sample pitch");
+        }
+    }
+
+    public void setSampleClaw(String position) {
+        switch (position) {
+            case "closed":
+                sampleClaw.setPosition(sampleClawClosed);
+                break;
+            case "open":
+                sampleClaw.setPosition(sampleClawOpenAuto);
+                break;
+            default:
+                throw new RuntimeException("invalid position for sample claw");
+        }
+    }
+
+    public void readyToPickupSample() {
+        setIntakeWrist("down");
+        setSamplePitch("ready");
+        sampleYaw.setPosition(POS_SAMPLE_YAW_CENTER);
+        setSampleClaw("open");
+    }
+
+    public void pickupSample() {
+        setSamplePitch("ground");
+        sleep(300);
+        setSampleClaw("closed");
+    }
+
+
+    public void placeSampleInBucket() {
+        setIntakeWrist("up");
+        setSamplePitch("drop");
+        sleep(500);
+        setSampleClaw("open");
     }
 
     public void stopIntake() {
@@ -169,17 +230,17 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void reverseIntake(double power) {
         //intakeWheels.setPower(power);
     }
-
-    public void placeSampleInBucket() {
-        intakeSlide.setPower(-0.5);
-        setIntakeWrist("up");
-        setBucketPosition("carry");
-        sleep(2000); // TODO change to set to how long for intake slide to go in
-        //reverseIntake();
-        sleep(500);
-        //stopIntake();
-
-    }
+//
+//    public void placeSampleInBucket() {
+//        intakeSlide.setPower(-0.5);
+//        setIntakeWrist("up");
+//        setBucketPosition("carry");
+//        sleep(2000); // TODO change to set to how long for intake slide to go in
+//        //reverseIntake();
+//        sleep(500);
+//        //stopIntake();
+//
+//    }
 
 
     public void moveToPosition(double globalX, double globalY, double power) {
@@ -189,6 +250,9 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void moveToPosition(double globalX, double globalY, double globalH, double power) {
         // uses optical sensor to move by setting robot motor power
         // DOES NOT USE ENCODERS
+
+        movementStartTime = this.time;
+
         double errorX = globalX - getXPos();
         double errorY = globalY - getYPos();
         double errorH = getErrorRot(globalH);
@@ -380,7 +444,6 @@ public class DarienOpModeAuto extends DarienOpMode {
         double errorXp;
         double errorYp;
         double errorH;
-        double startTime = this.time;
         while (looping) {
             telemetry.addData("heading", getRawHeading());
             telemetry.addData("x: ", errorX);
@@ -413,7 +476,7 @@ public class DarienOpModeAuto extends DarienOpMode {
             } else if (getHypotenuse(myOtos.getVelocity().x, myOtos.getVelocity().y, myOtos.getVelocity().h) <= minimumXYspeed &&
                     getHypotenuse(errorX, errorY, errorH) < acceptableXYError * 4) {
                 looping = false;
-            } else if ((this.time - startTime) > timeout) {
+            } else if ((this.time - movementStartTime) > timeout) {
                 looping = false;
             }
         }
