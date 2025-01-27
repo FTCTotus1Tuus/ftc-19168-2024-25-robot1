@@ -68,10 +68,10 @@ public class QualifierSpecimenSide extends DarienOpModeAuto {
         waitForMotors(1);
         // rotate to dump sample in corner
         setBucketPosition("drop"); // drop second sample
-        setSampleClaw("closed");
         autoRotate(35, 0.3);
         sleep(500); // allow time for bucket to fully go to position
         autoRotate(0, 0.3);
+        setSampleClaw("closed");
 
         // Specimen 2: Pick up specimen from wall
         moveToPosition(getXPos(), -7, 0.4);
