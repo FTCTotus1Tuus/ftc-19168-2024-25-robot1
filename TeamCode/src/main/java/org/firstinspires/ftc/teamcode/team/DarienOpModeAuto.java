@@ -191,7 +191,10 @@ public class DarienOpModeAuto extends DarienOpMode {
                 sampleClaw.setPosition(sampleClawClosed);
                 break;
             case "open":
-                sampleClaw.setPosition(sampleClawOpenAuto);
+                sampleClaw.setPosition(sampleClawOpen);
+                break;
+            case "openwide":
+                sampleClaw.setPosition(sampleClawOpenWide);
                 break;
             default:
                 throw new RuntimeException("invalid position for sample claw");
@@ -202,7 +205,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         setIntakeWrist("down");
         setSamplePitch("ready");
         sampleYaw.setPosition(POS_SAMPLE_YAW_CENTER);
-        setSampleClaw("open");
+        setSampleClaw("openwide");
     }
 
     public void pickupSample() {
@@ -215,8 +218,9 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void placeSampleInBucket() {
         setIntakeWrist("up");
         setSamplePitch("drop");
-        sleep(500);
-        setSampleClaw("open");
+        sleep(500); // to ensure the wrist and pitch servos go to their full position
+        setSampleClaw("openwide");
+        sleep(100); // to ensure sample leaves the claw
     }
 
     public void stopIntake() {

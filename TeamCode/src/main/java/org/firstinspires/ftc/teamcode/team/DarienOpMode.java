@@ -84,7 +84,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double POS_SAMPLE_YAW_RIGHT2 = 0.7;
     public static double POS_SAMPLE_YAW_RIGHT_MAX = 0.8;
 
-    public static double sampleClawOpenAuto = 0.95;
+    public static double sampleClawOpenWide = 0.95;
     public static double sampleClawOpen = 0.85;
     public static double sampleClawClosed = 0.74;
 
