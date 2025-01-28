@@ -218,7 +218,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void placeSampleInBucket() {
         setIntakeWrist("up");
         setSamplePitch("drop");
-        sleep(500); // to ensure the wrist and pitch servos go to their full position
+        sleep(600); // to ensure the wrist and pitch servos go to their full position
         setSampleClaw("openwide");
         sleep(100); // to ensure sample leaves the claw
     }
@@ -448,6 +448,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         double errorXp;
         double errorYp;
         double errorH;
+        double errorHrads;
         while (looping) {
             telemetry.addData("heading", getRawHeading());
             telemetry.addData("x: ", errorX);
@@ -455,30 +456,34 @@ public class DarienOpModeAuto extends DarienOpMode {
             errorX = targetPosX - getXPos();
             errorY = targetPosY - getYPos();
             errorH = getErrorRot(targetPosH);
+            errorHrads = Math.toRadians(errorH) * 7;
 
             if (Math.abs(errorH) <= 5) {// attempts to make sure jitters happen less
-                errorH = 0; // if error is within 2.5 degrees on either side we say we're good
+                errorH = 0; // if error is within 5 degrees on either side we say we're good
             }
 
             errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
             errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
 
-            if (getHypotenuse(errorXp, errorYp) > 7) {
+            if (getHypotenuse(errorXp, errorYp) > 5) {
                 setPower(currentMovementPower, errorXp, errorYp, errorH / 3); // add pid?
-            } else if (getHypotenuse(errorXp, errorYp) > 3.5) {
+                telemetry.addData("full speed", "");
+            } else if (getHypotenuse(errorXp, errorYp) > 3) {
                 setPower(currentMovementPower / 2, errorXp, errorYp, errorH / 3); // add pid?
                 telemetry.addData("half speed", "");
             } else {
-                setPower(currentMovementPower / 3, errorXp, errorYp, errorH / 3); // add pid?
+                setPower(currentMovementPower / 5, errorXp, errorYp, errorH / 3); // add pid?
                 telemetry.addData("third speed", "");
             }
             telemetry.addData("x vel: ", myOtos.getVelocity().x);
             telemetry.addData("y vel: ", myOtos.getVelocity().y);
 
-            if (getHypotenuse(errorX, errorY, errorH) <= acceptableXYError) {
+
+            //exit controls
+            if (getHypotenuse(errorX, errorY) <= acceptableXYError) {
                 looping = false;
-            } else if (getHypotenuse(myOtos.getVelocity().x, myOtos.getVelocity().y, myOtos.getVelocity().h) <= minimumXYspeed &&
-                    getHypotenuse(errorX, errorY, errorH) < acceptableXYError * 4) {
+            } else if (getHypotenuse(myOtos.getVelocity().x, myOtos.getVelocity().y) <= minimumXYspeed &&
+                    getHypotenuse(errorX, errorY) < acceptableXYError * 4) {
                 looping = false;
             } else if ((this.time - movementStartTime) > timeout) {
                 looping = false;

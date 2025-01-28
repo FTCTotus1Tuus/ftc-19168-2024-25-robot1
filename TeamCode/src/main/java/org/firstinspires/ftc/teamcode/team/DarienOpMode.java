@@ -92,8 +92,8 @@ public class DarienOpMode extends LinearOpMode {
     public static double intakeWristUpPosition = 0.43;
 
     // calibrated for torque servo
-    public static double specimenClawOpen = 0.82;
-    public static double specimenClawClosed = 0.95;
+    public static double specimenClawOpen = 0.93;
+    public static double specimenClawClosed = 0.818;
 
     // Variables to track servo position
     private double sampleYawCurrentPosition;
@@ -293,6 +293,7 @@ public class DarienOpMode extends LinearOpMode {
         telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
 
         telemetry.update();
+        print("ready to start", "");
     }
 
 

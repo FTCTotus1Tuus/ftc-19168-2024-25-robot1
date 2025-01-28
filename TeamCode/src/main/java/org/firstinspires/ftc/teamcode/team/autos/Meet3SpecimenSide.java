@@ -14,6 +14,7 @@ public class Meet3SpecimenSide extends DarienOpModeAuto {
 
         initControls();
         waitForStart();
+        print("starting", "");
         setBucketPosition("carry");
         setVerticalSlide("high chamber below", verticalSlidePower);
 
