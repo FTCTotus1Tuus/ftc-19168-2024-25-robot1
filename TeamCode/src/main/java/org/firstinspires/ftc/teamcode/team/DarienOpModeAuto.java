@@ -14,6 +14,8 @@ public class DarienOpModeAuto extends DarienOpMode {
     public static double verticalSlidePower = 1; //swapped to 1 from 0.8 needs testing
     public static double strafingInefficiencyFactor = 1.145;
 
+    public static double sampleClawClosed = 0.72;
+
     public double movementStartTime;
 
     //vertical slide positions

@@ -72,7 +72,7 @@ public class DarienOpMode extends LinearOpMode {
     public static double specimenWristPickup = 0.82;
 
     public static double POS_SAMPLE_PITCH_DROP_BUCKET = 0.2;
-    public static double POS_SAMPLE_PITCH_ARM_DOWN = 0.3;
+    public static double POS_SAMPLE_PITCH_ARM_DOWN = 0.4;
     public static double POS_SAMPLE_PITCH_PICKUP_READY = 0.5;
     public static double POS_SAMPLE_PITCH_PICKUP = 0.63;
 
