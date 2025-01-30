@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.team.autos;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
+@Disabled
 @Autonomous(name = "Meet 3: Specimen Side", group = "Meet 3")
 public class Meet3SpecimenSide extends DarienOpModeAuto {
     @Override

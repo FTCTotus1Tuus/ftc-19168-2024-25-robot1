@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 
 @Config
-
+@Disabled
 @Autonomous(name = "Meet 3: Sample Side", group = "Meet 3")
 public class Meet3SampleSideSebastianIsCrazy extends DarienOpModeAuto {
     public double normalPower = 0.5;
