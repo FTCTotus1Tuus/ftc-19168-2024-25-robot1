@@ -50,6 +50,10 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void initControls() {
         super.initControls();
 
+        // Initialize the servo positions and record the current position.
+        sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
+        intakeWristSetPosition(intakeWristUpPosition);
+
         print("otos", myOtos);
 
         // reverse motors 2 and 3
@@ -221,7 +225,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         setIntakeWrist("up");
         setSamplePitch("drop");
         sleep(600); // to ensure the wrist and pitch servos go to their full position
-        setSampleClaw("openwide");
+        setSampleClaw("open");
         sleep(100); // to ensure sample leaves the claw
     }
 

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
-@Autonomous(name = "Qual: Specimen Side", group = "State Qualifier")
+@Autonomous(name = "Qual: Specimen Side (R)", group = "State Qualifier")
 public class QualifierSpecimenSide extends DarienOpModeAuto {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -18,6 +18,7 @@ public class QualifierSpecimenSide extends DarienOpModeAuto {
 
         initControls();
         setSamplePitch("arm down");
+        sampleYaw.setPosition(POS_SAMPLE_YAW_CENTER);
         waitForStart();
         setIntakeSlidePower(-0.05);
         setBucketPosition("drop");

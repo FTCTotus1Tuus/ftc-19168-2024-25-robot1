@@ -68,10 +68,12 @@ public class DarienOpModeTeleop extends DarienOpMode {
             telemetry.addData("sampleYaw pos: ", sampleYawGetPosition());
 
             // CONTROL: SAMPLE YAW
-            if (gamepad2.dpad_left) {
-                sampleYawSetPosition(sampleYawGetPosition() - 0.005);
-            } else if (gamepad2.dpad_right) {
-                sampleYawSetPosition(sampleYawGetPosition() + 0.005);
+            if (intakeWristGetPosition() >= intakeWristGroundPosition - 0.1 || gamepad2.right_stick_button) {
+                if (gamepad2.dpad_left) {
+                    sampleYawSetPosition(sampleYawGetPosition() - 0.005);
+                } else if (gamepad2.dpad_right) {
+                    sampleYawSetPosition(sampleYawGetPosition() + 0.005);
+                }
             }
 
             // CONTROL: SAMPLE PITCH

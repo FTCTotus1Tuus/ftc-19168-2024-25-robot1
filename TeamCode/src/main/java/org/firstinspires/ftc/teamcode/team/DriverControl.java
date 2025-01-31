@@ -10,6 +10,9 @@ public class DriverControl extends DarienOpModeTeleop {
     public void runOpMode() {
         initControls();
         waitForStart();
+        // Initialize the servo positions and record the current position.
+        sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
+        intakeWristSetPosition(intakeWristUpPosition);
         specimenWrist.setPosition(specimenWristPickup);
         //Start
         while (this.opModeIsActive()) {

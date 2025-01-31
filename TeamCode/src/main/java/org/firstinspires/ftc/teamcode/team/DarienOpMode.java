@@ -159,10 +159,6 @@ public class DarienOpMode extends LinearOpMode {
         samplePitch = hardwareMap.get(Servo.class, "samplePitch"); // CH port
         sampleYaw = hardwareMap.get(Servo.class, "sampleYaw"); // CH port
 
-        // Initialize the servo positions and record the current position.
-        sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
-        intakeWristSetPosition(intakeWristUpPosition);
-
         telemetry.addLine("FTC 19168 Robot Initialization Done!");
         telemetry.update();
     }
