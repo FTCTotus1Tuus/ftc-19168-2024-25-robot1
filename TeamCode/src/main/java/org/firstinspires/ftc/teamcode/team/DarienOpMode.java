@@ -357,4 +357,7 @@ public class DarienOpMode extends LinearOpMode {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
     }
 
+    public static double clamp(double val, double min, double max) {
+        return Math.max(min, Math.min(max, val));
+    }
 }

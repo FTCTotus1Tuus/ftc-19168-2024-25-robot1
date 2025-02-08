@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.team;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -13,6 +16,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 @Config
 public class DarienOpModeAuto extends DarienOpMode {
+
+    public static double movement_igain = 0;
+    public static double movement_pgain = 0.018;
 
     public static double normalPower = 0.3;
     public static double verticalSlidePower = 1; //swapped to 1 from 0.8 needs testing
@@ -30,17 +36,20 @@ public class DarienOpModeAuto extends DarienOpMode {
     public static int barBelow2Pos;
     public static int barPlace2Pos;
     public static int barBelow1Pos;
-    public static int barPlace1Pos = 950; // TODO fix value random guess made in the delerium of exhaustion
+    public static int barPlace1Pos = 950;
     public static int basketLowPos = 2450;
     public static int basketHighPos = 4380;
     public static int armGroundPos = 0;
+
+    FtcDashboard dashboard;
+
 
     //encoder movement targets
     public double targetPosX = 0;
     public double targetPosY = 0;
     public double targetPosH = 0;
     public double rotConst = 1;
-    public double acceptableXYError = 0.5; //how many inches off the xy movement can be - does not compound
+    public double acceptableXYError = 0.25; //how many inches off the xy movement can be - does not compound
     public static double minimumXYspeed = 0.5;
     public double currentMovementPower = 0;
     public static double ProportionalCoefficient = 0.3;
@@ -71,6 +80,9 @@ public class DarienOpModeAuto extends DarienOpMode {
         verticalSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // this is key
 
         odo.resetPosAndIMU();
+
+        dashboard = FtcDashboard.getInstance();
+
 
     }
 
@@ -248,17 +260,6 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void reverseIntake(double power) {
         //intakeWheels.setPower(power);
     }
-//
-//    public void placeSampleInBucket() {
-//        intakeSlide.setPower(-0.5);
-//        setIntakeWrist("up");
-//        setBucketPosition("carry");
-//        sleep(2000); // TODO change to set to how long for intake slide to go in
-//        //reverseIntake();
-//        sleep(500);
-//        //stopIntake();
-//
-//    }
 
 
     public void moveToPosition(double globalX, double globalY, double power) {
@@ -460,7 +461,6 @@ public class DarienOpModeAuto extends DarienOpMode {
     }
 
     public void waitForMotors(double timeout) {
-
         boolean looping = true;
         double errorX = 0;
         double errorY = 0;
@@ -468,6 +468,15 @@ public class DarienOpModeAuto extends DarienOpMode {
         double errorYp;
         double errorH;
         double errorHrads;
+
+        //PID commands
+        double movement_pduty = 0;
+        double movement_iduty = 0;
+        double movement_power;
+
+        Pose2D velocity;
+
+
         while (looping) {
             updatePosition(); // VERY NESSCESSARY WHENEVER WE ARE MOVING
 
@@ -486,17 +495,23 @@ public class DarienOpModeAuto extends DarienOpMode {
             errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
             errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
 
-            if (getHypotenuse(errorXp, errorYp) > 5) {
-                setPower(currentMovementPower, errorXp, errorYp, errorH / 3); // add pid?
-                telemetry.addData("full speed", "");
-            } else if (getHypotenuse(errorXp, errorYp) > 3) {
-                setPower(currentMovementPower / 2, errorXp, errorYp, errorH / 3); // add pid?
-                telemetry.addData("half speed", "");
+//            if (getHypotenuse(errorXp, errorYp) < 25) {
+//                setPower(0.2, errorXp, errorYp, errorHrads); // add pid?
+//                telemetry.addData("full speed", "");
+//            } else {
+//                setPower(currentMovementPower, errorXp, errorYp, errorHrads); // add pid?
+//                telemetry.addData("half speed", "");
+//            }
+            if (getHypotenuse(errorXp, errorYp) < 4) {
+                setPower(0.2, errorXp, errorYp, errorHrads); // add pid?
+                telemetry.addData("fifth speed", "");
             } else {
-                setPower(currentMovementPower / 5, errorXp, errorYp, errorH / 3); // add pid?
-                telemetry.addData("third speed", "");
-            }
 
+                movement_pduty = clamp(movement_pgain * Math.pow(getHypotenuse(errorXp, errorYp), 3 / 2), -1, 1);
+                movement_iduty = clamp(movement_igain * (getHypotenuse(errorXp, errorYp)) + movement_iduty, -.7, .7);
+                movement_power = clamp(movement_pduty + movement_iduty, -currentMovementPower, currentMovementPower);
+                setPower(movement_power, errorXp, errorYp, errorHrads);
+            }
 
             //exit controls
             if (getHypotenuse(errorX, errorY) <= acceptableXYError) {
@@ -509,6 +524,19 @@ public class DarienOpModeAuto extends DarienOpMode {
             else if ((this.time - movementStartTime) > timeout) {
                 looping = false;
             }
+            //DASHBOARD TELEMETRY
+
+            velocity = odo.getVelocity();
+            TelemetryPacket packet = new TelemetryPacket();
+            packet.put("x pos", getXPos());
+            packet.put("y pos", getYPos());
+            packet.put("rot pos", getRawHeading());
+            packet.put("x vel", velocity.getY(DistanceUnit.INCH));
+            packet.put("y vel", velocity.getX(DistanceUnit.INCH));
+
+            dashboard.sendTelemetryPacket(packet);
+
+
         }
 
         currentHeading = getRawHeading();
@@ -544,7 +572,6 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public double getErrorRot(double targetPosRot) {
         // pos is clockwwise neg is counterclockwise
-        //TODO check if still correct
         return ((targetPosRot - getRawHeading()) + 180) % 360 - 180;
     }
 
@@ -563,6 +590,13 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public double getYPos() {
         return currentRobotPos.getY(DistanceUnit.INCH);
+    }
+
+    @Override
+    public void print(String Name, Object message) {
+        //saves a line for quick debug messages
+        telemetry.addData(Name, message);
+        telemetry.update();
     }
 
 
