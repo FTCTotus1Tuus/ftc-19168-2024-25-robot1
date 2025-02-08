@@ -31,6 +31,12 @@ public class DarienOpModeTeleop extends DarienOpMode {
 //
 //    }
 
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        telemetry.update(); // Send telemetry to the driver controller only here.
+    }
+
     /**
      * If the GP1 left bumper is pressed, spin the boot wheels in if the joystick is pulled down or spin the boot wheels out if the joystick is pushed up.
      */

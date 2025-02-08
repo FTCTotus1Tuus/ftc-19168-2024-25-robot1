@@ -102,7 +102,6 @@ public class DarienOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry.update(); // Send telemetry to the driver controller only here.
     }
 
     public void initControls() {
@@ -123,9 +122,12 @@ public class DarienOpMode extends LinearOpMode {
         );
         imu.resetYaw();
 
-        // Initialize the SparkFun Odometry Tracking Optical Sensor (OTOS), which includes an IMU.
-        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
-        configureOtos();
+//        // Initialize the SparkFun Odometry Tracking Optical Sensor (OTOS), which includes an IMU.
+//        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+//        configureOtos();
+
+        // Initialize 2 Deadwheel odometry
+        configure2DeadWheel();
 
         // INITIALIZE MOTORS
         omniMotor0 = initializeMotor("omniMotor0");
@@ -221,7 +223,7 @@ public class DarienOpMode extends LinearOpMode {
         the tracking point the Y (strafe) odometry pod is. forward of center is a positive number,
         backwards is a negative number.
          */
-        odo.setOffsets(165, 0); //these are tuned for 2/5/2025 robot
+        odo.setOffsets(0, 165); //these are tuned for 2/5/2025 robot
 
         /*
         Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
@@ -253,8 +255,8 @@ public class DarienOpMode extends LinearOpMode {
         odo.resetPosAndIMU();
 
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("X offset", odo.getXOffset());
-        telemetry.addData("Y offset", odo.getYOffset());
+        telemetry.addData("Y offset", odo.getXOffset());
+        telemetry.addData("X offset", odo.getYOffset());
         telemetry.addData("Device Version Number:", odo.getDeviceVersion());
         telemetry.addData("Device Scalar", odo.getYawScalar());
         telemetry.update();
