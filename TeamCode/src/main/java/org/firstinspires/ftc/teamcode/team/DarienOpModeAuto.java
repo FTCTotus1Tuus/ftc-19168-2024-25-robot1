@@ -4,6 +4,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
 //import org.apache.commons.math3.geometry.euclidean.twod.Line;
 
 
@@ -17,6 +21,8 @@ public class DarienOpModeAuto extends DarienOpMode {
     public static double sampleClawClosed = 0.72;
 
     public double movementStartTime;
+
+    public Pose2D currentRobotPos;
 
     //vertical slide positions
     public static int highChamberBelowPos = 1600;
@@ -50,11 +56,12 @@ public class DarienOpModeAuto extends DarienOpMode {
     public void initControls() {
         super.initControls();
 
+
         // Initialize the servo positions and record the current position.
         sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
         intakeWristSetPosition(intakeWristUpPosition);
 
-        print("otos", myOtos);
+//        print("otos", myOtos);
 
         // reverse motors 2 and 3
         omniMotor2.setDirection(DcMotor.Direction.REVERSE);
@@ -63,6 +70,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         verticalSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // this is key
 
+        odo.resetPosAndIMU();
 
     }
 
@@ -261,6 +269,8 @@ public class DarienOpModeAuto extends DarienOpMode {
         // uses optical sensor to move by setting robot motor power
         // DOES NOT USE ENCODERS
 
+        updatePosition(); //VERY NESSCESARY WHENEVER THE ROBOT IS MOVING
+
         movementStartTime = this.time;
 
         double errorX = globalX - getXPos();
@@ -336,6 +346,8 @@ public class DarienOpModeAuto extends DarienOpMode {
             return;
         }
         while (isRotating) {
+            updatePosition(); //VERY NESSCESSARY WHENEVER THE ROBOT IS MOVING
+
             error = getErrorRot(targetPosDegrees);
 
             if (Math.abs(error) <= rotationTolerance) {
@@ -448,6 +460,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     }
 
     public void waitForMotors(double timeout) {
+
         boolean looping = true;
         double errorX = 0;
         double errorY = 0;
@@ -456,6 +469,8 @@ public class DarienOpModeAuto extends DarienOpMode {
         double errorH;
         double errorHrads;
         while (looping) {
+            updatePosition(); // VERY NESSCESSARY WHENEVER WE ARE MOVING
+
             telemetry.addData("heading", getRawHeading());
             telemetry.addData("x: ", errorX);
             print("y: ", errorY);
@@ -481,17 +496,17 @@ public class DarienOpModeAuto extends DarienOpMode {
                 setPower(currentMovementPower / 5, errorXp, errorYp, errorH / 3); // add pid?
                 telemetry.addData("third speed", "");
             }
-            telemetry.addData("x vel: ", myOtos.getVelocity().x);
-            telemetry.addData("y vel: ", myOtos.getVelocity().y);
 
 
             //exit controls
             if (getHypotenuse(errorX, errorY) <= acceptableXYError) {
                 looping = false;
-            } else if (getHypotenuse(myOtos.getVelocity().x, myOtos.getVelocity().y) <= minimumXYspeed &&
-                    getHypotenuse(errorX, errorY) < acceptableXYError * 4) {
-                looping = false;
-            } else if ((this.time - movementStartTime) > timeout) {
+            }
+//            else if (getHypotenuse(myOtos.getVelocity().x, myOtos.getVelocity().y) <= minimumXYspeed &&
+//                    getHypotenuse(errorX, errorY) < acceptableXYError * 4) {
+//                looping = false;
+//            }
+            else if ((this.time - movementStartTime) > timeout) {
                 looping = false;
             }
         }
@@ -529,23 +544,41 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     public double getErrorRot(double targetPosRot) {
         // pos is clockwwise neg is counterclockwise
+        //TODO check if still correct
         return ((targetPosRot - getRawHeading()) + 180) % 360 - 180;
     }
 
+    public void updatePosition() {
+        odo.update();
+        currentRobotPos = odo.getPosition();
+    }
 
     public double getRawHeading() {
-        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return pos.h;
+        return currentRobotPos.getHeading(AngleUnit.DEGREES);
     }
 
     public double getXPos() {
-        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return pos.x;
+        return currentRobotPos.getX(DistanceUnit.INCH);
     }
 
     public double getYPos() {
-        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return pos.y;
+        return currentRobotPos.getY(DistanceUnit.INCH);
     }
+
+
+//    public double getRawHeading() {
+//        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+//        return pos.h;
+//    }
+//
+//    public double getXPos() {
+//        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+//        return pos.x;
+//    }
+//
+//    public double getYPos() {
+//        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+//        return pos.y;
+//    }
 
 }

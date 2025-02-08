@@ -29,6 +29,7 @@ public class DarienOpMode extends LinearOpMode {
     public DcMotor omniMotor3; // right rear
     public DcMotor verticalSlide;
     public IMU imu;
+    public GoBildaPinpointDriver odo;
     public CRServo intakeSlide;
     public Servo intakeWrist;
     //public CRServo intakeWheels;
@@ -101,7 +102,6 @@ public class DarienOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry.update(); // Send telemetry to the driver controller only here.
     }
 
     public void initControls() {
@@ -122,9 +122,12 @@ public class DarienOpMode extends LinearOpMode {
         );
         imu.resetYaw();
 
-        // Initialize the SparkFun Odometry Tracking Optical Sensor (OTOS), which includes an IMU.
-        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
-        configureOtos();
+//        // Initialize the SparkFun Odometry Tracking Optical Sensor (OTOS), which includes an IMU.
+//        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+//        configureOtos();
+
+        // Initialize 2 Deadwheel odometry
+        configure2DeadWheel();
 
         // INITIALIZE MOTORS
         omniMotor0 = initializeMotor("omniMotor0");
@@ -204,6 +207,59 @@ public class DarienOpMode extends LinearOpMode {
         DcMotor motor = hardwareMap.get(DcMotor.class, name);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         return motor;
+    }
+
+    private void configure2DeadWheel() {
+        // Initialize the hardware variables. Note that the strings used here must correspond
+        // to the names assigned during the robot configuration step on the DS or RC devices.
+
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+
+        /*
+        Set the odometry pod positions relative to the point that the odometry computer tracks around.
+        The X pod offset refers to how far sideways from the tracking point the
+        X (forward) odometry pod is. Left of the center is a positive number,
+        right of center is a negative number. the Y pod offset refers to how far forwards from
+        the tracking point the Y (strafe) odometry pod is. forward of center is a positive number,
+        backwards is a negative number.
+         */
+        odo.setOffsets(0, 165); //these are tuned for 2/5/2025 robot
+
+        /*
+        Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
+        the goBILDA_SWINGARM_POD, or the goBILDA_4_BAR_POD.
+        If you're using another kind of odometry pod, uncomment setEncoderResolution and input the
+        number of ticks per mm of your odometry pod.
+         */
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        //odo.setEncoderResolution(13.26291192);
+
+
+        /*
+        Set the direction that each of the two odometry pods count. The X (forward) pod should
+        increase when you move the robot forward. And the Y (strafe) pod should increase when
+        you move the robot to the left.
+         */
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD); //TODO check and fix these values
+
+
+        /*
+        Before running the robot, recalibrate the IMU. This needs to happen when the robot is stationary
+        The IMU will automatically calibrate when first powered on, but recalibrating before running
+        the robot is a good idea to ensure that the calibration is "good".
+        resetPosAndIMU will reset the position to 0,0,0 and also recalibrate the IMU.
+        This is recommended before you run your autonomous, as a bad initial calibration can cause
+        an incorrect starting value for x, y, and heading.
+         */
+        //odo.recalibrateIMU();
+        odo.resetPosAndIMU();
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Y offset", odo.getXOffset());
+        telemetry.addData("X offset", odo.getYOffset());
+        telemetry.addData("Device Version Number:", odo.getDeviceVersion());
+        telemetry.addData("Device Scalar", odo.getYawScalar());
+        telemetry.update();
     }
 
     private void configureOtos() {
