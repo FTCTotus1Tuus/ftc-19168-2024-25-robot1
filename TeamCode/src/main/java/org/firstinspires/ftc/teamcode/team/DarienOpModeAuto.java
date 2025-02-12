@@ -175,6 +175,9 @@ public class DarienOpModeAuto extends DarienOpMode {
             case "drop":
                 bucket.setPosition(bucketPlace);
                 break;
+            case "up":
+                bucket.setPosition(bucketUp);
+                break;
             default:
                 throw new RuntimeException("invalid position for bucket position");
         }
@@ -240,13 +243,9 @@ public class DarienOpModeAuto extends DarienOpMode {
         setSampleClaw("closed");
     }
 
-
     public void placeSampleInBucket() {
         setIntakeWrist("up");
         setSamplePitch("drop");
-        sleep(600); // to ensure the wrist and pitch servos go to their full position
-        setSampleClaw("open");
-        sleep(100); // to ensure sample leaves the claw
     }
 
     public void stopIntake() {
@@ -460,7 +459,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         omniMotor3.setMode(DcMotor.RunMode.RESET_ENCODERS);
     }
 
-    public void waitForMotors(double timeout) {
+    public void waitForMotors(double timeout, boolean noPID, double errorBand) {
         boolean looping = true;
         double errorX = 0;
         double errorY = 0;
@@ -469,8 +468,12 @@ public class DarienOpModeAuto extends DarienOpMode {
         double errorH;
         double errorHrads;
 
+        if (errorBand == 0) {
+            errorBand = acceptableXYError;
+        }
+
         //PID commands
-        double movement_pduty = 0;
+        double movement_pduty = 0.05;
         double movement_iduty = 0;
         double movement_power;
 
@@ -495,26 +498,30 @@ public class DarienOpModeAuto extends DarienOpMode {
             errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
             errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
 
-//            if (getHypotenuse(errorXp, errorYp) < 25) {
-//                setPower(0.2, errorXp, errorYp, errorHrads); // add pid?
-//                telemetry.addData("full speed", "");
-//            } else {
-//                setPower(currentMovementPower, errorXp, errorYp, errorHrads); // add pid?
-//                telemetry.addData("half speed", "");
-//            }
-            if (getHypotenuse(errorXp, errorYp) < 4) {
-                setPower(0.2, errorXp, errorYp, errorHrads); // add pid?
-                telemetry.addData("fifth speed", "");
+
+            if (noPID) {
+                if (getHypotenuse(errorXp, errorYp) < 5) {
+                    setPower(0.2, errorXp, errorYp, errorHrads); // add pid?
+                    telemetry.addData("slow speed - no pid", "");
+                } else {
+                    setPower(currentMovementPower, errorXp, errorYp, errorHrads); // add pid?
+                    telemetry.addData("full speed - no pid", "");
+                }
             } else {
+                if (getHypotenuse(errorXp, errorYp) < 4) {
+                    setPower(0.2, errorXp, errorYp, errorHrads); // add pid?
+                    telemetry.addData("final approach - pid", "");
+                } else {
 
-                movement_pduty = clamp(movement_pgain * Math.pow(getHypotenuse(errorXp, errorYp), 3 / 2), -1, 1);
-                movement_iduty = clamp(movement_igain * (getHypotenuse(errorXp, errorYp)) + movement_iduty, -.7, .7);
-                movement_power = clamp(movement_pduty + movement_iduty, -currentMovementPower, currentMovementPower);
-                setPower(movement_power, errorXp, errorYp, errorHrads);
+                    movement_pduty = clamp(movement_pgain * Math.pow(getHypotenuse(errorXp, errorYp), 3 / 2), -1, 1);
+                    movement_iduty = clamp(movement_igain * (getHypotenuse(errorXp, errorYp)) + movement_iduty, -.7, .7);
+                    movement_power = clamp(movement_pduty + movement_iduty, -currentMovementPower, currentMovementPower);
+                    setPower(movement_power, errorXp, errorYp, errorHrads);
+                    telemetry.addData("current move power: ", movement_power);
+                }
             }
-
             //exit controls
-            if (getHypotenuse(errorX, errorY) <= acceptableXYError) {
+            if (getHypotenuse(errorX, errorY) <= errorBand) {
                 looping = false;
             }
 //            else if (getHypotenuse(myOtos.getVelocity().x, myOtos.getVelocity().y) <= minimumXYspeed &&
@@ -547,8 +554,16 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     }
 
+    public void waitForMotors(double timeout, boolean noPID) {
+        waitForMotors(timeout, noPID, 0);
+    }
+
+    public void waitForMotors(double timeout) {
+        waitForMotors(timeout, true, 0);
+    }
+
     public void waitForMotors() {
-        waitForMotors(4);
+        waitForMotors(4, true, 0);
     }
 
     public void waitForMotors(boolean usingJustEncoders) {

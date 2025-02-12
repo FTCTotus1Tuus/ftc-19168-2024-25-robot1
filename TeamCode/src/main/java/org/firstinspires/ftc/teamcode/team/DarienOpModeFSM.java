@@ -46,43 +46,51 @@ public class DarienOpModeFSM extends OpMode {
 
     public void loop() {
         switch (scoringMechanismState) {
-           case READY_FOR_SPECIMEN_PICKUP:
-               if (true) {
+            case READY_FOR_SPECIMEN_PICKUP:
+                if (true) {
 
-               } break;
-           case PICKING_UP_SPECIMEN:
-               if (true) {
+                }
+                break;
+            case PICKING_UP_SPECIMEN:
+                if (true) {
 
-               } break;
-           case EXTENDING_TO_READY_TO_CLIP_HIGH_CHAMBER:
-               if (true) {
+                }
+                break;
+            case EXTENDING_TO_READY_TO_CLIP_HIGH_CHAMBER:
+                if (true) {
 //                   setVerticalSlide("high chamber below", verticalSlidePower);
-               } break;
-           case READY_TO_CLIP_HIGH_CHAMBER:
+                }
+                break;
+            case READY_TO_CLIP_HIGH_CHAMBER:
 //               if (setVerticalSlide("high chamber below", verticalSlidePower)) {
 //                    scoringMechanismState = ScoringMechanismState.EXTENDING_TO_CLIP_HIGH_CHAMBER;
 //               }
-               break;
-           case EXTENDING_TO_CLIP_HIGH_CHAMBER:
-               if (true) {
+                break;
+            case EXTENDING_TO_CLIP_HIGH_CHAMBER:
+                if (true) {
 
-               } break;
-           case CLIPPED_HIGH_CHAMBER:
-               if (true) {
+                }
+                break;
+            case CLIPPED_HIGH_CHAMBER:
+                if (true) {
 
-               } break;
-           case READY_FOR_SAMPLE_PICKUP:
-               if (true) {
+                }
+                break;
+            case READY_FOR_SAMPLE_PICKUP:
+                if (true) {
 
-               } break;
-           case READY_FOR_SAMPLE_DROP:
-               if (true) {
+                }
+                break;
+            case READY_FOR_SAMPLE_DROP:
+                if (true) {
 
-               } break;
-           case SAMPLE_DROP:
-               if (true) {
+                }
+                break;
+            case SAMPLE_DROP:
+                if (true) {
 
-               } break;
+                }
+                break;
             default:
                 // Throw an exception error since we should never go into the default case.
         }
@@ -167,10 +175,10 @@ public class DarienOpModeFSM extends OpMode {
     private double sampleYawCurrentPosition;
     private double intakeWristCurrentPosition;
 
-//    @Override
-//    public void runOpMode() throws InterruptedException {
+    //    @Override
+    public void runOpMode() throws InterruptedException {
 //        telemetry.update(); // Send telemetry to the driver controller only here.
-//    }
+    }
 
     public void initControls() {
 

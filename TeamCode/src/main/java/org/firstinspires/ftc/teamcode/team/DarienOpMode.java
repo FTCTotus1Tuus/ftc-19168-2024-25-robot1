@@ -66,8 +66,9 @@ public class DarienOpMode extends LinearOpMode {
 
     // Servo tuning constants
 
-    public static double bucketPickup = 0.95;
-    public static double bucketPlace = 0.75;
+    public static double bucketPickup = 0.6;
+    public static double bucketPlace = 0.45;
+    public static double bucketUp = 0.9;
 
     public static double specimenWristPlace = 0.20; // towards inside of robot - change name later?
     public static double specimenWristPickup = 0.82;
