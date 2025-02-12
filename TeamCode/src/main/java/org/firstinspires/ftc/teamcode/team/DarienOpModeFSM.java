@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode.team;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -20,66 +20,73 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Config
-public class DarienOpModeFSM extends LinearOpMode {
+public class DarienOpModeFSM extends OpMode {
 
     // FINITE STATE MACHINE
     public enum ScoringMechanismState {
-        Ready_for_specimen_pickup,
-        Picking_up_specimen,
-        Extending_to_Ready_to_clip_high_chamber,
-        Ready_to_clip_high_chamber,
-        Extending_to_clip_high_chamber,
-        Clipped_high_chamber,
-        Ready_for_sample_pickup,
-        Ready_for_sample_drop,
-        Sample_drop
-
-
-
-
+        READY_FOR_SPECIMEN_PICKUP,
+        PICKING_UP_SPECIMEN,
+        EXTENDING_TO_READY_TO_CLIP_HIGH_CHAMBER,
+        READY_TO_CLIP_HIGH_CHAMBER,
+        EXTENDING_TO_CLIP_HIGH_CHAMBER,
+        CLIPPED_HIGH_CHAMBER,
+        READY_FOR_SAMPLE_PICKUP,
+        READY_FOR_SAMPLE_DROP,
+        SAMPLE_DROP
     }
 
- ////      public void loop() {
-////       switch (ScoringMechanismState) {
-////           case "Ready_for_specimen_pickup":
-////               if () {
-////
-////               } break;
-////           case "Picking_up_specimen":
-////               if () {
-////
-////               } break;
-////           case "Extending_to_Ready_to_clip_high_chamber":
-////               if () {
-////                    verticalSlide.setPower(.5);
-////                    verticalSlide.setTargetPosition("high chamber below");
-////               } break;
-////           case "Ready_to_clip_high_chamber":
-////               if (verticalSlide.setTargetPosition() = "high chamber below";) {
-////                    ScoringMechanismState = ScoringMechanismState.Extending_to_clip_high_chamber;
-////               } break;
-////           case "Extending_to_clip_high_chamber":
-////               if () {
-////                    verticalSlide.setTargetPosition();
-////               } break;
-////           case "Clipped_high_chamber":
-////               if () {
-////
-////               } break;
-////           case "Ready_for_sample_pickup":
-////               if () {
-////
-////               } break;
-////           case "Ready_for_sample_drop":
-////               if () {
-////
-////               } break;
-////           case "Sample_drop":
-////               if () {
-////
-////               } break;
-////       }
-////    }
+    public void init() {
+        // Reset any component timers first.
+
+        // hardware initialization code goes here
+        // this needs to correspond with the configuration used
+    }
+
+    ScoringMechanismState scoringMechanismState = ScoringMechanismState.READY_FOR_SAMPLE_PICKUP;
+
+    public void loop() {
+        switch (scoringMechanismState) {
+           case READY_FOR_SPECIMEN_PICKUP:
+               if (true) {
+
+               } break;
+           case PICKING_UP_SPECIMEN:
+               if (true) {
+
+               } break;
+           case EXTENDING_TO_READY_TO_CLIP_HIGH_CHAMBER:
+               if (true) {
+//                   setVerticalSlide("high chamber below", verticalSlidePower);
+               } break;
+           case READY_TO_CLIP_HIGH_CHAMBER:
+//               if (setVerticalSlide("high chamber below", verticalSlidePower)) {
+//                    scoringMechanismState = ScoringMechanismState.EXTENDING_TO_CLIP_HIGH_CHAMBER;
+//               }
+               break;
+           case EXTENDING_TO_CLIP_HIGH_CHAMBER:
+               if (true) {
+
+               } break;
+           case CLIPPED_HIGH_CHAMBER:
+               if (true) {
+
+               } break;
+           case READY_FOR_SAMPLE_PICKUP:
+               if (true) {
+
+               } break;
+           case READY_FOR_SAMPLE_DROP:
+               if (true) {
+
+               } break;
+           case SAMPLE_DROP:
+               if (true) {
+
+               } break;
+            default:
+                // Throw an exception error since we should never go into the default case.
+        }
+    }
 
 
     // HARDWARE COMPONENTS
@@ -160,10 +167,10 @@ public class DarienOpModeFSM extends LinearOpMode {
     private double sampleYawCurrentPosition;
     private double intakeWristCurrentPosition;
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-        telemetry.update(); // Send telemetry to the driver controller only here.
-    }
+//    @Override
+//    public void runOpMode() throws InterruptedException {
+//        telemetry.update(); // Send telemetry to the driver controller only here.
+//    }
 
     public void initControls() {
 
