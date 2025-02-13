@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.team.autos;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
+@Disabled
 @Autonomous(name = "Qual: Specimen Side (R)", group = "State Qualifier")
 public class QualifierSpecimenSide extends DarienOpModeAuto {
     @Override

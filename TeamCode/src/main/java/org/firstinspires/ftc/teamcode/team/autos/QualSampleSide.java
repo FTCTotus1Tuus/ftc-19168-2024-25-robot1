@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 
 @Config
-
+@Disabled
 @Autonomous(name = "Qual: Sample Side (L)", group = "State Qualifier")
 public class QualSampleSide extends DarienOpModeAuto {
     public double normalPower = 0.5;
