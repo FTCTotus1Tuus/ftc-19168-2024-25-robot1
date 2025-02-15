@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Config
 public class DarienOpModeFSM extends OpMode {
 
-    // FINITE STATE MACHINE
+    // SCORING FINITE STATE MACHINE
     public enum ScoringMechanismState {
         START,
         READY_FOR_SPECIMEN_PICKUP,
@@ -50,52 +50,65 @@ public class DarienOpModeFSM extends OpMode {
         switch (scoringMechanismState) {
             case READY_FOR_SPECIMEN_PICKUP:
                 if (true) {
-
+//                    setSpecimenClaw("open");
+//                    setSpecimenWrist("pickup");
+//                    setBucketPosition("carry");
+//                    scoringMechanismState = ScoringMechanismState.PICKING_UP_SPECIMEN;
                 }
                 break;
             case PICKING_UP_SPECIMEN:
                 if (true) {
-
+//                   setSpecimenClaw("closed");
+//                   scoringMechanismState = ScoringMechanismState.EXTENDING_TO_READY_TO_CLIP_HIGH_CHAMBER;
                 }
                 break;
             case EXTENDING_TO_READY_TO_CLIP_HIGH_CHAMBER:
                 if (true) {
 //                   setVerticalSlide("high chamber below", verticalSlidePower);
+//                   setSpecimenWrist("place");
+//                   scoringMechanismState = ScoringMechanismState.READY_TO_CLIP_HIGH_CHAMBER;
                 }
                 break;
             case READY_TO_CLIP_HIGH_CHAMBER:
 //               if (setVerticalSlide("high chamber below", verticalSlidePower)) {
-//                    scoringMechanismState = ScoringMechanismState.EXTENDING_TO_CLIP_HIGH_CHAMBER;
+//                   scoringMechanismState = ScoringMechanismState.EXTENDING_TO_CLIP_HIGH_CHAMBER;
 //               }
                 break;
             case EXTENDING_TO_CLIP_HIGH_CHAMBER:
                 if (true) {
+//                   setVerticalSlide("high chamber place", verticalSlidePower);
+//                   scoringMechanismState = ScoringMechanismState.CLIPPED_HIGH_CHAMBER;
 
                 }
                 break;
             case CLIPPED_HIGH_CHAMBER:
-                if (true) {
-
-                }
+//              if (setVerticalSlide("high chamber place", verticalSlidePower);) {
+//                    setSpecimenWrist("pickup");
+//                    setSpecimenClaw("open");
+//                    scoringMechanismState = ScoringMechanismState.READY_FOR_SAMPLE_PICKUP;
+//              }
                 break;
             case READY_FOR_SAMPLE_PICKUP:
                 if (true) {
-
+//                   setVerticalSlide("high chamber low", verticalSlidePower);
+//                   scoringMechanismState = ScoringMechanismState.READY_FOR_SAMPLE_DROP;
                 }
                 break;
             case READY_FOR_SAMPLE_DROP:
                 if (true) {
-
+//                   scoringMechanismState = ScoringMechanismState.SAMPLE_DROP;
                 }
                 break;
             case SAMPLE_DROP:
                 if (true) {
-
+//                    setBucketPosition("drop");
                 }
                 break;
             default:
                 // Throw an exception error since we should never go into the default case.
         }
+
+
     }
 
 
