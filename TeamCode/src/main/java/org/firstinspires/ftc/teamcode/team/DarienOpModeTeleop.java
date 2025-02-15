@@ -16,6 +16,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public double startTime = 0;
     private double intakeWristStartTime = 0;
     private boolean samplePitchAvoidArm = false;
+    boolean bucketIsUp = false;
 
 //    public void pollSensors() {
 //        //intakeColorSensor.enableLed(true);
@@ -162,10 +163,20 @@ public class DarienOpModeTeleop extends DarienOpMode {
             verticalSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        if (gamepad2.a) {
-            bucket.setPosition(bucketPlace);
-        } else {
+
+        if (gamepad2.right_bumper) {
+            bucket.setPosition(bucketUp);
+            bucketIsUp = true;
+        } else if (gamepad2.left_bumper) {
             bucket.setPosition(bucketPickup);
+            bucketIsUp = false;
+        }
+        if (!bucketIsUp) {
+            if (gamepad2.a) {
+                bucket.setPosition(bucketPlace);
+            } else {
+                bucket.setPosition(bucketPickup);
+            }
         }
     }
 

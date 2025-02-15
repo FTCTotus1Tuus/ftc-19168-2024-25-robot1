@@ -75,8 +75,8 @@ public class DarienOpMode extends LinearOpMode {
 
     public static double POS_SAMPLE_PITCH_DROP_BUCKET = 0.2;
     public static double POS_SAMPLE_PITCH_ARM_DOWN = 0.4;
-    public static double POS_SAMPLE_PITCH_PICKUP_READY = 0.5;
-    public static double POS_SAMPLE_PITCH_PICKUP = 0.63;
+    public static double POS_SAMPLE_PITCH_PICKUP_READY = 0.43;
+    public static double POS_SAMPLE_PITCH_PICKUP = 0.65;
 
     public static double POS_SAMPLE_YAW_LEFT_MAX = 0.3;
     public static double POS_SAMPLE_YAW_LEFT2 = 0.3;
@@ -90,12 +90,12 @@ public class DarienOpMode extends LinearOpMode {
     public static double sampleClawOpen = 0.85;
     public static double sampleClawClosed = 0.74;
 
-    public static double intakeWristGroundPosition = 0.74;
+    public static double intakeWristGroundPosition = 0.7;
     public static double intakeWristUpPosition = 0.43;
 
     // calibrated for torque servo
-    public static double specimenClawOpen = 0.93;
-    public static double specimenClawClosed = 0.818;
+    public static double specimenClawOpen = 0.94;
+    public static double specimenClawClosed = 0.83;
 
     // Variables to track servo position
     private double sampleYawCurrentPosition;
