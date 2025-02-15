@@ -24,6 +24,7 @@ public class DarienOpModeFSM extends OpMode {
 
     // FINITE STATE MACHINE
     public enum ScoringMechanismState {
+        START,
         READY_FOR_SPECIMEN_PICKUP,
         PICKING_UP_SPECIMEN,
         EXTENDING_TO_READY_TO_CLIP_HIGH_CHAMBER,
@@ -35,15 +36,16 @@ public class DarienOpModeFSM extends OpMode {
         SAMPLE_DROP
     }
 
+    // We declare a variable to persist the state between loop() calls
+    ScoringMechanismState scoringMechanismState = ScoringMechanismState.START;
+
     public void init() {
         // Reset any component timers first.
 
         // hardware initialization code goes here
         // this needs to correspond with the configuration used
     }
-
-    ScoringMechanismState scoringMechanismState = ScoringMechanismState.READY_FOR_SAMPLE_PICKUP;
-
+    
     public void loop() {
         switch (scoringMechanismState) {
             case READY_FOR_SPECIMEN_PICKUP:
