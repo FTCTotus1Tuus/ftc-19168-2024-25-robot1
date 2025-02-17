@@ -8,9 +8,10 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 @Config
 @Autonomous
-@Disabled
 public class PIDtesting extends DarienOpModeAuto {
     public static double maxPower = 0;
+    public static double xTarget = 0;
+    public static double yTarget = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -20,11 +21,9 @@ public class PIDtesting extends DarienOpModeAuto {
         waitForStart();
 
         while (opModeIsActive()) {
-            moveToPosition(0, 100, maxPower);
+            moveToPosition(xTarget, yTarget, maxPower);
             waitForMotors(4);
-            setBreakpoint();
-            moveToPosition(0, 0, maxPower);
-            waitForMotors(4);
+
             setBreakpoint();
         }
 

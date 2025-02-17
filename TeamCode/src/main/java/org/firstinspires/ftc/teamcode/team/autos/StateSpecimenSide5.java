@@ -20,7 +20,7 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
 
         // Specimen 1
         moveToPosition(-2, 32, 0.8);
-        setSpecimenClaw("closed");
+        specimenClaw.setPosition(specimenClawClosed - 0.02);
         setSpecimenWrist("place");
         waitForMotors(0.8);
         waitForArm();
@@ -36,32 +36,32 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         moveToPosition(getXPos(), 25, 1); // backup from wall
         waitForMotors(0.5);
 
-        moveToPosition(35.5, 20.5, 1); // go to first sample
+        moveToPosition(35.5, 23.5, 1); // go to first sample
         sleep(300);
         readyToPickupSample();
-        waitForMotors(); // was 3
+        waitForMotors(); // was 3s
         pickupSample();
         sleep(300);
         moveToPosition(getXPos(), 2, 0.4);
         placeSampleInBucket();
-        waitForMotors(2);
+        waitForMotors(2, false, 1);
         setSampleClaw("open");
-        sleep(600);
+        sleep(400);
 
         //sample 2
-        moveToPosition(45, 21, 1); // go to second sample
+        moveToPosition(47, 23.5, 1); // go to second sample
         readyToPickupSample();
         waitForMotors();//was 1.2
         pickupSample();
         sleep(100);
         moveToPosition(getXPos(), 2, 0.4);
         placeSampleInBucket();
-        waitForMotors(2);
+        waitForMotors(2, false, 1);
         setSampleClaw("open");
-        sleep(500);
+        sleep(400);
 
         //sample 3
-        moveToPosition(55, 21, 1); // go to third sample
+        moveToPosition(55, 23.5, 1); // go to third sample
 
         setIntakeWrist("down");
         setSamplePitch("ready");
@@ -73,26 +73,27 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         sleep(100);
         moveToPosition(getXPos(), 2, 0.4);
         placeSampleInBucket();
-        waitForMotors(1.5);
+        waitForMotors(1.5, false, 0.5);
         setSampleClaw("open");
-        sleep(500);
 
-        moveToPosition(40, 0, 0.6);
+        moveToPosition(47, 0, 1);
         waitForMotors(1.5);
+
+        setSampleClaw("closed");
 
         // Specimen 2: Pick up specimen from wall
-        specimenClaw.setPosition(specimenClawClosed + 0.02); // keeps the claw slightly open to allow the specimen to fall into position
+        setSpecimenClaw("closed"); // keeps the claw slightly open to allow the specimen to fall into position
         sleep(250);
         setVerticalSlide("high chamber below", verticalSlidePower);
 
         // Start placing specimens on bar
         moveToPosition(-4, 27, 1);
         setSpecimenWrist("place");
-        waitForMotors(2.5, true); // was 2.5
-        setSpecimenClaw("closed"); // tightens the claw so the specimen doesnt wobble as we clip it
+        waitForMotors(2.5, true, 2, true); // was 2.5
+        specimenClaw.setPosition(specimenClawClosed - 0.02); // tightens the claw so the specimen doesnt wobble as we clip it
         waitForArm();
-        moveToPosition(getXPos(), 34, 0.25);
-        waitForMotors(0.3);
+        moveToPosition(getXPos(), 31.5, 0.8);
+        waitForMotors(1);
 
 
         setVerticalSlide("high chamber place", verticalSlidePower);
@@ -103,24 +104,24 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         setVerticalSlide("low", verticalSlidePower);
 
         // Specimen 3: Pickup specimen from wall
-        moveToPosition(33, 5, 1);
-        waitForMotors(2.5, true, 2); // was 2
+        moveToPosition(33, 6, 1);
+        waitForMotors(2.5, true, 2, true); // was 2
         autoRotate(0, normalPower);
         moveToPosition(getXPos(), -2, 0.3);
-        waitForMotors(0.75); // was 1
+        waitForMotors(0.6); // was 1
         //print("done", "");
-        specimenClaw.setPosition(specimenClawClosed + 0.02);
+        setSpecimenClaw("closed");
         sleep(300);
         setVerticalSlide("high chamber below", verticalSlidePower);
 
         // Start placing specimens on bar
         moveToPosition(-5, 27, 1);
         setSpecimenWrist("place");
-        waitForMotors(2, true);
-        setSpecimenClaw("closed");
+        waitForMotors(2, true, 2, true);
+        specimenClaw.setPosition(specimenClawClosed - 0.02);
         waitForArm();
-        moveToPosition(getXPos(), 33, 0.3);
-        waitForMotors(0.3);
+        moveToPosition(getXPos(), 31.5, 0.8);
+        waitForMotors(1);
 
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
@@ -131,12 +132,12 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
 
         // Specimen 4: Pickup specimen from wall
         moveToPosition(33, 8, 1);
-        waitForMotors(2, true, 2);
+        waitForMotors(2, true, 2, true);
         autoRotate(0, normalPower);
         moveToPosition(getXPos(), -7, 0.3);
-        waitForMotors(0.75);
+        waitForMotors(0.6);
         print("done", "");
-        specimenClaw.setPosition(specimenClawClosed + 0.02);
+        setSpecimenClaw("closed");
         sleep(300);
         setVerticalSlide("high chamber below", verticalSlidePower);
 
@@ -144,11 +145,11 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         // Start placing specimens on bar
         moveToPosition(-7, 27, 1);
         setSpecimenWrist("place");
-        waitForMotors(2, true);
-        setSpecimenClaw("closed");
+        waitForMotors(2, true, 2, true);
+        specimenClaw.setPosition(specimenClawClosed - 0.02);
         waitForArm();
-        moveToPosition(getXPos(), 34, 0.3);
-        waitForMotors(0.3);
+        moveToPosition(getXPos(), 31.5, 0.8);
+        waitForMotors(1);
 
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
@@ -159,22 +160,22 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
 
         // Specimen 5: Pickup specimen from wall
         moveToPosition(33, 8, 1);
-        waitForMotors(2, true, 2);
+        waitForMotors(2, true, 2, true);
         autoRotate(0, normalPower);
         moveToPosition(getXPos(), -7, 0.3);
-        waitForMotors(0.75);
+        waitForMotors(0.6);
         print("done", "");
-        specimenClaw.setPosition(specimenClawClosed + 0.02);
+        setSpecimenClaw("closed");
         sleep(300);
         setVerticalSlide("high chamber below", verticalSlidePower);
         // Start placing specimens on bar
         moveToPosition(-10, 27, 1);
         setSpecimenWrist("place");
-        waitForMotors(2, true);
-        setSpecimenClaw("closed");
+        waitForMotors(2, true, 2, true);
+        specimenClaw.setPosition(specimenClawClosed - 0.02);
         waitForArm();
-        moveToPosition(getXPos(), 34, 0.3);
-        waitForMotors(0.3);
+        moveToPosition(getXPos(), 31.5, 0.8);
+        waitForMotors(1, true);
 
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
@@ -185,7 +186,7 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
 
         // PARK: Go to observation zone.
         moveToPosition(40, 5, 1);
-        waitForMotors(2, true);
+        waitForMotors(2, true, acceptableXYError, true);
 
     }
 }

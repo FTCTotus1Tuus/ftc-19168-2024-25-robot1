@@ -18,20 +18,22 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 public class DarienOpModeAuto extends DarienOpMode {
 
     public static double movement_igain = 0;
-    public static double movement_pgain = 0.018;
+    public static double movement_pgain = 0.055;
+    public static double distanceToSlowdown = 3; //Inches
+    public static double slowdownPower = 0.3;
 
     public static double normalPower = 0.3;
     public static double verticalSlidePower = 1; //swapped to 1 from 0.8 needs testing
     public static double strafingInefficiencyFactor = 1.145;
 
-    public static double sampleClawClosed = 0.72;
+//    public static double sampleClawClosed = 0.83;
 
     public double movementStartTime;
 
     public Pose2D currentRobotPos;
 
     //vertical slide positions
-    public static int highChamberBelowPos = 1600;
+    public static int highChamberBelowPos = 1750;
     public static int highChamberPlacePos = 2300;
     public static int barBelow2Pos;
     public static int barPlace2Pos;
@@ -50,7 +52,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     public double targetPosH = 0;
     public double rotConst = 1;
     public double acceptableXYError = 0.25; //how many inches off the xy movement can be - does not compound
-    public static double minimumXYspeed = 0.5;
+    public static double minimumXYspeed = 5;
     public double currentMovementPower = 0;
     public static double ProportionalCoefficient = 0.3;
 
@@ -459,7 +461,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         omniMotor3.setMode(DcMotor.RunMode.RESET_ENCODERS);
     }
 
-    public void waitForMotors(double timeout, boolean noPID, double errorBand) {
+    public void waitForMotors(double timeout, boolean noPID, double errorBand, boolean noSlowdown) {
         boolean looping = true;
         double errorX = 0;
         double errorY = 0;
@@ -473,7 +475,7 @@ public class DarienOpModeAuto extends DarienOpMode {
         }
 
         //PID commands
-        double movement_pduty = 0.05;
+        double movement_pduty = 0;
         double movement_iduty = 0;
         double movement_power;
 
@@ -500,16 +502,16 @@ public class DarienOpModeAuto extends DarienOpMode {
 
 
             if (noPID) {
-                if (getHypotenuse(errorXp, errorYp) < 5) {
-                    setPower(0.2, errorXp, errorYp, errorHrads); // add pid?
+                if (getHypotenuse(errorXp, errorYp) < distanceToSlowdown && !noSlowdown) {
+                    setPower(slowdownPower, errorXp, errorYp, errorHrads); // add pid?
                     telemetry.addData("slow speed - no pid", "");
                 } else {
                     setPower(currentMovementPower, errorXp, errorYp, errorHrads); // add pid?
                     telemetry.addData("full speed - no pid", "");
                 }
             } else {
-                if (getHypotenuse(errorXp, errorYp) < 4) {
-                    setPower(0.2, errorXp, errorYp, errorHrads); // add pid?
+                if (getHypotenuse(errorXp, errorYp) < distanceToSlowdown && !noSlowdown) {
+                    setPower(slowdownPower, errorXp, errorYp, errorHrads); // add pid?
                     telemetry.addData("final approach - pid", "");
                 } else {
 
@@ -523,12 +525,10 @@ public class DarienOpModeAuto extends DarienOpMode {
             //exit controls
             if (getHypotenuse(errorX, errorY) <= errorBand) {
                 looping = false;
-            }
-//            else if (getHypotenuse(myOtos.getVelocity().x, myOtos.getVelocity().y) <= minimumXYspeed &&
-//                    getHypotenuse(errorX, errorY) < acceptableXYError * 4) {
-//                looping = false;
-//            }
-            else if ((this.time - movementStartTime) > timeout) {
+            } else if (getHypotenuse(odo.getVelX(), odo.getVelY()) <= minimumXYspeed &&
+                    getHypotenuse(errorX, errorY) < acceptableXYError * 4) {
+                looping = false;
+            } else if ((this.time - movementStartTime) > timeout) {
                 looping = false;
             }
             //DASHBOARD TELEMETRY
@@ -554,16 +554,20 @@ public class DarienOpModeAuto extends DarienOpMode {
 
     }
 
+    public void waitForMotors(double timeout, boolean noPid, double errorBand) {
+        waitForMotors(timeout, noPid, errorBand, false);
+    }
+
     public void waitForMotors(double timeout, boolean noPID) {
         waitForMotors(timeout, noPID, 0);
     }
 
     public void waitForMotors(double timeout) {
-        waitForMotors(timeout, true, 0);
+        waitForMotors(timeout, false, 0);
     }
 
     public void waitForMotors() {
-        waitForMotors(4, true, 0);
+        waitForMotors(4, false, 0);
     }
 
     public void waitForMotors(boolean usingJustEncoders) {
