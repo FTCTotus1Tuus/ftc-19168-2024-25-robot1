@@ -1,36 +1,34 @@
 package org.firstinspires.ftc.teamcode.team.testing;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.team.testing.tpmpDebug;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.List;
-
 @TeleOp
-@Disabled
+@Config
 public class cameraDebugTest extends LinearOpMode {
 
 
-    tpmpDebug tpmpDebug;
+    samplePickupPipelineDebug samplePickupPipeline;
+    public static String color = "yellow";
 
     @Override
     public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        tpmpDebug = new tpmpDebug(false);
+        samplePickupPipeline = new samplePickupPipelineDebug(color);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                camera.setPipeline(tpmpDebug);
+                camera.setPipeline(samplePickupPipeline);
             }
 
             @Override
@@ -46,15 +44,11 @@ public class cameraDebugTest extends LinearOpMode {
             while (opModeIsActive()) {
                 telemetry.addData("cound", getRuntime());
 
-                telemetry.addData("Partisian", tpmpDebug.getLastResults());
+                telemetry.addData("Partisian", samplePickupPipeline.location());
                 telemetry.update();
 
-                if (gamepad1.a) {
-                    tpmpDebug.setColour(true);
-                } else if (gamepad1.b) {
-                    tpmpDebug.setColour(false);
                 }
             }
         }
     }
-}
+
