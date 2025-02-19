@@ -163,6 +163,10 @@ public class DarienOpModeTeleop extends DarienOpMode {
             verticalSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
+        if (gamepad2.right_stick_button) {
+            verticalSlide.setTargetPosition(highChamberBelowPos);
+        }
+
 
         if (gamepad2.right_bumper) {
             bucket.setPosition(bucketUp);
@@ -183,6 +187,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public void runLift1System() {
         double lift_power, lift_iduty, lift_pduty, lift_pgain = .002, lift_igain = .00001, lift_sp = 50;
         boolean doingL2ascent = false;
+        int secondsToHoldIntakePosition = 30;
         // encoder values are positive and motor is in forward mode
         if (gamepad2.dpad_up && lift1.getCurrentPosition() <= lift1MaxHeight) {
             lift1.setPower(1);
@@ -206,14 +211,16 @@ public class DarienOpModeTeleop extends DarienOpMode {
                     if (gamepad2.b) {
                         doingL2ascent = false;
                     }
-                    if (getRuntime() - intakeSlideStartTime <= 30) {
+                    if (getRuntime() - intakeSlideStartTime <= secondsToHoldIntakePosition) {
                         /*while within 30 seconds set intake slide power 0.1 */
                         intakeSlide.setPower(-0.1); //to keep intake slide from rolling out while doing the L2 ascent
-                        intakeWristSetPosition(intakeWristUpPosition);
+                        intakeWrist.setPosition(intakeWristUpPosition);
+                        samplePitch.setPosition(POS_SAMPLE_PITCH_DROP_BUCKET);
                     } else {
                         /* otherwise set intake slide power to 0*/
                         intakeSlide.setPower(0);
-                        intakeWristSetPosition(intakeWristUpPosition);
+                        intakeWrist.setPosition(intakeWristUpPosition);
+                        samplePitch.setPosition(POS_SAMPLE_PITCH_DROP_BUCKET);
                     }
 
                 }

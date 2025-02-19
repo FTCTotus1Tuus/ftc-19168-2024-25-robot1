@@ -18,9 +18,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 public class DarienOpModeAuto extends DarienOpMode {
 
     public static double movement_igain = 0;
-    public static double movement_pgain = 0.055;
-    public static double distanceToSlowdown = 3; //Inches
-    public static double slowdownPower = 0.3;
+    public static double movement_pgain = 0.06;
+    public static double distanceToSlowdown = 4; //Inches
+    public static double slowdownPower = 0.35;
 
     public static double normalPower = 0.3;
     public static double verticalSlidePower = 1; //swapped to 1 from 0.8 needs testing

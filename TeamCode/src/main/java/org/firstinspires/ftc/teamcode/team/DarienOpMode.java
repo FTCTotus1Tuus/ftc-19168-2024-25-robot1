@@ -93,6 +93,10 @@ public class DarienOpMode extends LinearOpMode {
     public static double intakeWristGroundPosition = 0.7;
     public static double intakeWristUpPosition = 0.43;
 
+    //vertical slide positions
+    public static int highChamberBelowPos = 1750;
+    public static int highChamberPlacePos = 2300;
+
     // calibrated for torque servo
     public static double specimenClawOpen = 0.94;
     public static double specimenClawClosed = 0.83;
