@@ -33,15 +33,10 @@ public class DarienOpModeAuto extends DarienOpMode {
     public Pose2D currentRobotPos;
 
     //vertical slide positions
-    public static int highChamberBelowPos = 1750;
-    public static int highChamberPlacePos = 2300;
     public static int barBelow2Pos;
     public static int barPlace2Pos;
     public static int barBelow1Pos;
-    public static int barPlace1Pos = 950;
-    public static int basketLowPos = 2450;
-    public static int basketHighPos = 4380;
-    public static int armGroundPos = 0;
+
 
     FtcDashboard dashboard;
 

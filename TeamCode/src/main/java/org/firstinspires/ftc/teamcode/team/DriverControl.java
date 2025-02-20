@@ -14,6 +14,7 @@ public class DriverControl extends DarienOpModeTeleop {
         sampleYawSetPosition(POS_SAMPLE_YAW_CENTER);
         intakeWristSetPosition(intakeWristUpPosition);
         specimenWrist.setPosition(specimenWristPickup);
+        bucket.setPosition(bucketUp);
         //Start
         while (this.opModeIsActive()) {
 
@@ -23,6 +24,8 @@ public class DriverControl extends DarienOpModeTeleop {
             runVerticalSlideSystem();
             runSpecimenSystem();
             runLift1System();
+
+            telemetry.update();
 
 
             //runMacro("ReadyToPickup");

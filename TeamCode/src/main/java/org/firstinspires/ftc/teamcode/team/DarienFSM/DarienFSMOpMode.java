@@ -12,87 +12,22 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.team.DarienFSM.Subsystems.IntakeFSM;
+import org.firstinspires.ftc.teamcode.team.DarienFSM.Subsystems.ScoringFSM;
 import org.firstinspires.ftc.teamcode.team.GoBildaPinpointDriver;
 
 @Config
 public class DarienFSMOpMode extends OpMode {
 
-    // FINITE STATE MACHINE
-    private enum ScoringMechanismState {
-        START,
-        READY_FOR_SPECIMEN_PICKUP,
-        PICKING_UP_SPECIMEN,
-        EXTENDING_TO_READY_TO_CLIP_HIGH_CHAMBER,
-        READY_TO_CLIP_HIGH_CHAMBER,
-        EXTENDING_TO_CLIP_HIGH_CHAMBER,
-        CLIPPED_HIGH_CHAMBER,
-        READY_FOR_SAMPLE_PICKUP,
-        READY_FOR_SAMPLE_DROP,
-        SAMPLE_DROP
+    // FINITE STATE MACHINES BY SUBSYSTEMS
+    IntakeFSM intakeFSM;
+    ScoringFSM scoringFSM;
+
+
+    {
+        intakeFSM = new IntakeFSM();
+        scoringFSM = new ScoringFSM();
     }
-
-    // We declare a variable to persist the state between loop() calls
-    ScoringMechanismState scoringMechanismState = ScoringMechanismState.START;
-
-    public void init() {
-        // Reset any component timers first.
-
-        // hardware initialization code goes here
-        // this needs to correspond with the configuration used
-    }
-
-    public void loop() {
-        switch (scoringMechanismState) {
-            case READY_FOR_SPECIMEN_PICKUP:
-                if (true) {
-
-                }
-                break;
-            case PICKING_UP_SPECIMEN:
-                if (true) {
-
-                }
-                break;
-            case EXTENDING_TO_READY_TO_CLIP_HIGH_CHAMBER:
-                if (true) {
-//                   setVerticalSlide("high chamber below", verticalSlidePower);
-                }
-                break;
-            case READY_TO_CLIP_HIGH_CHAMBER:
-//               if (setVerticalSlide("high chamber below", verticalSlidePower)) {
-//                    scoringMechanismState = ScoringMechanismState.EXTENDING_TO_CLIP_HIGH_CHAMBER;
-//               }
-                break;
-            case EXTENDING_TO_CLIP_HIGH_CHAMBER:
-                if (true) {
-
-                }
-                break;
-            case CLIPPED_HIGH_CHAMBER:
-                if (true) {
-
-                }
-                break;
-            case READY_FOR_SAMPLE_PICKUP:
-                if (true) {
-
-                }
-                break;
-            case READY_FOR_SAMPLE_DROP:
-                if (true) {
-
-                }
-                break;
-            case SAMPLE_DROP:
-                if (true) {
-
-                }
-                break;
-            default:
-                // Throw an exception error since we should never go into the default case.
-        }
-    }
-
 
     // HARDWARE COMPONENTS
     public DcMotor omniMotor0; // left front
@@ -171,6 +106,18 @@ public class DarienFSMOpMode extends OpMode {
     // Variables to track servo position
     private double sampleYawCurrentPosition;
     private double intakeWristCurrentPosition;
+
+    public void init() {
+        // Reset any component timers first.
+
+        // hardware initialization code goes here
+        // this needs to correspond with the configuration used
+    }
+
+    @Override
+    public void loop() {
+        //TODO added to get rid of error idk what need to do with it
+    }
 
     //    @Override
     public void runOpMode() throws InterruptedException {

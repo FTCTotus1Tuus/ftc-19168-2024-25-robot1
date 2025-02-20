@@ -16,7 +16,11 @@ public class DarienOpModeTeleop extends DarienOpMode {
     public double startTime = 0;
     private double intakeWristStartTime = 0;
     private boolean samplePitchAvoidArm = false;
-    boolean bucketIsUp = false;
+    boolean bucketIsUp = true;
+    boolean isMovingToBelowPos = false;
+    boolean isArmMovingDown = false;
+
+    public static int highChamberBelowPos = 1600;
 
 //    public void pollSensors() {
 //        //intakeColorSensor.enableLed(true);
@@ -135,10 +139,33 @@ public class DarienOpModeTeleop extends DarienOpMode {
         if (verticalSlide.getCurrentPosition() > verticalSlideMaxHeight && -gamepad2.left_stick_y > 0) {
             verticalSlide.setPower(0.1);
             samplePitchAvoidArm = false;
+        } else if ((gamepad2.b || (isMovingToBelowPos && Math.abs(gamepad2.left_stick_y) < 0.02)) && verticalSlide.getCurrentPosition() < highChamberBelowPos) {
+            verticalSlide.setPower(1);
+            specimenWrist.setPosition(specimenWristPlace);
+            isMovingToBelowPos = true;
+        } else if (gamepad2.x && !isArmMovingDown) {
+            isMovingToBelowPos = false;
+            if (verticalSlide.getCurrentPosition() < highChamberPlacePos) {
+                verticalSlide.setPower(1);
+            } else {
+                verticalSlide.setPower(0.1);
+                specimenClaw.setPosition(specimenClawOpen);
+                specimenWrist.setPosition(specimenWristPickup);
+                sleep(100);
+                isArmMovingDown = true;
+            }
+        } else if (isArmMovingDown) {
+            if (verticalSlide.getCurrentPosition() > 300 && Math.abs(gamepad2.left_stick_y) < 0.02) {
+                verticalSlide.setPower(-1);
+            } else {
+                verticalSlide.setPower(0);
+                isArmMovingDown = false;
+            }
         } else if (Math.abs(gamepad2.left_stick_y) < 0.02) {
-            verticalSlide.setPower(0);
+            verticalSlide.setPower(0.1);
             samplePitchAvoidArm = false;
         } else {
+            isMovingToBelowPos = false;
             verticalSlide.setPower(-gamepad2.left_stick_y);
             // To avoid crashing the bucket down onto the intake's sampleClaw when the claw is in the drop position,
             // rotate the samplePitch away from the bucket so the bucket clears as it comes down,
@@ -251,8 +278,13 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
         if (gamepad2.right_trigger > 0.5) {
             specimenClaw.setPosition(specimenClawOpen);
+            telemetry.addData("claw open", "");
+        } else if (verticalSlide.getCurrentPosition() >= highChamberBelowPos - 200) {
+            specimenClaw.setPosition(specimenClawClosed - 0.03);
+            telemetry.addData("claw closed tight", "");
         } else {
             specimenClaw.setPosition(specimenClawClosed);
+            telemetry.addData("claw closed", "");
         }
 
     }

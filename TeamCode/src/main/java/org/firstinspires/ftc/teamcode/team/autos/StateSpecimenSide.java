@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.team.autos;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 @Autonomous(name = "State: Specimen Side (R)", group = "State")
+@Disabled
 public class StateSpecimenSide extends DarienOpModeAuto {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -128,7 +130,7 @@ public class StateSpecimenSide extends DarienOpModeAuto {
         waitForMotors(2, true, 2);
         autoRotate(0, normalPower);
         moveToPosition(getXPos(), -7, 0.3);
-        waitForMotors(1);
+        waitForMotors(0.4);
         print("done", "");
         setSpecimenClaw("closed");
         sleep(300);
