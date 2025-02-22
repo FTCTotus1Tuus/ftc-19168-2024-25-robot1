@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.team.DarienFSM.Subsystems;
 
 public class IntakeFSM {
     // INTAKE FINITE STATE MACHINE
-    public enum IntakeMechanismState {
+    public enum IntakeSubsystemState {
         READY_FOR_SAMPLE_MECHANISM,
         EXTENDING_TO_SAMPLE,
         READY_TO_GRAB_SAMPLE,
@@ -12,10 +12,10 @@ public class IntakeFSM {
         SAMPLE_DROP
     }
 
-    IntakeMechanismState intakeMechanismState = IntakeMechanismState.READY_FOR_SAMPLE_MECHANISM;
+    IntakeSubsystemState intakeSubsystemState = IntakeSubsystemState.READY_FOR_SAMPLE_MECHANISM;
 
     public void loop() {
-        switch (intakeMechanismState) {
+        switch (intakeSubsystemState) {
             case READY_FOR_SAMPLE_MECHANISM:
                 if (true) {
 
