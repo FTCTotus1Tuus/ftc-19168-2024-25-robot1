@@ -20,7 +20,6 @@ public class DarienOpModeTeleop extends DarienOpMode {
     boolean isMovingToBelowPos = false;
     boolean isArmMovingDown = false;
 
-    public static int highChamberBelowPos = 1600;
 
 //    public void pollSensors() {
 //        //intakeColorSensor.enableLed(true);
@@ -80,9 +79,10 @@ public class DarienOpModeTeleop extends DarienOpMode {
 
             // CONTROL: SAMPLE YAW
             if (intakeWristGetPosition() >= intakeWristGroundPosition - 0.1 || gamepad2.right_stick_button) {
-                if (gamepad2.dpad_left) {
+                // Allow both drivers to control the sampleYaw servo.
+                if (gamepad2.dpad_left || gamepad1.dpad_left) {
                     sampleYawSetPosition(sampleYawGetPosition() - 0.005);
-                } else if (gamepad2.dpad_right) {
+                } else if (gamepad2.dpad_right || gamepad1.dpad_right) {
                     sampleYawSetPosition(sampleYawGetPosition() + 0.005);
                 }
             }
@@ -140,10 +140,12 @@ public class DarienOpModeTeleop extends DarienOpMode {
             verticalSlide.setPower(0.1);
             samplePitchAvoidArm = false;
         } else if ((gamepad2.b || (isMovingToBelowPos && Math.abs(gamepad2.left_stick_y) < 0.02)) && verticalSlide.getCurrentPosition() < highChamberBelowPos) {
+            // DRIVER MACRO: Get ready to clip specimen on high chamber.
             verticalSlide.setPower(1);
             specimenWrist.setPosition(specimenWristPlace);
             isMovingToBelowPos = true;
-        } else if (gamepad2.x && !isArmMovingDown) {
+        } else if (gamepad2.x && !isArmMovingDown && !gamepad2.dpad_down) {
+            // DRIVER MACRO: Clip the specimen on the high chamber. Don't conflict with X button when doing L2 ASCENT.
             isMovingToBelowPos = false;
             if (verticalSlide.getCurrentPosition() < highChamberPlacePos) {
                 verticalSlide.setPower(1);
@@ -277,14 +279,24 @@ public class DarienOpModeTeleop extends DarienOpMode {
         }
 
         if (gamepad2.right_trigger > 0.5) {
-            specimenClaw.setPosition(specimenClawOpen);
-            telemetry.addData("claw open", "");
-        } else if (verticalSlide.getCurrentPosition() >= highChamberBelowPos - 200) {
-            specimenClaw.setPosition(specimenClawClosed - 0.03);
-            telemetry.addData("claw closed tight", "");
+            // If the vertical slide is up, the right trigger should not fully open to prevent accidental drops
+            if (verticalSlide.getCurrentPosition() <= highChamberBelowPos || verticalSlide.getCurrentPosition() >= highChamberPlacePos - 100) {
+                specimenClaw.setPosition(specimenClawOpen);
+                telemetry.addData("claw open", "");
+            } else {
+                specimenClaw.setPosition(specimenClawClosed);
+                telemetry.addData("claw closed loose", "");
+            }
         } else {
-            specimenClaw.setPosition(specimenClawClosed);
-            telemetry.addData("claw closed", "");
+            if (gamepad2.b) {
+                // Grip the specimen loosely so that the specimen can fall into position on the claw.
+                specimenClaw.setPosition(specimenClawClosed);
+                telemetry.addData("claw closed loose", "");
+            } else {
+                // Grip the specimen tightly so that the specimen can be clipped properly.
+                specimenClaw.setPosition(specimenClawClosedTight);
+                telemetry.addData("claw closed tight", "");
+            }
         }
 
     }

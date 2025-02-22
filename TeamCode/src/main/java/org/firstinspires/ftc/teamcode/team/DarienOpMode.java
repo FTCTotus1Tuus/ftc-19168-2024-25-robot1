@@ -104,6 +104,7 @@ public class DarienOpMode extends LinearOpMode {
     // calibrated for torque servo
     public static double specimenClawOpen = 0.94;
     public static double specimenClawClosed = 0.83;
+    public static double specimenClawClosedTight = specimenClawClosed - 0.03;
 
     // Variables to track servo position
     private double sampleYawCurrentPosition;
