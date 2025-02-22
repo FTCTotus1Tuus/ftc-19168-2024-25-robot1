@@ -44,11 +44,11 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         pickupSample();
         sleep(100);
         updatePosition();
-        moveToPosition(getXPos(), 2, 1);
+        moveToPosition(getXPos(), 6, 0.9); // Set Y target to a few inches from wall to avoid slamming into the wall as robot skids into position.
         placeSampleInBucket();
-        waitForMotors(2, false, 1);
-        setSampleClaw("open");
         sleep(400);
+        setSampleClaw("open");
+        waitForMotors(1.5, false, 1);
 
         //sample 2
         moveToPosition(45.5, 23.5, 1); // go to second sample
@@ -57,11 +57,11 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         pickupSample();
         sleep(100);
         updatePosition();
-        moveToPosition(getXPos(), 2, 1);
+        moveToPosition(getXPos(), 6, 0.9); // Set Y target to a few inches from wall to avoid slamming into the wall as robot skids into position.
         placeSampleInBucket();
-        waitForMotors(2, false, 1);
-        setSampleClaw("open");
         sleep(400);
+        setSampleClaw("open");
+        waitForMotors(1.5, false, 1);
 
         //sample 3
         moveToPosition(55, 23.5, 1); // go to third sample
@@ -74,7 +74,7 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         waitForMotors(1.5);
         pickupSample();
         sleep(100);
-        moveToPosition(40, -2, 1); //TODO maybe speed up next run
+        moveToPosition(40, -2, 1); // Set a negative Y position to reach the wall.
         placeSampleInBucket();
         waitForMotors(1.5, false, 0.5);
         setSampleClaw("open");
