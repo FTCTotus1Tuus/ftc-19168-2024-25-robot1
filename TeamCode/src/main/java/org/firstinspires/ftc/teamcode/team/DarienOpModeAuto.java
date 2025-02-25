@@ -241,6 +241,7 @@ public class DarienOpModeAuto extends DarienOpMode {
     }
 
     public void placeSampleInBucket() {
+        sampleYaw.setPosition(POS_SAMPLE_YAW_CENTER);
         setIntakeWrist("up");
         setSamplePitch("drop");
     }

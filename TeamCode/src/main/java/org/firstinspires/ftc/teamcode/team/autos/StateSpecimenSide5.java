@@ -69,7 +69,7 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         setIntakeWrist("down");
         setSamplePitch("ready");
         sampleYaw.setPosition(POS_SAMPLE_YAW_CENTER);
-        setSampleClaw("openwide");
+        setSampleClaw("open");
 
         waitForMotors(1.5);
         pickupSample();
