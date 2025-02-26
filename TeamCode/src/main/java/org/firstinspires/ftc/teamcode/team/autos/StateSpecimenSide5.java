@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.team.autos;
 // JMJ
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 
 @Autonomous(name = "State: Specimen Side (R)", group = "State")
@@ -213,7 +216,26 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
 
         // PARK: Go to observation zone.
         moveToPosition(40, 5, 1);
-        waitForMotors(2, true, acceptableXYError, true);
+
+        double errorX = 0;
+        double errorY = 0;
+        double errorXp;
+        double errorYp;
+        double errorH;
+        double errorHrads;
+
+        while (opModeIsActive()) {
+            errorX = targetPosX - getXPos();
+            errorY = targetPosY - getYPos();
+            errorH = getErrorRot(targetPosH);
+            errorHrads = Math.toRadians(errorH) * 7;
+
+            errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
+            errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
+
+
+            setPower(slowdownPower, errorXp, errorYp, errorHrads); // add pid?
+        }
 
     }
 }

@@ -350,10 +350,9 @@ public class DarienOpModeAuto extends DarienOpMode {
 
             if (Math.abs(error) <= rotationTolerance) {
                 isRotating = false;
+            } else if (Math.abs(error) <= rotationTolerance * 5) {
+                power /= 3;
             }
-//            else if (Math.abs(error) <= rotationTolerance * 3) {
-//                power /= 3;
-//            }
 
             direction = Math.signum(error);
             setRotatePower(power, direction);

@@ -20,6 +20,7 @@ public class DarienOpModeTeleop extends DarienOpMode {
     boolean isMovingToBelowPos = false;
     boolean isArmMovingDown = false;
 
+    public static int highChamberBelowPos = 1600;
 
 //    public void pollSensors() {
 //        //intakeColorSensor.enableLed(true);

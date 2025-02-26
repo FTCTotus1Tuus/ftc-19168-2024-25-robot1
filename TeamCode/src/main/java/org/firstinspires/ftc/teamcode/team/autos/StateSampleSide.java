@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 @Autonomous(name = "State: Sample Side (L)", group = "State Qualifier")
 public class StateSampleSide extends DarienOpModeAuto {
 
-    public static double[] xVals = {-2, -21.5, 0, -21, 0, -26, -20, 0, 0, -40};
-    public static double[] yVals = {-17.5, -12, -19.5, -12, -18.5, -17, -10, -10, -21, -15};
-    public static double[] speedVals = {0.3, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.6, 0.5};
+    public static double[] xVals = {-2, -21.5, 0, -22.5, 0, -27.5, -20, 0, 0, -40};
+    public static double[] yVals = {-17.5, -12.5, -19.5, -11.5, -18.5, -15.75, -10, -10, -19, -15};
+    public static double[] speedVals = {0.325, 1, 0.5, 1, 0.5, 1, 0.3, 0.3, 0.3, 0.3};
 
 
     @Override
@@ -24,7 +24,7 @@ public class StateSampleSide extends DarienOpModeAuto {
         //start with pre-load sample
         setSamplePitch("arm down");
         waitForStart();
-        setIntakeSlidePower(-0.05);
+        setIntakeSlidePower(-0.15);
         setSamplePitch("arm down");
         setSampleClaw("closed");
         setIntakeWrist("up");
@@ -33,7 +33,7 @@ public class StateSampleSide extends DarienOpModeAuto {
         setVerticalSlide("basket high", 1);
         sleep(800);
         moveToPosition(xVals[0], yVals[0], speedVals[0]);// approach slowly
-        waitForMotors(1.5);
+        waitForMotors(1.25);
         waitForArm();
         setBucketPosition("drop");
         sleep(850);
@@ -43,20 +43,20 @@ public class StateSampleSide extends DarienOpModeAuto {
         sleep(200);
         setBucketPosition("carry");
         setSamplePitch("arm down");
-        setVerticalSlide("low", 0.8);
+        setVerticalSlide("low", 1);
         waitForMotors(2);
-        autoRotate(90, 0.3);
         readyToPickupSample();
-        sleep(200);
+        autoRotate(90, 0.6);
         pickupSample();
         sleep(300);
         waitForArm();
         placeSampleInBucket();
-        sleep(300);
+        sleep(350);
         setSampleClaw("open");
         sleep(300);
         setVerticalSlide("basket high", 1); // raise arm sample 2
-        autoRotate(0, 0.3);
+        autoRotate(0, 0.6);
+        sleep(100);
 
         //go to basket for sample 1
         moveToPosition(xVals[2], yVals[2], speedVals[2]);// approach slowly
@@ -73,22 +73,21 @@ public class StateSampleSide extends DarienOpModeAuto {
         setBucketPosition("carry");
         waitForMotors();
         setSamplePitch("arm down");
-        setVerticalSlide("low", 0.8);
-        autoRotate(135, 0.3);
+        setVerticalSlide("low", 1);
         setIntakeWrist("down");
         setSamplePitch("ready");
         sampleYaw.setPosition(POS_SAMPLE_YAW_RIGHT2);
         setSampleClaw("openwide");
-        sleep(200);
+        autoRotate(135, 0.6);
         pickupSample();
         sleep(300);
-        waitForArm();
         placeSampleInBucket();
-        sleep(300);
+        sleep(350);
+        waitForArm();
         setSampleClaw("open");
         sleep(300);
         setVerticalSlide("basket high", 1); // raise arm sample 2
-        autoRotate(0, 0.3);
+        autoRotate(0, 0.6);
         //go to basket for sample 2
         moveToPosition(xVals[4], yVals[4], speedVals[4]);// approach slowly
         waitForMotors(3);
@@ -105,35 +104,32 @@ public class StateSampleSide extends DarienOpModeAuto {
         setSamplePitch("ground");
         sampleYaw.setPosition(POS_SAMPLE_YAW_RIGHT_MAX);
         setSampleClaw("open");
-        setSamplePitch("arm down");
         setVerticalSlide("low", verticalSlidePower);
         waitForMotors();
-        autoRotate(165, 0.3);
+        autoRotate(165, 0.6);
         setIntakeWrist("down");
-        sleep(300);
+        sleep(400);
         setSampleClaw("closed");
         sleep(200);
         placeSampleInBucket();
-        moveToPosition(getXPos(), yVals[7], speedVals[7]);
-        sleep(300);
+        autoRotate(0, 0.6);
         setSampleClaw("open");
-        waitForMotors();
+        sleep(300);
         setVerticalSlide("basket high", 1);
-        autoRotate(0, 0.3);
 
         //go to the basket for sample 4
         moveToPosition(xVals[8], yVals[8], speedVals[8]);// approach slowly
-        waitForMotors(3);
+        waitForMotors(5);
         waitForArm();
         setBucketPosition("drop");
         sleep(800);
 
         moveToPosition(xVals[9], yVals[9], speedVals[9]);
-        sleep(200);
+        sleep(400);
+        setBucketPosition("carry");
         setSamplePitch("arm down");
         setVerticalSlide("low", 1);
         waitForMotors();
-        waitForArm();
 
 
         while (opModeIsActive()) {
