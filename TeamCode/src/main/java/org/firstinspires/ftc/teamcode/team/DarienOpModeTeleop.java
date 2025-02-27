@@ -69,8 +69,14 @@ public class DarienOpModeTeleop extends DarienOpMode {
             // INDEPENDENT CONTROLS
 
             // CONTROL: SAMPLE CLAW
-            if (gamepad2.left_trigger > 0.5) {
+            if (gamepad2.left_trigger >= 0.95) {
                 sampleClaw.setPosition(sampleClawOpen);
+            } else if (0.75 <= gamepad2.left_trigger && gamepad2.left_trigger < 0.95) {
+                sampleClaw.setPosition(0.825);
+            } else if (0.5 <= gamepad2.left_trigger && gamepad2.left_trigger < 0.75) {
+                sampleClaw.setPosition(0.8);
+            } else if (0.25 <= gamepad2.left_trigger && gamepad2.left_trigger < 0.5) {
+                sampleClaw.setPosition(0.77);
             } else {
                 sampleClaw.setPosition(sampleClawClosed);
             }
