@@ -27,7 +27,7 @@ public class gyroTesst extends DarienOpModeAuto {
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("", imu.getRobotYawPitchRollAngles());
+//            telemetry.addData("", imu.getRobotYawPitchRollAngles());
             print("", getRuntime());
 //            if (gamepad1.a) {
 //                AutoRotate(rotationAmount, 0.3, 0);

@@ -13,21 +13,23 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        bucketUp = 0.925;
+
         initControls();
         setBucketPosition("up");
         setSamplePitch("arm down");
         sampleYaw.setPosition(POS_SAMPLE_YAW_CENTER);
         waitForStart();
-        setIntakeSlidePower(-0.05);
+        setIntakeSlidePower(-0.1);
         setVerticalSlide("high chamber below", verticalSlidePower);
 
         // Specimen 1
-        moveToPosition(-2, 31, 0.8);
+        moveToPosition(-15, 31.5, 0.95); //TODO
         specimenClaw.setPosition(specimenClawClosed - 0.03);
         setSpecimenWrist("place");
-        waitForMotors(0.8);
+        waitForMotors(1);
         waitForArm();
-        sleep(50);
+        sleep(100);
         setVerticalSlide("high chamber place", verticalSlidePower);
         waitForArm();
         setSpecimenClaw("open");
@@ -47,11 +49,12 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         pickupSample();
         sleep(100);
         updatePosition();
-        moveToPosition(getXPos(), 6, 0.9); // Set Y target to a few inches from wall to avoid slamming into the wall as robot skids into position.
+        moveToPosition(getXPos(), 4, 0.9); // Set Y target to a few inches from wall to avoid slamming into the wall as robot skids into position.
         placeSampleInBucket();
-        sleep(400);
+        sleep(300); //TODO 400-300
         setSampleClaw("open");
         waitForMotors(1.5, false, 1);
+        sleep(150);
 
         //sample 2
         moveToPosition(45.5, 23.5, 1); // go to second sample
@@ -60,11 +63,12 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         pickupSample();
         sleep(100);
         updatePosition();
-        moveToPosition(getXPos(), 6, 0.9); // Set Y target to a few inches from wall to avoid slamming into the wall as robot skids into position.
+        moveToPosition(getXPos(), 4, 0.9); // Set Y target to a few inches from wall to avoid slamming into the wall as robot skids into position.
         placeSampleInBucket();
-        sleep(400);
+        sleep(300); //TODO 400-250
         setSampleClaw("open");
         waitForMotors(1.5, false, 1);
+        sleep(150);
 
         //sample 3
         moveToPosition(55, 23.5, 1); // go to third sample
@@ -79,9 +83,68 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         sleep(100);
         moveToPosition(40, -2, 1); // Set a negative Y position to reach the wall.
         placeSampleInBucket();
-        waitForMotors(1.5, false, 0.5);
-        setSampleClaw("open");
-        sleep(100);
+
+        boolean looping = true;
+        double errorX = 0;
+        double errorY = 0;
+        double errorXp;
+        double errorYp;
+        double errorH;
+        double errorHrads;
+
+        //PID commands
+        double movement_pduty = 0;
+        double movement_iduty = 0;
+        double movement_power;
+
+        Pose2D velocity;
+
+        double startTime = this.time;
+
+
+        while (looping) {
+
+            if (this.time - startTime > .3) {
+                setSampleClaw("open");
+            }
+
+            updatePosition(); // VERY NESSCESSARY WHENEVER WE ARE MOVING
+
+            errorX = targetPosX - getXPos();
+            errorY = targetPosY - getYPos();
+            errorH = getErrorRot(targetPosH);
+            errorHrads = Math.toRadians(errorH) * 7;
+
+            errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
+            errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
+
+
+            {
+                if (getHypotenuse(errorXp, errorYp) < distanceToSlowdown) {
+                    setPower(slowdownPower, errorXp, errorYp, errorHrads); // add pid?
+                    telemetry.addData("final approach - pid", "");
+                } else {
+
+                    movement_pduty = clamp(movement_pgain * Math.pow(getHypotenuse(errorXp, errorYp), 3 / 2), -1, 1);
+                    movement_iduty = clamp(movement_igain * (getHypotenuse(errorXp, errorYp)) + movement_iduty, -.7, .7);
+                    movement_power = clamp(movement_pduty + movement_iduty, -currentMovementPower, currentMovementPower);
+                    setPower(movement_power, errorXp, errorYp, errorHrads);
+                    telemetry.addData("current move power: ", movement_power);
+                }
+            }
+            //exit controls
+            if (getHypotenuse(errorX, errorY) <= 0.5) {
+                looping = false;
+            } else if (getHypotenuse(odo.getVelX(), odo.getVelY()) <= minimumXYspeed &&
+                    getHypotenuse(errorX, errorY) < acceptableXYError * 4) {
+                looping = false;
+            } else if ((this.time - movementStartTime) > 1.5) {
+                looping = false;
+            }
+        }
+
+        setPower(0, 0, 0, 0);
+
 
         // Specimen 2: Pick up specimen from wall
         setSpecimenClaw("closed"); // keeps the claw slightly open to allow the specimen to fall into position
@@ -89,16 +152,12 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         setVerticalSlide("high chamber below", verticalSlidePower);
 
         // Place specimen on chamber
-        moveToPosition(-4, 27, 1);
+        moveToPosition(-4, 27, 1); //TODO
         setSpecimenWrist("place");
         waitForMotors(1.8, true, 2, true); // was 2.5
         specimenClaw.setPosition(specimenClawClosed - 0.02); // tightens the claw so the specimen doesnt wobble as we clip it
-//        waitForArm(); TODO possibly risky
-//        updatePosition();
-//        moveToPosition(getXPos() - 3, 31, 0.8);
-//        waitForMotors(0.5, true, 0.25, true);
-        setPower(0.3, 0, 1, 0);
-        sleep(150);
+        setPower(0.35, 0, 1, 0);
+        sleep(200);
 
 
         setVerticalSlide("high chamber place", verticalSlidePower);
@@ -121,16 +180,13 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         setVerticalSlide("high chamber below", verticalSlidePower);
 
         // Place specimen on chamber
-        moveToPosition(-6, 27, 1);
+        moveToPosition(-2, 27, 1); //TODO
         setSpecimenWrist("place");
         waitForMotors(1.8, true, 2, true);
-        specimenClaw.setPosition(specimenClawClosed - 0.02);
-//        waitForArm(); TODO
-//        moveToPosition(getXPos() - 3, 31, 0.8);
-//        waitForMotors(0.5, true, 0.25, true);
+        specimenClaw.setPosition(specimenClawClosed - 0.04);
 
-        setPower(0.3, 0, 1, 0);
-        sleep(150);
+        setPower(0.4, 0, 1, 0);
+        sleep(200);
 
 
         setVerticalSlide("high chamber place", verticalSlidePower);
@@ -157,17 +213,13 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
 
 
         // Place specimen on chamber
-        moveToPosition(-9, 27, 1);
+        moveToPosition(0.25, 27, 1); //TODO
         setSpecimenWrist("place");
         waitForMotors(1.8, true, 2, true);
-        specimenClaw.setPosition(specimenClawClosed - 0.02);
-//        waitForArm(); TODO
-//        updatePosition();
-//        moveToPosition(getXPos() - 3, 31, 0.8);
-//        waitForMotors(0.5, true, 0.25, true);
+        specimenClaw.setPosition(specimenClawClosed - 0.04);
 
-        setPower(0.3, 0, 1, 0);
-        sleep(150);
+        setPower(0.4, 0, 1, 0);
+        sleep(200);
 
 
         setVerticalSlide("high chamber place", verticalSlidePower);
@@ -192,14 +244,10 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         setVerticalSlide("high chamber below", verticalSlidePower);
 
         // Place specimen on chamber
-        moveToPosition(-12, 27, 1);
+        moveToPosition(1.5, 27, 1); //TODO
         setSpecimenWrist("place");
         waitForMotors(1.8, true, 2, true);
-        specimenClaw.setPosition(specimenClawClosed - 0.02);
-//        waitForArm(); TODO
-//        updatePosition();
-//        moveToPosition(getXPos() - 3, 31, 0.8);
-//        waitForMotors(0.5, true, 0.25, true);
+        specimenClaw.setPosition(specimenClawClosed - 0.04);
 
         setPower(0.3, 0, 1, 0);
         sleep(150);
@@ -217,24 +265,24 @@ public class StateSpecimenSide5 extends DarienOpModeAuto {
         // PARK: Go to observation zone.
         moveToPosition(40, 5, 1);
 
-        double errorX = 0;
-        double errorY = 0;
-        double errorXp;
-        double errorYp;
-        double errorH;
-        double errorHrads;
+        double errorX1 = 0;
+        double errorY1 = 0;
+        double errorXp1;
+        double errorYp1;
+        double errorH1;
+        double errorHrads1;
 
         while (opModeIsActive()) {
-            errorX = targetPosX - getXPos();
-            errorY = targetPosY - getYPos();
-            errorH = getErrorRot(targetPosH);
-            errorHrads = Math.toRadians(errorH) * 7;
+            errorX1 = targetPosX - getXPos();
+            errorY1 = targetPosY - getYPos();
+            errorH1 = getErrorRot(targetPosH);
+            errorHrads1 = Math.toRadians(errorH1) * 7;
 
-            errorXp = (errorX * Math.cos(Math.toRadians(getRawHeading()))) + errorY * Math.sin(Math.toRadians(getRawHeading()));
-            errorYp = (-errorX * Math.sin(Math.toRadians(getRawHeading()))) + errorY * Math.cos(Math.toRadians(getRawHeading()));
+            errorXp1 = (errorX1 * Math.cos(Math.toRadians(getRawHeading()))) + errorY1 * Math.sin(Math.toRadians(getRawHeading()));
+            errorYp1 = (-errorX1 * Math.sin(Math.toRadians(getRawHeading()))) + errorY1 * Math.cos(Math.toRadians(getRawHeading()));
 
 
-            setPower(slowdownPower, errorXp, errorYp, errorHrads); // add pid?
+            setPower(1, errorXp1, errorYp1, errorHrads1); // add pid?
         }
 
     }

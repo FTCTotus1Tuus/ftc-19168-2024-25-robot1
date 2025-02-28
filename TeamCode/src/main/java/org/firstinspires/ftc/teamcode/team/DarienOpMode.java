@@ -28,7 +28,7 @@ public class DarienOpMode extends LinearOpMode {
     public DcMotor omniMotor2; // left rear
     public DcMotor omniMotor3; // right rear
     public DcMotor verticalSlide;
-    public IMU imu;
+    //    public IMU imu;
     public GoBildaPinpointDriver odo;
     public CRServo intakeSlide;
     public Servo intakeWrist;
@@ -120,17 +120,17 @@ public class DarienOpMode extends LinearOpMode {
         //intakeColorSensor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
         intakeWristTouchSensor = hardwareMap.get(TouchSensor.class, "intakeWristTouchSensor");
 
-        // Initialize IMU on the REV Control Hub
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(
-                new IMU.Parameters(
-                        new RevHubOrientationOnRobot(
-                                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
-                        )
-                )
-        );
-        imu.resetYaw();
+//        // Initialize IMU on the REV Control Hub
+//        imu = hardwareMap.get(IMU.class, "imu");
+//        imu.initialize(
+//                new IMU.Parameters(
+//                        new RevHubOrientationOnRobot(
+//                                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+//                        )
+//                )
+//        );
+//        imu.resetYaw();
 
 //        // Initialize the SparkFun Odometry Tracking Optical Sensor (OTOS), which includes an IMU.
 //        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");

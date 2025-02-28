@@ -11,13 +11,16 @@ import org.firstinspires.ftc.teamcode.team.DarienOpModeAuto;
 @Autonomous(name = "State: Sample Side (L)", group = "State Qualifier")
 public class StateSampleSide extends DarienOpModeAuto {
 
+
     public static double[] xVals = {-2, -21.5, 0, -22.5, 0, -27.5, -20, 0, 0, -40};
-    public static double[] yVals = {-17.5, -12.5, -19.5, -11.5, -18.5, -15.75, -10, -10, -19, -15};
+    public static double[] yVals = {-17.5, -12.5, -19.5, -11.5, -18.5, -16.5, -10, -10, -19, -15};
     public static double[] speedVals = {0.325, 1, 0.5, 1, 0.5, 1, 0.3, 0.3, 0.3, 0.3};
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        bucketPlace = 0.43;
 
         initControls();
         sampleYaw.setPosition(POS_SAMPLE_YAW_CENTER);
@@ -132,8 +135,24 @@ public class StateSampleSide extends DarienOpModeAuto {
         waitForMotors();
 
 
-        while (opModeIsActive()) {
-        }
+        double errorX1 = 0;
+        double errorY1 = 0;
+        double errorXp1;
+        double errorYp1;
+        double errorH1;
+        double errorHrads1;
 
+        while (opModeIsActive()) {
+            errorX1 = targetPosX - getXPos();
+            errorY1 = targetPosY - getYPos();
+            errorH1 = getErrorRot(targetPosH);
+            errorHrads1 = Math.toRadians(errorH1) * 7;
+
+            errorXp1 = (errorX1 * Math.cos(Math.toRadians(getRawHeading()))) + errorY1 * Math.sin(Math.toRadians(getRawHeading()));
+            errorYp1 = (-errorX1 * Math.sin(Math.toRadians(getRawHeading()))) + errorY1 * Math.cos(Math.toRadians(getRawHeading()));
+
+
+            setPower(1, errorXp1, errorYp1, errorHrads1); // add pid?
+        }
     }
 }
