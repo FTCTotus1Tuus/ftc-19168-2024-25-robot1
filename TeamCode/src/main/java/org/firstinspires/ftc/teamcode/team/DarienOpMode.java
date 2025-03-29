@@ -203,7 +203,7 @@ public class DarienOpMode extends LinearOpMode {
     public void print(String Name, Object message) {
         //saves a line for quick debug messages
         telemetry.addData(Name, message);
-        //telemetry.update();
+        telemetry.update();
     }
 
     public double relativePower(double intended_power) {
