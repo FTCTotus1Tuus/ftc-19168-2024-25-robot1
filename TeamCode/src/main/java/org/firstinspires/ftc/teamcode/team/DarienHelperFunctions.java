@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.team;
 
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -41,11 +43,12 @@ public class DarienHelperFunctions {
         return (13 * intended_power) / getVoltage(hardwareMap);
     }
 
-    public static DcMotor initializeMotor(String name, HardwareMap hardwareMap) {
+    public static MotorEx initializeMotor(String name, HardwareMap hardwareMap) {
          /*This is just a handy dandy function which saves a few lines and looks cool,
          it initializes the motor and it also initializers the motor power logs for this motor*/
-        DcMotor motor = hardwareMap.get(DcMotor.class, name);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        MotorEx motor = new MotorEx(hardwareMap, name);
+        motor.setRunMode(MotorEx.RunMode.RawPower);
+        motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         return motor;
     }
 

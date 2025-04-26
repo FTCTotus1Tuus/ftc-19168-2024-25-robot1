@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.team.DarienFSM.Subsystems;
 
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -18,13 +18,11 @@ public class DriveSubsystem extends SubsystemBase {
     //TODO add a telemetry function to send all data we need to dash and driver hub
 
 
-    private DcMotor omniMotor0, omniMotor1, omniMotor2, omniMotor3;
+    private MotorEx omniMotor0, omniMotor1, omniMotor2, omniMotor3;
 
     private Telemetry telemetry;
 
     private GoBildaPinpointDriver pinpoint;
-
-    private Gamepad drivePad, controlPad;
 
     private HardwareMap hm;
 
@@ -46,26 +44,22 @@ public class DriveSubsystem extends SubsystemBase {
     private double targetX, targetY, targetRot;
     private Pose2D currentRobotPos;
 
-    public DriveSubsystem(DcMotor omniMotor0, DcMotor omniMotor1, DcMotor omniMotor2, DcMotor omniMotor3, Telemetry telemetry, GoBildaPinpointDriver pinpoint, Gamepad drivePad, Gamepad controlPad, HardwareMap hm) {
+    public DriveSubsystem(MotorEx omniMotor0, MotorEx omniMotor1, MotorEx omniMotor2, MotorEx omniMotor3, Telemetry telemetry, GoBildaPinpointDriver pinpoint, HardwareMap hm) {
         this.omniMotor0 = omniMotor0;
         this.omniMotor1 = omniMotor1;
         this.omniMotor2 = omniMotor2;
         this.omniMotor3 = omniMotor3;
         this.telemetry = telemetry;
         this.pinpoint = pinpoint;
-        this.drivePad = drivePad;
-        this.controlPad = controlPad;
         this.hm = hm;
     }
 
-    public void teleopDrive() {
-        direction[0] = Math.pow(-drivePad.left_stick_x, 5);
-        direction[1] = Math.pow(-drivePad.left_stick_y, 5);
-        if (!drivePad.left_bumper) {
-            rotation = Math.pow(-drivePad.right_stick_x, 5);
-        }
-        turboBoost = drivePad.left_stick_button;
-        MoveRobot(direction, -rotation, turboBoost);
+    public void teleopDrive(double forward, double strafe, double rotation, double turbo) {
+        strafe = Math.pow(-strafe, 5);
+        forward = Math.pow(-forward, 5); //TODO possibly flip neg signs
+        rotation = Math.pow(rotation, 5);
+
+        MoveRobot(strafe, forward, rotation, turbo);
 
     }
 
@@ -141,10 +135,10 @@ public class DriveSubsystem extends SubsystemBase {
                 (adjY - adjX - adjH * rotConst),
                 (adjY + adjX + adjH * rotConst), power);
 
-        omniMotor0.setPower(DarienHelperFunctions.relativePower(motorPowers[0], hm));
-        omniMotor1.setPower(DarienHelperFunctions.relativePower(motorPowers[1], hm));
-        omniMotor2.setPower(DarienHelperFunctions.relativePower(motorPowers[2], hm));
-        omniMotor3.setPower(DarienHelperFunctions.relativePower(motorPowers[3], hm));
+        omniMotor0.setVelocity(DarienHelperFunctions.relativePower(motorPowers[0], hm));
+        omniMotor1.setVelocity(DarienHelperFunctions.relativePower(motorPowers[1], hm));
+        omniMotor2.setVelocity(DarienHelperFunctions.relativePower(motorPowers[2], hm));
+        omniMotor3.setVelocity(DarienHelperFunctions.relativePower(motorPowers[3], hm));
     }
 
     private double[] scalePower(double motorPower0, double motorPower1, double motorPower2, double motorPower3, double power) {
@@ -162,15 +156,15 @@ public class DriveSubsystem extends SubsystemBase {
         return returnPower;
     }
 
-    private void MoveRobot(double[] direction, double rotation, boolean turboBoost) {
+    private void MoveRobot(double strafe, double forward, double rotation, double speedBoost) {
 
         double divBy;
-        double wheel0 = DarienHelperFunctions.clamp(-direction[0] + direction[1] + rotation, -1, 1);
-        double wheel1 = DarienHelperFunctions.clamp(direction[0] + direction[1] - rotation, -1, 1);
-        double wheel2 = DarienHelperFunctions.clamp(-direction[0] + -direction[1] - rotation, -1, 1);
-        double wheel3 = DarienHelperFunctions.clamp(direction[0] + -direction[1] + rotation, -1, 1);
+        double wheel0 = DarienHelperFunctions.clamp(-strafe + forward + rotation, -1, 1);
+        double wheel1 = DarienHelperFunctions.clamp(strafe + forward - rotation, -1, 1);
+        double wheel2 = DarienHelperFunctions.clamp(-strafe + -forward - rotation, -1, 1);
+        double wheel3 = DarienHelperFunctions.clamp(strafe + -forward + rotation, -1, 1);
 
-        divBy = (drivePad.left_trigger / 2) + 0.5;
+        divBy = (speedBoost / 2) + 0.5;
         telemetry.addData("", wheel0 * divBy);
 
         MoveMotor(omniMotor0, wheel0 * divBy);
@@ -180,8 +174,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
 
-    private void MoveMotor(DcMotor motor, double power) {
-        motor.setPower(power);
+    private void MoveMotor(MotorEx motor, double power) {
+        motor.setVelocity(power);
     }
 
     private void updatePosition() {

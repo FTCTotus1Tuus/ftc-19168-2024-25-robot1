@@ -17,7 +17,8 @@ import org.firstinspires.ftc.teamcode.team.DarienFSM.Subsystems.ScoringFSM;
 import org.firstinspires.ftc.teamcode.team.GoBildaPinpointDriver;
 
 @Config
-public class DarienFSMOpMode extends OpMode {
+public class
+DarienFSMOpMode extends OpMode {
 
     // FINITE STATE MACHINES BY SUBSYSTEMS
     IntakeFSM intakeFSM;
