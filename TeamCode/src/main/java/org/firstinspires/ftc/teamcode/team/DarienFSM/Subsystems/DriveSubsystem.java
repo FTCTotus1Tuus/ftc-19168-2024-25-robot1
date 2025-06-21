@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.team.DarienFSM.Subsystems;
 
 
-import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -54,9 +52,9 @@ public class DriveSubsystem extends SubsystemBase {
         this.hm = hm;
     }
 
-    public void teleopDrive(double forward, double strafe, double rotation, double turbo) {
-        strafe = Math.pow(-strafe, 5);
-        forward = Math.pow(-forward, 5); //TODO possibly flip neg signs
+    public void teleDrive(double forward, double strafe, double rotation, double turbo) {
+        strafe = Math.pow(strafe, 5);
+        forward = Math.pow(-forward, 5);
         rotation = Math.pow(rotation, 5);
 
         MoveRobot(strafe, forward, rotation, turbo);
@@ -175,7 +173,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 
     private void MoveMotor(MotorEx motor, double power) {
-        motor.setVelocity(power);
+        motor.set(power);
     }
 
     private void updatePosition() {

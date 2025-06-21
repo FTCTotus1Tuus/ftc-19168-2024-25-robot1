@@ -34,6 +34,7 @@ public class TestTeleop extends DarienRobot {
     public void run() {
         super.run();
 
+        
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);
         currentGamepad1.copy(gamepad1);
