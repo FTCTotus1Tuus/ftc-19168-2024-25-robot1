@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.team.DarienFSM.Subsystems;
 
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.teamcode.team.DarienHelperFunctions.initializeMotor;
+
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -24,32 +28,39 @@ public class DriveSubsystem extends SubsystemBase {
 
     private HardwareMap hm;
 
-    private double[] direction;
-    private double rotation;
-    private boolean turboBoost;
-
     //CONSTS
-    public static double rotConst = 1;
-    public static double acceptableXYError = 0.25; //how many inches off the xy movement can be - does not compound
-    public static double minimumXYspeed = 5;
-    public static double movement_igain = 0;
-    public static double movement_pgain = 0.06;
-    public static double distanceToSlowdown = 4; //Inches
-    public static double slowdownPower = 0.35;
+    private static double rotConst = 1;
+    private static double acceptableXYError = 0.25; //how many inches off the xy movement can be - does not compound
+    private static double minimumXYspeed = 5;
+    private static double movement_igain = 0;
+    private static double movement_pgain = 0.06;
+    private static double distanceToSlowdown = 4; //Inches
+    private static double slowdownPower = 0.35;
+    private static double errorBand = 1;
+    private double errorX, errorY, errorXp, errorYp, errorH, errorHrads;
+    private boolean noPID, noSlowdown;
+    private double maxPower;
 
 
     //AUTO Variables
     private double targetX, targetY, targetRot;
     private Pose2D currentRobotPos;
 
-    public DriveSubsystem(MotorEx omniMotor0, MotorEx omniMotor1, MotorEx omniMotor2, MotorEx omniMotor3, Telemetry telemetry, GoBildaPinpointDriver pinpoint, HardwareMap hm) {
-        this.omniMotor0 = omniMotor0;
-        this.omniMotor1 = omniMotor1;
-        this.omniMotor2 = omniMotor2;
-        this.omniMotor3 = omniMotor3;
-        this.telemetry = telemetry;
-        this.pinpoint = pinpoint;
+    public DriveSubsystem(String omniMotor0, String omniMotor1, String omniMotor2, String omniMotor3, Telemetry telemetry, String pinpoint, HardwareMap hm) {
         this.hm = hm;
+        this.telemetry = telemetry;
+
+        this.omniMotor0 = initializeMotor(omniMotor0, hm);
+        this.omniMotor1 = initializeMotor(omniMotor1, hm);
+        this.omniMotor2 = initializeMotor(omniMotor2, hm);
+        this.omniMotor3 = initializeMotor(omniMotor3, hm);
+
+        this.omniMotor0.setInverted(true); //is direction to reverse
+        this.omniMotor1.setInverted(false);
+        this.omniMotor2.setInverted(false);
+        this.omniMotor3.setInverted(true);
+
+        configurePinpoint(pinpoint);
     }
 
     public void teleDrive(double forward, double strafe, double rotation, double turbo) {
@@ -61,17 +72,23 @@ public class DriveSubsystem extends SubsystemBase {
 
     }
 
-    public void setAutoDestination(double x, double y, double rot) {
+    public void setAutoDestination(double x, double y, double rot, boolean noPID, boolean noSlowdown, double maxPower) {
         this.targetX = x;
         this.targetY = y;
         this.targetRot = rot;
+        this.noPID = noPID;
+        this.noSlowdown = noSlowdown;
+        this.maxPower = maxPower;
+
     }
 
 
-    public boolean autoUpdatePower(double maxPower, boolean noPID, boolean noSlowdown, double errorBand) {
-        //Returns if robot is within the error margins and should go on to the next command
+    public void setAutoDestination(double x, double y, double rot) {
+        setAutoDestination(x, y, rot, false, false, 1);
+    }
 
-        double errorX, errorY, errorXp, errorYp, errorH, errorHrads;
+    public void autoUpdatePower() {
+
         double movement_pduty, movement_iduty = 0, movement_power;
         Pose2D velocity;
 
@@ -111,16 +128,16 @@ public class DriveSubsystem extends SubsystemBase {
                 telemetry.addData("current move power: ", movement_power);
             }
         }
-        //exit controls
+    }
+
+
+    public boolean isMovementDone() {
         if (DarienHelperFunctions.getHypotenuse(errorX, errorY) <= errorBand) {
             return true;
         } else if (DarienHelperFunctions.getHypotenuse(pinpoint.getVelX(), pinpoint.getVelY()) <= minimumXYspeed &&
                 DarienHelperFunctions.getHypotenuse(errorX, errorY) < acceptableXYError * 4) {
             return true;
         }
-//        else if ((this.time - movementStartTime) > timeout) {
-//            return true;
-//        } REMOVING FOR NOW ADD BACK LATER IF NESSCESSARY
 
         return false;
     }
@@ -130,13 +147,23 @@ public class DriveSubsystem extends SubsystemBase {
         double[] motorPowers = scalePower(
                 (adjY + adjX - adjH * rotConst),
                 (adjY - adjX + adjH * rotConst),
-                (adjY - adjX - adjH * rotConst),
-                (adjY + adjX + adjH * rotConst), power);
+                -(adjY - adjX - adjH * rotConst),
+                -(adjY + adjX + adjH * rotConst), power);
 
-        omniMotor0.setVelocity(DarienHelperFunctions.relativePower(motorPowers[0], hm));
-        omniMotor1.setVelocity(DarienHelperFunctions.relativePower(motorPowers[1], hm));
-        omniMotor2.setVelocity(DarienHelperFunctions.relativePower(motorPowers[2], hm));
-        omniMotor3.setVelocity(DarienHelperFunctions.relativePower(motorPowers[3], hm));
+        telemetry.addData("0 move power: ", motorPowers[0]);
+        telemetry.addData("1 move power: ", motorPowers[1]);
+        telemetry.addData("2 move power: ", motorPowers[2]);
+        telemetry.addData("3 move power: ", motorPowers[3]);
+
+        omniMotor0.setRunMode(Motor.RunMode.RawPower); //TODO look at switching to velocity instead
+        omniMotor1.setRunMode(Motor.RunMode.RawPower);
+        omniMotor2.setRunMode(Motor.RunMode.RawPower);
+        omniMotor3.setRunMode(Motor.RunMode.RawPower);
+
+        omniMotor0.set(motorPowers[0]);
+        omniMotor1.set(motorPowers[1]);
+        omniMotor2.set(motorPowers[2]);
+        omniMotor3.set(motorPowers[3]);
     }
 
     private double[] scalePower(double motorPower0, double motorPower1, double motorPower2, double motorPower3, double power) {
@@ -164,6 +191,11 @@ public class DriveSubsystem extends SubsystemBase {
 
         divBy = (speedBoost / 2) + 0.5;
         telemetry.addData("", wheel0 * divBy);
+
+        omniMotor0.setRunMode(Motor.RunMode.RawPower);
+        omniMotor1.setRunMode(Motor.RunMode.RawPower);
+        omniMotor2.setRunMode(Motor.RunMode.RawPower);
+        omniMotor3.setRunMode(Motor.RunMode.RawPower);
 
         MoveMotor(omniMotor0, wheel0 * divBy);
         MoveMotor(omniMotor1, wheel1 * divBy);
@@ -198,4 +230,57 @@ public class DriveSubsystem extends SubsystemBase {
         return currentRobotPos.getY(DistanceUnit.INCH);
     }
 
+    private void configurePinpoint(String name) {
+        pinpoint = hm.get(GoBildaPinpointDriver.class, name);
+
+        /*
+        Set the odometry pod positions relative to the point that the odometry computer tracks around.
+        The X pod offset refers to how far sideways from the tracking point the
+        X (forward) odometry pod is. Left of the center is a positive number,
+        right of center is a negative number. the Y pod offset refers to how far forwards from
+        the tracking point the Y (strafe) odometry pod is. forward of center is a positive number,
+        backwards is a negative number.
+         */
+        pinpoint.setOffsets(0, 165); //these are tuned for 2/5/2025 robot
+
+        /*
+        Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
+        the goBILDA_SWINGARM_POD, or the goBILDA_4_BAR_POD.
+        If you're using another kind of odometry pod, uncomment setEncoderResolution and input the
+        number of ticks per mm of your odometry pod.
+         */
+        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        //odo.setEncoderResolution(13.26291192);
+
+
+        /*
+        Set the direction that each of the two odometry pods count. The X (forward) pod should
+        increase when you move the robot forward. And the Y (strafe) pod should increase when
+        you move the robot to the left.
+         */
+        /*
+        Set the direction that each of the two odometry pods count. The X (forward) pod should
+        increase when you move the robot forward. And the Y (strafe) pod should increase when
+        you move the robot to the left.
+         */
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD); //TODO check and fix these values
+
+
+        /*
+        Before running the robot, recalibrate the IMU. This needs to happen when the robot is stationary
+        The IMU will automatically calibrate when first powered on, but recalibrating before running
+        the robot is a good idea to ensure that the calibration is "good".
+        resetPosAndIMU will reset the position to 0,0,0 and also recalibrate the IMU.
+        This is recommended before you run your autonomous, as a bad initial calibration can cause
+        an incorrect starting value for x, y, and heading.
+         */
+        //odo.recalibrateIMU();
+        pinpoint.resetPosAndIMU();
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Y offset", pinpoint.getXOffset());
+        telemetry.addData("X offset", pinpoint.getYOffset());
+        telemetry.addData("Device Version Number:", pinpoint.getDeviceVersion());
+        telemetry.addData("Device Scalar", pinpoint.getYawScalar());
+    }
 }
